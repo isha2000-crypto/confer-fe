@@ -27,11 +27,18 @@
       "apexcharts/*": [
         "./node_modules/apexcharts-clevision/*"
       ],
+      "@custom-types/*": [
+        "src/custom-types/*"
+      ]
     }
   },
   "include": [
     "src",
-    "declaration.d.ts"
+    "declaration.d.ts",
+    "src/custom-types/**/*.d.ts",
+    "next-env.d.ts",
+    "src/pages/**/*",
+    "src/**/*", //if it happened in inside src
   ],
   "exclude": [
     "node_modules"
