@@ -9,9 +9,9 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'mdi:home-outline'
     },
     {
-      title: 'Second Page',
-      path: '/second-page',
-      icon: 'mdi:email-outline'
+      title: 'Assessments',
+      path: '/assessments',
+      icon: 'mdi:calendar-check-outline'
     },
     {
       path: '/acl',
