@@ -1,7 +1,8 @@
 // ** Redux Imports
+import { Assessment } from '@custom-types/assessmentsType'
 import { createSlice } from '@reduxjs/toolkit'
 
-const assessments: any = [
+const assessments: Assessment[] = [
   {
     type: 'leadership',
     title: 'Leading a Team',
@@ -53,9 +54,9 @@ const assessments: any = [
 ]
 
 export const assessmentsSlice = createSlice({
-  name: 'appPermissions',
+  name: 'assessments',
   initialState: {
-    assessments: [...assessments]
+    assessments
   },
   reducers: {}
 })

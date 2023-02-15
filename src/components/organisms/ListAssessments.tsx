@@ -1,11 +1,11 @@
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
 import CardAssessment from 'src/components/molecules/CardAssessment'
-
 import { useSelector } from 'react-redux'
+import { RootState } from 'src/store'
 
 function ListAssessments() {
-  const { assessments }: any = useSelector<any>(state => state.assessments)
+  const { assessments } = useSelector((state: RootState) => state.assessments)
 
   return (
     <>
