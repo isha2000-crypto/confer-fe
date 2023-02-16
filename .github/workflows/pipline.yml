@@ -43,16 +43,16 @@ jobs:
           echo 'Creating build ...'
           yarn run build
   test:
-  name: Tester
-  runs-on: ubuntu-latest
-  steps:
-    - name: Clone Repository
-      uses: actions/checkout@v2
-    - name: Install Dependencies
-      run: |
-        echo 'Running installation dependencies ...'
-        yarn install --frozen-lockfile
-    - name: Run Tests
-      run: |
-        echo 'Running jest test cases ...'
-        yarn run test
+    name: Tester
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Repository
+        uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+          echo 'Running installation dependencies ...'
+          yarn install --frozen-lockfile
+      - name: Run Tests
+        run: |
+          echo 'Running jest test cases ...'
+          yarn run test
