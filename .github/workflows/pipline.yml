@@ -28,7 +28,7 @@ jobs:
     needs: [lint]
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [16.x, 18.x]
     steps:
       - name: Clone Repository
         uses: actions/checkout@v2
