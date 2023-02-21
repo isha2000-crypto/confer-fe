@@ -1,4 +1,4 @@
-name: Node.js CI
+name: CI
 on:
   push:
     branches: [ master, main, develop ]
@@ -25,6 +25,7 @@ jobs:
   build:
     name: Builder
     runs-on: ubuntu-latest
+    needs: [lint]
     strategy:
       matrix:
         node-version: [14.x, 16.x, 18.x]
@@ -45,6 +46,11 @@ jobs:
   test:
     name: Tester
     runs-on: ubuntu-latest
+    needs: [lint, build]
+    env: 
+      NEXT_PUBLIC_JWT_EXPIRATION: '5m'
+      NEXT_PUBLIC_JWT_SECRET: 'dd5f3089-40c3-403d-af14-d0c228b05cb4'
+      NEXT_PUBLIC_JWT_REFRESH_TOKEN_SECRET: '7c4c1c50-3230-45bf-9eae-c9b2e401c767'
     steps:
       - name: Clone Repository
         uses: actions/checkout@v2
@@ -55,4 +61,4 @@ jobs:
       - name: Run Tests
         run: |
           echo 'Running jest test cases ...'
-          yarn run test
+          yarn run test --runInBand
