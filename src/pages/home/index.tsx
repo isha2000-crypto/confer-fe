@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography'
 import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
 
-const Assessments = () => {
+const HomePage = () => {
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -36,4 +36,4 @@ const Assessments = () => {
   )
 }
 
-export default Assessments
+export default HomePage

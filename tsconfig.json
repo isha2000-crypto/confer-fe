@@ -32,11 +32,15 @@
       ],
       "@components/*": [
         "src/components/*"
+      ],
+      "src/*": [
+        "src/*"
       ]
     }
   },
   "include": [
     "src",
+    "src/tests",
     "declaration.d.ts",
     "src/custom-types/**/*.d.ts",
     "next-env.d.ts",
