@@ -17,12 +17,12 @@ function GetUsers() {
     if (error) {
       toast.error(error.message)
     }
-  }, [loading])
+  }, [data, error])
 
   return (
     <div>
       {/* <Error error={error} /> */}
-      {loading ? 'loading..' : users.map(val => <h1>{val?.name}</h1>)}
+      {loading ? 'loading..' : users.map((index, val: any) => <h1 key={index}>{val?.name}</h1>)}
     </div>
   )
 }
