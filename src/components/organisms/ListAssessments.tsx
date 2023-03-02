@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid'
 import CardAssessment from 'src/components/molecules/CardAssessment'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
-import GetUser from '../GetUsers'
+
 
 function ListAssessments() {
   const { assessments } = useSelector((state: RootState) => state.assessments)
@@ -17,8 +17,6 @@ function ListAssessments() {
           </Grid>
         )
       })}
-      This is get user output
-      <GetUser />
     </>
   )
 }
