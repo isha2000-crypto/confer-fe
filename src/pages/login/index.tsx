@@ -1,7 +1,5 @@
 // ** React Imports
-import { useState, ReactNode, MouseEvent } from 'react'
-
-import { GoogleOAuthProvider, GoogleLogin} from '@react-oauth/google';
+import { useState, ReactNode } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -45,6 +43,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
+import ButtonGoogle from '@components/molecules/ButtonGoogle'
 
 // ** Styled Components
 const LoginIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -360,21 +359,8 @@ const LoginPage = () => {
               >
                 or
               </Divider>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div className="App">
-         <GoogleOAuthProvider      clientId="660472262456-d1d87f1rdn8t709d1ib1utsco2v20s10.apps.googleusercontent.com"
-         >
-           <GoogleLogin
-             onSuccess={async (credentialResponse) => {
-             console.log(credentialResponse);
-                        }}
-             onError={() => {
-               console.log("Login Failed");
-             }}
-           />
-         </GoogleOAuthProvider>
-   </div>
-                
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+                <ButtonGoogle />
               </Box>
             </form>
           </BoxWrapper>
