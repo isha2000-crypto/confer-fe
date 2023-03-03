@@ -1,6 +1,8 @@
 // ** React Imports
 import { useState, ReactNode, MouseEvent } from 'react'
 
+import { GoogleOAuthProvider, GoogleLogin} from '@react-oauth/google';
+
 // ** Next Imports
 import Link from 'next/link'
 
@@ -359,38 +361,20 @@ const LoginPage = () => {
                 or
               </Divider>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <IconButton
-                  href='/'
-                  component={Link}
-                  sx={{ color: '#497ce2' }}
-                  onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                >
-                  <Icon icon='mdi:facebook' />
-                </IconButton>
-                <IconButton
-                  href='/'
-                  component={Link}
-                  sx={{ color: '#1da1f2' }}
-                  onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                >
-                  <Icon icon='mdi:twitter' />
-                </IconButton>
-                <IconButton
-                  href='/'
-                  component={Link}
-                  onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                  sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : 'grey.300') }}
-                >
-                  <Icon icon='mdi:github' />
-                </IconButton>
-                <IconButton
-                  href='/'
-                  component={Link}
-                  sx={{ color: '#db4437' }}
-                  onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                >
-                  <Icon icon='mdi:google' />
-                </IconButton>
+              <div className="App">
+         <GoogleOAuthProvider      clientId="660472262456-d1d87f1rdn8t709d1ib1utsco2v20s10.apps.googleusercontent.com"
+         >
+           <GoogleLogin
+             onSuccess={async (credentialResponse) => {
+             console.log(credentialResponse);
+                        }}
+             onError={() => {
+               console.log("Login Failed");
+             }}
+           />
+         </GoogleOAuthProvider>
+   </div>
+                
               </Box>
             </form>
           </BoxWrapper>
