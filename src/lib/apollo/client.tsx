@@ -1,5 +1,6 @@
 import { ApolloClient, InMemoryCache, HttpLink, from } from '@apollo/client'
-import { onError } from '@apollo/client/link/error'
+import { onError } from 'apollo-link-error'
+
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const errorLink = onError(({ graphqlErrors, networkError }) => {
