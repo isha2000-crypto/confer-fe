@@ -1,5 +1,6 @@
 // ** React Imports
 import { createContext, useEffect, useState, ReactNode } from 'react'
+import Cookies from 'js-cookie';
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -9,9 +10,15 @@ import axios from 'axios'
 
 // ** Config
 import authConfig from 'src/configs/auth'
+import { useMutation } from "@apollo/client";
+import LOGIN_USER_MUTATION from '../lib/graphql/Mutation/index';
+import { useQuery, gql } from '@apollo/client'
+import { VALIDATE_USERS  } from '../lib/graphql/Query/index'
+
 
 // ** Types
 import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataType } from '@custom-types/contextTypes'
+import client from 'src/lib/apollo/client';
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -37,62 +44,82 @@ const AuthProvider = ({ children }: Props) => {
 
   // ** Hooks
   const router = useRouter()
-
+ 
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
-      const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)!
+      const storedToken = Cookies.get('access_token')
       if (storedToken) {
         setLoading(true)
-        await axios
-          .get(authConfig.meEndpoint, {
-            headers: {
-              Authorization: storedToken
-            }
-          })
-          .then(async response => {
-            setLoading(false)
-            setUser({ ...response.data.userData })
-          })
-          .catch(() => {
-            localStorage.removeItem('userData')
-            localStorage.removeItem('refreshToken')
-            localStorage.removeItem('accessToken')
-            setUser(null)
-            setLoading(false)
-            if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
-              router.replace('/login')
-            }
-          })
+        try {
+          const { data } = await validateUserQuery()
+          setUser(data.validateToken)
+        } catch (error) {
+          Cookies.remove('access_token')
+          setUser(null)
+          if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
+            router.replace('/login')
+          }
+        } finally {
+          setLoading(false)
+        }
       } else {
         setLoading(false)
       }
     }
-
-    initAuth()
+    
+    const { loading: validateUserLoading, error: validateUserError, data: validateUserData } = useQuery(VALIDATE_USERS)
+    
+    const validateUserQuery = async () => {
+      return await client.query({
+        query: VALIDATE_USERS,
+        fetchPolicy: "network-only",
+        context: {
+          headers: {
+            Authorization: `Bearer ${Cookies.get('access_token')}`
+          }
+        }
+      })
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  const [loginUserMutation,{data}] = useMutation(LOGIN_USER_MUTATION);
 
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
-    axios
-      .post(authConfig.loginEndpoint, params)
-      .then(async response => {
+    // Pass params in the mutation
+  
+    loginUserMutation({
+      variables: {
+        email: params.email,
+        password: params.password,
+      },
+    })
+      .then((response) => {
+        //console.log(data)
+        console.log("response here",response)
+        console.log( "your token here",response.data.loginUser.access_token)
+        Cookies.set('access_token', response.data.loginUser.access_token, { expires: 10 })
+        const returnUrl = router.query.returnUrl;
+  
+        setUser({ ...response.data.loginUser.user });
         params.rememberMe
-          ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken)
-          : null
-        const returnUrl = router.query.returnUrl
-
-        setUser({ ...response.data.userData })
-        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
-
-        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
-
-        router.replace(redirectURL as string)
+          ? window.localStorage.setItem(
+              "userData",
+              JSON.stringify(response.data.loginUser.user)
+              
+            )
+          : null;
+          
+  
+        const redirectURL = returnUrl && returnUrl !== "/" ? returnUrl : "/";
+  
+        router.replace(redirectURL as string);
       })
-
-      .catch(err => {
-        if (errorCallback) errorCallback(err)
-      })
-  }
+      .catch((err) => {
+        console.log('Error',err)
+        if (errorCallback) errorCallback(err);
+      });
+      //console.log(params)
+  };
 
   const handleLogout = () => {
     setUser(null)

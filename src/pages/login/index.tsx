@@ -1,8 +1,10 @@
 // ** React Imports
 import { useState, ReactNode, MouseEvent } from 'react'
-
+//import {LOGIN_USER_MUTATION } from '../../lib/graphql/Mutation/index'
+import {useMutation} from '@apollo/client'
 // ** Next Imports
 import Link from 'next/link'
+import { useContext } from 'react'
 
 // ** MUI Components
 
@@ -99,10 +101,10 @@ const schema = yup.object().shape({
   password: yup.string().min(5).required()
 })
 
-const defaultValues = {
-  password: 'admin',
-  email: 'admin@materialize.com'
-}
+// const defaultValues = {
+//   password: 'admin',
+//   email: 'admin@materialize.com'
+// }
 
 interface FormData {
   email: string
@@ -129,7 +131,7 @@ const LoginPage = () => {
     handleSubmit,
     formState: { errors }
   } = useForm({
-    defaultValues,
+    
     mode: 'onBlur',
     resolver: yupResolver(schema)
   })
@@ -141,10 +143,26 @@ const LoginPage = () => {
         type: 'manual',
         message: 'Email or Password is invalid'
       })
+      
     })
+    
   }
 
   const imageSource = skin === 'bordered' ? 'auth-v2-login-illustration-bordered' : 'auth-v2-login-illustration'
+  // const [loginUser, { loading: loginLoading }] = useMutation(LOGIN_USER_MUTATION, {
+  //   onCompleted: (data) => {
+  //     // Handle successful login
+  //     console.log('Logged in:', data.login)
+  //   },
+  //   onError: (error) => {
+  //     // Handle login error
+  //     console.error('Login error:', error)
+  //     setError('email', {
+  //       type: 'manual',
+  //       message: 'Email or Password is invalid'
+  //     })
+  //   }
+  // })
 
   return (
     <Box className='content-right'>
@@ -273,7 +291,7 @@ const LoginPage = () => {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.email)}
-                      placeholder='admin@materialize.com'
+                      placeholder='Enter Your email'
                     />
                   )}
                 />

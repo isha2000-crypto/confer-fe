@@ -10,3 +10,12 @@ export const LOAD_USERS = gql`
     }
   }
 `
+export const VALIDATE_USERS = gql `
+query validateToken  {
+  validateToken {
+    email
+    id
+    name
+  }
+}
+`
