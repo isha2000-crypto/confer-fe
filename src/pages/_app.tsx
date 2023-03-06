@@ -1,6 +1,7 @@
 // ** React Imports
 import { ReactNode } from 'react'
 
+
 import { GoogleOAuthProvider, GoogleLogin} from '@react-oauth/google';
 
 // ** Next Imports
@@ -121,7 +122,8 @@ const App = (props: ExtendedAppProps) => {
   const aclAbilities = Component.acl ?? defaultACLObj
 
   return (
-    <GoogleOAuthProvider clientId="660472262456-d1d87f1rdn8t709d1ib1utsco2v20s10.apps.googleusercontent.com">
+    <GoogleOAuthProvider      clientId="660472262456-d1d87f1rdn8t709d1ib1utsco2v20s10.apps.googleusercontent.com"
+    >
     <Provider store={store}>
       <CacheProvider value={emotionCache}>
         <Head>

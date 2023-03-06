@@ -2,6 +2,7 @@
 import { useState, ReactNode, MouseEvent } from 'react'
 
 import { GoogleOAuthProvider, GoogleLogin} from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
 
 // ** Next Imports
 import Link from 'next/link'
@@ -23,10 +24,11 @@ import FormHelperText from '@mui/material/FormHelperText'
 import InputAdornment from '@mui/material/InputAdornment'
 import Typography, { TypographyProps } from '@mui/material/Typography'
 import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
-
+import { faGoogleG } from '@fortawesome/free-brands-svg-icons';
 // ** Third Party Imports
 import * as yup from 'yup'
 import { useForm, Controller } from 'react-hook-form'
@@ -45,6 +47,8 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
+import Grid from '@mui/material/Grid';
+import { red } from '@mui/material/colors';
 
 // ** Styled Components
 const LoginIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -147,7 +151,10 @@ const LoginPage = () => {
   }
 
   const imageSource = skin === 'bordered' ? 'auth-v2-login-illustration-bordered' : 'auth-v2-login-illustration'
-
+  const login = useGoogleLogin({
+    onSuccess: codeResponse => console.log(codeResponse),
+    flow: 'auth-code',
+  });
   return (
     <Box className='content-right'>
       {!hidden ? (
@@ -362,18 +369,18 @@ const LoginPage = () => {
               </Divider>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div className="App">
-         <GoogleOAuthProvider      clientId="660472262456-d1d87f1rdn8t709d1ib1utsco2v20s10.apps.googleusercontent.com"
-         >
-           <GoogleLogin
-             onSuccess={async (credentialResponse) => {
-             console.log(credentialResponse);
-                        }}
-             onError={() => {
-               console.log("Login Failed");
-             }}
-           />
-         </GoogleOAuthProvider>
-   </div>
+         
+      
+             
+        {/* <Grid onClick={() => login()}>
+       <span> <Icon icon='mdi:google' /> </span> {''} <span>Sign in with Google</span>
+        </Grid> */}
+        {/* <Grid onClick={() => login()} className='googlebtn'><div><span>  <FontAwesomeIcon icon="fa fa-google fa-google" />    </span>Sign in with Google</div></Grid>
+
+   </div> */}
+   <Grid onClick={() => login()} className='googlebtn'><div><span ><FontAwesomeIcon icon={faGoogleG} />  </span>Sign in with Google</div></Grid>
+
+</div>
                 
               </Box>
             </form>
