@@ -44,6 +44,7 @@ const AuthProvider = ({ children }: Props) => {
 
   // ** Hooks
   const router = useRouter()
+  const { loading: validateUserLoading, error: validateUserError, data: validateUserData } = useQuery(VALIDATE_USERS)
  
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
@@ -67,7 +68,7 @@ const AuthProvider = ({ children }: Props) => {
       }
     }
     
-    const { loading: validateUserLoading, error: validateUserError, data: validateUserData } = useQuery(VALIDATE_USERS)
+    
     
     const validateUserQuery = async () => {
       return await client.query({
