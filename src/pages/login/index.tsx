@@ -1,8 +1,5 @@
 // ** React Imports
-import { useState, ReactNode, MouseEvent } from 'react'
-
-import { GoogleOAuthProvider, GoogleLogin} from '@react-oauth/google';
-import { useGoogleLogin } from '@react-oauth/google';
+import { useState, ReactNode } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -28,7 +25,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
-import { faGoogleG } from '@fortawesome/free-brands-svg-icons';
 // ** Third Party Imports
 import * as yup from 'yup'
 import { useForm, Controller } from 'react-hook-form'
@@ -47,8 +43,8 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
-import Grid from '@mui/material/Grid';
-import { red } from '@mui/material/colors';
+import ButtonGoogle from '@components/molecules/ButtonGoogle'
+import { useGoogleLogin } from '@react-oauth/google'
 
 // ** Styled Components
 const LoginIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -367,21 +363,8 @@ const LoginPage = () => {
               >
                 or
               </Divider>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div className="App">
-         
-      
-             
-        {/* <Grid onClick={() => login()}>
-       <span> <Icon icon='mdi:google' /> </span> {''} <span>Sign in with Google</span>
-        </Grid> */}
-        {/* <Grid onClick={() => login()} className='googlebtn'><div><span>  <FontAwesomeIcon icon="fa fa-google fa-google" />    </span>Sign in with Google</div></Grid>
-
-   </div> */}
-   <Grid onClick={() => login()} className='googlebtn'><div><span ><FontAwesomeIcon icon={faGoogleG} />  </span>Sign in with Google</div></Grid>
-
-</div>
-                
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+                <ButtonGoogle />
               </Box>
             </form>
           </BoxWrapper>
