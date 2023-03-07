@@ -21,8 +21,9 @@ export const VALIDATE_USERS = gql`
     validateToken {
       email
       id
+      role
     }
   }
-}
+
 `
 
