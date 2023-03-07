@@ -12,7 +12,6 @@ import axios from 'axios'
 import authConfig from 'src/configs/auth'
 import { useMutation } from "@apollo/client";
 import LOGIN_USER_MUTATION from '../lib/graphql/Mutation/index';
-import { useQuery, gql } from '@apollo/client'
 import { VALIDATE_USERS  } from '../lib/graphql/Query/index'
 
 
@@ -44,10 +43,10 @@ const AuthProvider = ({ children }: Props) => {
 
   // ** Hooks
   const router = useRouter()
-  const { loading: validateUserLoading, error: validateUserError, data: validateUserData } = useQuery(VALIDATE_USERS)
+ 
  
   useEffect(() => {
-    const initAuth = async (): Promise<void> => {
+     async (): Promise<void> => {
       const storedToken = Cookies.get('access_token')
       if (storedToken) {
         setLoading(true)
@@ -77,13 +76,14 @@ const AuthProvider = ({ children }: Props) => {
         context: {
           headers: {
             Authorization: `Bearer ${Cookies.get('access_token')}`
+            
           }
         }
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  const [loginUserMutation,{data}] = useMutation(LOGIN_USER_MUTATION);
+  const [loginUserMutation] = useMutation(LOGIN_USER_MUTATION);
 
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
     // Pass params in the mutation
@@ -119,6 +119,7 @@ const AuthProvider = ({ children }: Props) => {
         console.log('Error',err)
         if (errorCallback) errorCallback(err);
       });
+
       //console.log(params)
   };
 

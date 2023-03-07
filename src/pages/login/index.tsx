@@ -1,10 +1,12 @@
 // ** React Imports
 import { useState, ReactNode, MouseEvent } from 'react'
+
 //import {LOGIN_USER_MUTATION } from '../../lib/graphql/Mutation/index'
-import {useMutation} from '@apollo/client'
+
+
 // ** Next Imports
 import Link from 'next/link'
-import { useContext } from 'react'
+
 
 // ** MUI Components
 
@@ -149,20 +151,7 @@ const LoginPage = () => {
   }
 
   const imageSource = skin === 'bordered' ? 'auth-v2-login-illustration-bordered' : 'auth-v2-login-illustration'
-  // const [loginUser, { loading: loginLoading }] = useMutation(LOGIN_USER_MUTATION, {
-  //   onCompleted: (data) => {
-  //     // Handle successful login
-  //     console.log('Logged in:', data.login)
-  //   },
-  //   onError: (error) => {
-  //     // Handle login error
-  //     console.error('Login error:', error)
-  //     setError('email', {
-  //       type: 'manual',
-  //       message: 'Email or Password is invalid'
-  //     })
-  //   }
-  // })
+
 
   return (
     <Box className='content-right'>
