@@ -1,0 +1,45 @@
+.container {
+  display: grid;
+  height: 77vh;
+  width: 98%;
+  // background: #083a54 !important;
+}
+.videoContainer {
+  display: grid;
+  height: 65vh;
+  width: 100%;
+  // background: #0ebbb2 !important;
+}
+
+.questionContainer {
+  display: grid;
+  align-self: end;
+  align-content: space-around;
+  height: 25vh;
+  width: 100%;
+  background: lightgray !important;
+  box-shadow: none !important;
+
+  .timelineContainer {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    height: 20%;
+    justify-self: center;
+  }
+}
+
+.questionCard {
+  display: grid;
+  height: 15vh;
+  width: 90%;
+  justify-content: center;
+  align-items: center;
+  justify-self: center;
+}
+
+.buttonsContainer {
+  display: flex;
+  justify-content: space-around;
+  padding: 0 40%;
+}
