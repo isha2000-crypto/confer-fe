@@ -1,15 +1,15 @@
 import { useQuery } from '@apollo/client'
-import { LOAD_USERS } from '../graphql/Query/index'
+import { LOAD_ASSESSMENT } from '../graphql/Query/index'
 import { toast } from 'react-hot-toast'
 
-export const FetchUsers = () => {
-  const { error, loading, data } = useQuery(LOAD_USERS)
+export const FetchAssessments = () => {
+  const { error, loading, data } = useQuery(LOAD_ASSESSMENT )
 
   return {
     error,
     loading,
     data,
-    fetchUsers: () => {
+    fetchAssessments: () => {
       if (error) {
         toast.error(error.message)
       }
