@@ -50,10 +50,8 @@ const AuthProvider = ({ children }: Props) => {
         setLoading(true)
         try {
           const { data } = await validateUserQuery()
-          console.log(data.validateToken)
           setLoading(false)
           setUser({ ...data.validateToken })
-          console.log('Setting user')
         } catch (error) {
           Cookies.remove('access_token')
           setUser(null)
@@ -64,7 +62,6 @@ const AuthProvider = ({ children }: Props) => {
       } else {
         setLoading(false)
       }
-      console.log('This function finished')
     }
 
     const validateUserQuery = async () => {
@@ -87,8 +84,6 @@ const AuthProvider = ({ children }: Props) => {
   const [loginUserMutation] = useMutation(LOGIN_USER_MUTATION)
 
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
-    // Pass params in the mutation
-
     loginUserMutation({
       variables: {
         email: params.email,
@@ -96,37 +91,16 @@ const AuthProvider = ({ children }: Props) => {
       }
     })
       .then(response => {
-        //console.log(data)
-        console.log('response here', response)
-        console.log('your token here', response.data.loginUser.access_token)
         Cookies.set('access_token', response.data.loginUser.access_token)
         const returnUrl = router.query.returnUrl
-
-        // window.localStorage.setItem(
-        //         "userData",
-        //         JSON.stringify(response.data.loginUser.user))
-        console.log(response.data.loginUser.user)
         setUser({ ...response.data.loginUser.user })
-
-        // params.rememberMe
-        //   ? window.localStorage.setItem(
-        //       "userData",
-        //       JSON.stringify(response.data.loginUser.user)
-
-        //     )
-        //   : null;
-
-        console.log(returnUrl)
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
-
         router.replace(redirectURL as string)
       })
       .catch(err => {
         console.log('Error', err)
         if (errorCallback) errorCallback(err)
       })
-
-    //console.log(params)
   }
 
   const handleLogout = () => {
