@@ -3,10 +3,8 @@ import { useState, ReactNode, MouseEvent } from 'react'
 
 //import {LOGIN_USER_MUTATION } from '../../lib/graphql/Mutation/index'
 
-
 // ** Next Imports
 import Link from 'next/link'
-
 
 // ** MUI Components
 
@@ -103,10 +101,10 @@ const schema = yup.object().shape({
   password: yup.string().min(5).required()
 })
 
-// const defaultValues = {
-//   password: 'admin',
-//   email: 'admin@materialize.com'
-// }
+const defaultValues = {
+  password: '',
+  email: ''
+}
 
 interface FormData {
   email: string
@@ -133,7 +131,7 @@ const LoginPage = () => {
     handleSubmit,
     formState: { errors }
   } = useForm({
-    
+    defaultValues,
     mode: 'onBlur',
     resolver: yupResolver(schema)
   })
@@ -145,13 +143,10 @@ const LoginPage = () => {
         type: 'manual',
         message: 'Email or Password is invalid'
       })
-      
     })
-    
   }
 
   const imageSource = skin === 'bordered' ? 'auth-v2-login-illustration-bordered' : 'auth-v2-login-illustration'
-
 
   return (
     <Box className='content-right'>
