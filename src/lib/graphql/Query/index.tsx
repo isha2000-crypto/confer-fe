@@ -16,4 +16,13 @@ query Assessments {
   }
 }
 `
+export const VALIDATE_USERS = gql`
+  query validateToken {
+    validateToken {
+      email
+      id
+    }
+  }
+}
+`
 
