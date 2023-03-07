@@ -9,6 +9,9 @@ import axios from 'axios'
 
 // ** Config
 import authConfig from 'src/configs/auth'
+import { useMutation } from "@apollo/client";
+import SIGNUP_USER_MUTATION from '../lib/graphql/Mutation/index';
+
 
 // ** Types
 import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataType } from '@custom-types/contextTypes'
@@ -100,18 +103,28 @@ const AuthProvider = ({ children }: Props) => {
     window.localStorage.removeItem(authConfig.storageTokenKeyName)
     router.push('/login')
   }
+  const [signupUserMutation] = useMutation( SIGNUP_USER_MUTATION )
 
-  const handleRegister = (params: RegisterParams, errorCallback?: ErrCallbackType) => {
-    axios
-      .post(authConfig.registerEndpoint, params)
-      .then(res => {
-        if (res.data.error) {
-          if (errorCallback) errorCallback(res.data.error)
-        } else {
-          handleLogin({ email: params.email, password: params.password })
-        }
-      })
-      .catch((err: { [key: string]: string }) => (errorCallback ? errorCallback(err) : null))
+  const handleRegister = (params: RegisterParams) => {
+
+    signupUserMutation({
+      variables: {
+        name:params.username,
+        email: params.email,
+        password: params.password,
+      }
+    })
+
+    // axios
+    //   .post(authConfig.registerEndpoint, params)
+    //   .then(res => {
+    //     if (res.data.error) {
+    //       if (errorCallback) errorCallback(res.data.error)
+    //     } else {
+    //       handleLogin({ email: params.email, password: params.password })
+    //     }
+    //   })
+    //   .catch((err: { [key: string]: string }) => (errorCallback ? errorCallback(err) : null))
   }
 
   const values = {
