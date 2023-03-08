@@ -1,6 +1,7 @@
 // ** React Imports
 import { useState, ReactNode, MouseEvent } from 'react'
 
+
 // ** Next Imports
 import Link from 'next/link'
 
@@ -100,8 +101,8 @@ const schema = yup.object().shape({
 })
 
 const defaultValues = {
-  password: 'admin',
-  email: 'admin@materialize.com'
+  password: '',
+  email: ''
 }
 
 interface FormData {
@@ -273,7 +274,7 @@ const LoginPage = () => {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.email)}
-                      placeholder='admin@materialize.com'
+                      placeholder='Enter Your email'
                     />
                   )}
                 />
