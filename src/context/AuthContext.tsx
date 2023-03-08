@@ -9,9 +9,8 @@ import axios from 'axios'
 
 // ** Config
 import authConfig from 'src/configs/auth'
-import { useMutation } from "@apollo/client";
-import SIGNUP_USER_MUTATION from '../lib/graphql/Mutation/index';
-
+import { useMutation } from '@apollo/client'
+import SIGNUP_USER_MUTATION from '../lib/graphql/Mutation/index'
 
 // ** Types
 import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataType } from '@custom-types/contextTypes'
@@ -103,15 +102,15 @@ const AuthProvider = ({ children }: Props) => {
     window.localStorage.removeItem(authConfig.storageTokenKeyName)
     router.push('/login')
   }
-  const [signupUserMutation] = useMutation( SIGNUP_USER_MUTATION )
+  const [signupUserMutation] = useMutation(SIGNUP_USER_MUTATION)
 
   const handleRegister = (params: RegisterParams) => {
-
+    router.push('/login')
     signupUserMutation({
       variables: {
-        name:params.username,
+        name: params.username,
         email: params.email,
-        password: params.password,
+        password: params.password
       }
     })
 
