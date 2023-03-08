@@ -18,7 +18,6 @@ export const getHomeRoute = (role: string) => {
   else return '/home'
 }
 
-
 const Home = () => {
   // ** Hooks
   const auth = useAuth()
