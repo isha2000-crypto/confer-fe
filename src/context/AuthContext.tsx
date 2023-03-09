@@ -16,6 +16,7 @@ import { VALIDATE_USERS } from '../lib/graphql/Query/index'
 // ** Types
 import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataType } from '@custom-types/contextTypes'
 import client from 'src/lib/apollo/client'
+import { ACCESS_TOKEN } from '@custom-types/constants'
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -44,7 +45,7 @@ const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const authInit = async (): Promise<void> => {
-      const storedToken = Cookies.get('access_token')
+      const storedToken = Cookies.get(ACCESS_TOKEN)
       if (storedToken) {
         setLoading(true)
         try {
@@ -52,7 +53,7 @@ const AuthProvider = ({ children }: Props) => {
           setLoading(false)
           setUser({ ...data.validateToken })
         } catch (error) {
-          Cookies.remove('access_token')
+          Cookies.remove(ACCESS_TOKEN)
           setUser(null)
           if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
             router.replace('/login')
@@ -69,14 +70,13 @@ const AuthProvider = ({ children }: Props) => {
         fetchPolicy: 'network-only',
         context: {
           headers: {
-            Authorization: `Bearer ${Cookies.get('access_token')}`
+            Authorization: `Bearer ${Cookies.get(ACCESS_TOKEN)}`
           }
         }
       })
     }
 
     authInit()
-    console.log('Auth complete')
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -90,7 +90,7 @@ const AuthProvider = ({ children }: Props) => {
       }
     })
       .then(response => {
-        Cookies.set('access_token', response.data.loginUser.access_token)
+        Cookies.set(ACCESS_TOKEN, response.data.loginUser.access_token)
         const returnUrl = router.query.returnUrl
         setUser({ ...response.data.loginUser.user })
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
@@ -104,7 +104,7 @@ const AuthProvider = ({ children }: Props) => {
 
   const handleLogout = () => {
     setUser(null)
-    Cookies.remove('access_token')
+    Cookies.remove(ACCESS_TOKEN)
     window.localStorage.removeItem('userData')
     window.localStorage.removeItem(authConfig.storageTokenKeyName)
     router.push('/login')
