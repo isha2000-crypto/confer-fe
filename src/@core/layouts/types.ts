@@ -58,6 +58,7 @@ export type NavLink = {
   externalLink?: boolean
   openInNewTab?: boolean
   badgeColor?: 'default' | 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info'
+  visible?: boolean
 }
 
 export type VerticalNavItemsType = (NavLink | NavGroup | NavSectionTitle)[]
