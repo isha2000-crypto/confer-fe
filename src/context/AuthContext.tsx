@@ -18,6 +18,7 @@ import { VALIDATE_USERS } from '../lib/graphql/Query/index'
 import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataType } from '@custom-types/contextTypes'
 import client from 'src/lib/apollo/client'
 import { ACCESS_TOKEN } from '@custom-types/constants'
+import { CodeResponse } from '@react-oauth/google'
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -26,6 +27,7 @@ const defaultProvider: AuthValuesType = {
   setUser: () => null,
   setLoading: () => Boolean,
   login: () => Promise.resolve(),
+  loginGoogle: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   register: () => Promise.resolve()
 }
@@ -125,12 +127,28 @@ const AuthProvider = ({ children }: Props) => {
 
   const [loginGoogleMutation] = useMutation(LOGIN_GOOGLE_MUTATION)
 
+  const handleGoogleLogin = (params: CodeResponse, errorCallback?: ErrCallbackType) => {
+    loginGoogleMutation({
+      variables: {
+        ...params
+      }
+    })
+      .then(response => {
+        console.log('google Response: ', response)
+      })
+      .catch(err => {
+        console.log('Error', err)
+        if (errorCallback) errorCallback(err)
+      })
+  }
+
   const values = {
     user,
     loading,
     setUser,
     setLoading,
     login: handleLogin,
+    loginGoogle: handleGoogleLogin,
     logout: handleLogout,
     register: handleRegister
   }

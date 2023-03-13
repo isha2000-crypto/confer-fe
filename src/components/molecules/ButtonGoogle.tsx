@@ -1,7 +1,8 @@
 import { Grid } from '@mui/material'
 import React from 'react'
 import GoogleButton from 'react-google-button'
-import { useGoogleLogin } from '@react-oauth/google'
+import { CodeResponse, useGoogleLogin } from '@react-oauth/google'
+import { ErrCallbackType } from '@custom-types/contextTypes'
 
 const ButtonStyle: React.CSSProperties = {
   width: '100%',
@@ -10,9 +11,13 @@ const ButtonStyle: React.CSSProperties = {
   alignItems: 'center',
   borderRadius: '8px'
 }
-function ButtonGoogle() {
+
+interface Props {
+  handleLogin: (params: CodeResponse, errCallBack?: ErrCallbackType) => void
+}
+function ButtonGoogle({ handleLogin }: Props) {
   const login: any = useGoogleLogin({
-    onSuccess: codeResponse => console.log(codeResponse),
+    onSuccess: codeResponse => handleLogin(codeResponse),
     flow: 'auth-code'
   })
 
