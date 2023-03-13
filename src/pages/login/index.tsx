@@ -352,7 +352,7 @@ const LoginPage = () => {
                 or
               </Divider>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
-                <ButtonGoogle />
+                <ButtonGoogle handleLogin={auth.loginGoogle} />
               </Box>
             </form>
           </BoxWrapper>
