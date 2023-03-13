@@ -1,4 +1,6 @@
 import { AbilityBuilder, Ability } from '@casl/ability'
+import { Roles } from '../custom-types/enum'
+import { ASSESSMENTS } from '@custom-types/constants'
 
 export type Subjects = string
 export type Actions = 'manage' | 'create' | 'read' | 'update' | 'delete'
@@ -19,12 +21,15 @@ export type ACLObj = {
 const defineRulesFor = (role: string, subject: string) => {
   const { can, rules } = new AbilityBuilder(AppAbility)
 
-  if (role === 'admin') {
+  if (Roles.ADMIN === role) {
     can('manage', 'all')
-  } else if (role === 'client') {
-    can(['read'], 'acl-page')
-  } else {
-    can(['read', 'create', 'update', 'delete'], subject)
+  } else if (Roles.USER === role) {
+    can(['read', 'write'], ASSESSMENTS)
+  }
+
+  // add a rule to deny access to the home page for non-admin users
+  if (Roles.ADMIN !== role && subject === 'home') {
+    can('read', 'none')
   }
 
   return rules
