@@ -17,7 +17,15 @@ export const LOGIN_USER_MUTATION = gql`
         name
         email
         role
+        permissions
       }
+    }
+  }
+`
+export const LOGIN_GOOGLE_MUTATION = gql`
+  mutation LoginGoogle($authuser: String!, $code: String!, $hd: String!, $prompt: String!, $scope: String!) {
+    loginGoogle(googleLoginInput: { authuser: $authuser, code: $code, hd: $hd, prompt: $prompt, scope: $scope }) {
+      access_token
     }
   }
 `
