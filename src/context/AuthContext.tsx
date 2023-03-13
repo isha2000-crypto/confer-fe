@@ -11,6 +11,7 @@ import { useMutation } from '@apollo/client'
 
 import { SIGNUP_USER_MUTATION } from '../lib/graphql/Mutation/index'
 import { LOGIN_USER_MUTATION } from '../lib/graphql/Mutation/index'
+import { LOGIN_GOOGLE_MUTATION } from '../lib/graphql/Mutation/index'
 import { VALIDATE_USERS } from '../lib/graphql/Query/index'
 
 // ** Types
@@ -121,6 +122,8 @@ const AuthProvider = ({ children }: Props) => {
       }
     })
   }
+
+  const [loginGoogleMutation] = useMutation(LOGIN_GOOGLE_MUTATION)
 
   const values = {
     user,
