@@ -1,43 +1,112 @@
-// ** React Imports
-import { useContext } from 'react'
-
-// ** Context Imports
-import { AbilityContext } from 'src/layouts/components/acl/Can'
-
-// ** MUI Imports
-import Grid from '@mui/material/Grid'
-import Card from '@mui/material/Card'
-import CardHeader from '@mui/material/CardHeader'
-import Typography from '@mui/material/Typography'
-import CardContent from '@mui/material/CardContent'
-
-const ACLPage = () => {
-  // ** Hooks
-  const ability = useContext(AbilityContext)
+import './styles.css'
+import { useReactMediaRecorder } from 'react-media-recorder'
+import VideoRecorder from 'react-video-recorder'
+import { RecordWebcam, useRecordWebcam, CAMERA_STATUS } from 'react-record-webcam'
+const OPTIONS = {
+  filename: 'test-filename',
+  fileType: 'mp4',
+  width: 1920,
+  height: 1080
+}
+const RecordView = () => {
+  const { status, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({
+    video: true,
+    facingMode: { exact: 'environment' }
+  })
 
   return (
-    <Grid container spacing={6}>
-      <Grid item md={6} xs={12}>
-        <Card>
-          <CardHeader title='Common' />
-          <CardContent>
-            <Typography sx={{ mb: 4 }}>No ability is required to view this card</Typography>
-            <Typography sx={{ color: 'primary.main' }}>This card is visible to 'user' and 'admin' both</Typography>
-          </CardContent>
-        </Card>
-      </Grid>
-      {ability?.can('read', 'analytics') ? (
-        <Grid item md={6} xs={12}>
-          <Card>
-            <CardHeader title='Analytics' />
-            <CardContent>
-              <Typography sx={{ mb: 4 }}>User with 'Analytics' subject's 'Read' ability can view this card</Typography>
-              <Typography sx={{ color: 'error.main' }}>This card is visible to 'admin' only</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      ) : null}
-    </Grid>
+    <div>
+      <p>{status}</p>
+      <button onClick={startRecording}>Start Recording</button>
+      <button onClick={stopRecording}>Stop Recording</button>
+      <video src={mediaBlobUrl} controls autoPlay loop />
+    </div>
+  )
+}
+
+export default function ACLPage() {
+  const recordWebcam = useRecordWebcam(OPTIONS)
+  const getRecordingFileHooks = async () => {
+    const blob = await recordWebcam.getRecording()
+    console.log({ blob })
+  }
+
+  const getRecordingFileRenderProp = async blob => {
+    console.log({ blob })
+  }
+
+  return (
+    <div>
+      <h1>Record your video</h1>
+      <VideoRecorder
+        onRecordingComplete={videoBlob => {
+          // Do something with the video...
+          console.log('videoBlob', videoBlob)
+        }}
+      />
+      <h1>3.react-record-webcam</h1>
+      <p>Camera status: {recordWebcam.status}</p>
+      <div>
+        <button
+          disabled={
+            recordWebcam.status === CAMERA_STATUS.OPEN ||
+            recordWebcam.status === CAMERA_STATUS.RECORDING ||
+            recordWebcam.status === CAMERA_STATUS.PREVIEW
+          }
+          onClick={recordWebcam.open}
+        >
+          Open camera
+        </button>
+        <button
+          disabled={recordWebcam.status === CAMERA_STATUS.CLOSED || recordWebcam.status === CAMERA_STATUS.PREVIEW}
+          onClick={recordWebcam.close}
+        >
+          Close camera
+        </button>
+        <button
+          disabled={
+            recordWebcam.status === CAMERA_STATUS.CLOSED ||
+            recordWebcam.status === CAMERA_STATUS.RECORDING ||
+            recordWebcam.status === CAMERA_STATUS.PREVIEW
+          }
+          onClick={recordWebcam.start}
+        >
+          Start recording
+        </button>
+        <button disabled={recordWebcam.status !== CAMERA_STATUS.RECORDING} onClick={recordWebcam.stop}>
+          Stop recording
+        </button>
+        <button disabled={recordWebcam.status !== CAMERA_STATUS.PREVIEW} onClick={recordWebcam.retake}>
+          Retake
+        </button>
+        <button disabled={recordWebcam.status !== CAMERA_STATUS.PREVIEW} onClick={recordWebcam.download}>
+          Download
+        </button>
+        <button disabled={recordWebcam.status !== CAMERA_STATUS.PREVIEW} onClick={getRecordingFileHooks}>
+          Get recording
+        </button>
+      </div>
+
+      <video
+        ref={recordWebcam.webcamRef}
+        style={{
+          display: `${
+            recordWebcam.status === CAMERA_STATUS.OPEN || recordWebcam.status === CAMERA_STATUS.RECORDING
+              ? 'block'
+              : 'none'
+          }`
+        }}
+        autoPlay
+        muted
+      />
+      <video
+        ref={recordWebcam.previewRef}
+        style={{
+          display: `${recordWebcam.status === CAMERA_STATUS.PREVIEW ? 'block' : 'none'}`
+        }}
+        controls
+      />
+    </div>
   )
 }
 
@@ -45,5 +114,3 @@ ACLPage.acl = {
   action: 'read',
   subject: 'acl-page'
 }
-
-export default ACLPage

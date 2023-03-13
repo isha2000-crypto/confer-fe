@@ -6,6 +6,8 @@ import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
 
 const HomePage = () => {
+  console.log('here coming')
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
