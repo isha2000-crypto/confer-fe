@@ -11,12 +11,14 @@ import { useMutation } from '@apollo/client'
 
 import { SIGNUP_USER_MUTATION } from '../lib/graphql/Mutation/index'
 import { LOGIN_USER_MUTATION } from '../lib/graphql/Mutation/index'
+import { LOGIN_GOOGLE_MUTATION } from '../lib/graphql/Mutation/index'
 import { VALIDATE_USERS } from '../lib/graphql/Query/index'
 
 // ** Types
 import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataType } from '@custom-types/contextTypes'
 import client from 'src/lib/apollo/client'
 import { ACCESS_TOKEN } from '@custom-types/constants'
+import { CodeResponse } from '@react-oauth/google'
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -25,6 +27,7 @@ const defaultProvider: AuthValuesType = {
   setUser: () => null,
   setLoading: () => Boolean,
   login: () => Promise.resolve(),
+  loginGoogle: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   register: () => Promise.resolve()
 }
@@ -122,12 +125,34 @@ const AuthProvider = ({ children }: Props) => {
     })
   }
 
+  const [loginGoogleMutation] = useMutation(LOGIN_GOOGLE_MUTATION)
+
+  const handleGoogleLogin = (params: CodeResponse, errorCallback?: ErrCallbackType) => {
+    loginGoogleMutation({
+      variables: {
+        ...params
+      }
+    })
+      .then(response => {
+        Cookies.set(ACCESS_TOKEN, response.data.loginGoogle.access_token)
+        const returnUrl = router.query.returnUrl
+        setUser({ ...response.data.loginGoogle.user })
+        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+        router.replace(redirectURL as string)
+      })
+      .catch(err => {
+        console.log('Error', err)
+        if (errorCallback) errorCallback(err)
+      })
+  }
+
   const values = {
     user,
     loading,
     setUser,
     setLoading,
     login: handleLogin,
+    loginGoogle: handleGoogleLogin,
     logout: handleLogout,
     register: handleRegister
   }
