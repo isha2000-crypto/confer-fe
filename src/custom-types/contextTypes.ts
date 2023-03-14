@@ -18,10 +18,11 @@ export type UserDataType = {
   id: number
   role: string
   email: string
+  name: string
   fullName: string
   username: string
   password: string
-  avatar?: string | null
+  picture?: string | null
 }
 
 export type AuthValuesType = {

@@ -134,7 +134,11 @@ const AuthProvider = ({ children }: Props) => {
       }
     })
       .then(response => {
-        console.log('google Response: ', response)
+        Cookies.set(ACCESS_TOKEN, response.data.loginGoogle.access_token)
+        const returnUrl = router.query.returnUrl
+        setUser({ ...response.data.loginGoogle.user })
+        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+        router.replace(redirectURL as string)
       })
       .catch(err => {
         console.log('Error', err)
