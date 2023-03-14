@@ -79,9 +79,11 @@
 // import Image from 'next/image'
 
 //import styles from '../styles/Home.module.css'
+import Head from 'next/head'
+import Image from 'next/image'
+import styles from '../styles/Home.module.css'
 import Webcam from 'react-webcam'
-
-// import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import React from 'react'
 
 const VideoRecorder = () => {
@@ -96,45 +98,38 @@ const VideoRecorder = () => {
   const mediaRecorderRef = React.useRef(null)
   const [capturing, setCapturing] = React.useState(false)
   const [recordedChunks, setRecordedChunks] = React.useState([])
-  const [recordingTime, setRecordingTime] = React.useState(0)
-  const [isPreviewing, setIsPreviewing] = React.useState(false)
-  const duration = 10
+  const [timeLimit, setTimeLimit] = useState(10)
+  const [timeRemaining, setTimeRemaining] = useState(timeLimit)
+
   const handleStartCaptureClick = React.useCallback(() => {
     setCapturing(true)
+    setTimeRemaining(timeLimit)
     mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
       mimeType: 'video/webm'
     })
     mediaRecorderRef.current.addEventListener('dataavailable', handleDataAvailable)
-
     mediaRecorderRef.current.start()
+    startTimer()
+  }, [webcamRef, setCapturing, mediaRecorderRef, setTimeRemaining])
 
-    //mediaRecorderRef.current.start(10000)
-    const duration = 10
-    const intervalId = setInterval(() => {
-      setRecordingTime(prevTime => {
-        const newTime = prevTime + 1
-        if (newTime >= duration) {
-          clearInterval(intervalId)
-          mediaRecorderRef.current.stop()
-          setCapturing(false)
-        }
-
-        return newTime
-      })
-    }, 1000)
-  }, [webcamRef, setCapturing, mediaRecorderRef])
   const handleDataAvailable = React.useCallback(
     ({ data }) => {
       if (data.size > 0) {
         setRecordedChunks(prev => prev.concat(data))
       }
+      if (mediaRecorderRef.current.state === 'inactive') {
+        mediaRecorderRef.current.removeEventListener('dataavailable', handleDataAvailable)
+      }
     },
-    [setRecordedChunks]
+    [setRecordedChunks, mediaRecorderRef]
   )
+
   const handleStopCaptureClick = React.useCallback(() => {
-    mediaRecorderRef.current?.stop()
+    clearInterval(timerRef.current)
+    mediaRecorderRef.current.stop()
     setCapturing(false)
   }, [mediaRecorderRef, webcamRef, setCapturing])
+
   const handleDownload = React.useCallback(() => {
     if (recordedChunks.length) {
       const blob = new Blob(recordedChunks, {
@@ -152,24 +147,47 @@ const VideoRecorder = () => {
     }
   }, [recordedChunks])
 
-  // const handleRetakeClick = () => {
-  //   setRecordedChunks([])
-  //   handleStartCaptureClick()
-  // }
+  const handleRetake = () => {
+    setRecordedChunks([])
+  }
+
+  const startTimer = () => {
+    const timer = setInterval(() => {
+      setTimeRemaining(time => time - 1)
+    }, 1000)
+    timerRef.current = timer
+  }
+
+  const timerRef = useRef(null)
+
+  React.useEffect(() => {
+    if (timeRemaining === 0) {
+      handleStopCaptureClick()
+    }
+  }, [timeRemaining, handleStopCaptureClick])
 
   return (
     <>
-      <Webcam audio={true} ref={webcamRef} videoConstraints={videoConstraints} mirrored />
+      <Webcam audio={false} ref={webcamRef} videoConstraints={videoConstraints} mirrored />
       {capturing ? (
-        <>
-          <div>Recording... {duration - recordingTime} seconds remaining</div>
+        <div>
+          <div>Recording time left: {timeRemaining}</div>
           <button onClick={handleStopCaptureClick}>Stop Capture</button>
-        </>
+        </div>
       ) : (
         <button onClick={handleStartCaptureClick}>Start Capture</button>
       )}
-      {recordedChunks.length > 0 && <button onClick={handleDownload}>Download</button>}
-      {/* <button onClick={handleRetakeClick}>Retake</button> */}
+      {recordedChunks.length > 0 && (
+        <div>
+          <video controls>
+            {recordedChunks.map((chunk, index) => (
+              <source key={index} src={URL.createObjectURL(chunk)} />
+            ))}
+          </video>
+          <button onClick={handleDownload}>Download</button>
+          <button onClick={handleRetake}>Retake</button>
+        </div>
+      )}
     </>
   )
 }
