@@ -4,7 +4,7 @@ export const LOAD_USERS = gql`
   query Users {
     users {
       email
-      id
+      _id
       name
       role
     }
@@ -14,7 +14,7 @@ export const VALIDATE_USERS = gql`
   query validateToken {
     validateToken {
       email
-      id
+      _id
       name
       role
     }
