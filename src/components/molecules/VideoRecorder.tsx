@@ -85,15 +85,14 @@ import { useState, useRef } from 'react'
 import React from 'react'
 
 const VideoRecorder = () => {
-  const videoConstraints = {
+  const videoConstraints: MediaTrackConstraints = {
     width: 1280,
     height: 720,
-    facingMode: true,
-    mirrored: false,
+    facingMode: 'user',
     echoCancellation: true
   }
-  const webcamRef = React.useRef(null)
-  const mediaRecorderRef = React.useRef(null)
+  const webcamRef: any = React.useRef(null)
+  const mediaRecorderRef: any = React.useRef(null)
   const [capturing, setCapturing] = React.useState(false)
   const [recordedChunks, setRecordedChunks] = React.useState([])
   const [timeLimit] = useState(10)
@@ -111,7 +110,7 @@ const VideoRecorder = () => {
   }, [webcamRef, setCapturing, mediaRecorderRef, setTimeRemaining])
 
   const handleDataAvailable = React.useCallback(
-    ({ data }) => {
+    ({ data }: any) => {
       if (data.size > 0) {
         setRecordedChunks(prev => prev.concat(data))
       }
@@ -136,7 +135,8 @@ const VideoRecorder = () => {
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       document.body.appendChild(a)
-      a.style = 'display: none'
+
+      // a.style = 'display: none'
       a.href = url
       a.download = 'react-webcam-stream-capture.mp4'
       a.click()
@@ -156,7 +156,7 @@ const VideoRecorder = () => {
     timerRef.current = timer
   }
 
-  const timerRef = useRef(null)
+  const timerRef: any = useRef(null)
 
   React.useEffect(() => {
     if (timeRemaining === 0) {
