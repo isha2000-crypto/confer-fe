@@ -13,6 +13,11 @@ const navigation = (): HorizontalNavItemsType => [
     icon: 'mdi:email-outline'
   },
   {
+    title: 'Recorder',
+    path: '/recorder',
+    icon: 'mdi:record'
+  },
+  {
     path: '/acl',
     action: 'read',
     subject: 'acl-page',

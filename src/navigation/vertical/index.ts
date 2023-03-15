@@ -18,9 +18,9 @@ const navigation = (): VerticalNavItemsType => {
       subject: ASSESSMENTS
     },
     {
-      title: 'Capture Video',
-      path: '/video-record',
-      icon: 'mdi-video'
+      title: 'Recorder',
+      path: '/recorder',
+      icon: 'mdi:record'
     }
   ]
 }
