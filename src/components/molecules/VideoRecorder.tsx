@@ -79,11 +79,9 @@
 // import Image from 'next/image'
 
 //import styles from '../styles/Home.module.css'
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+
 import Webcam from 'react-webcam'
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef } from 'react'
 import React from 'react'
 
 const VideoRecorder = () => {
@@ -98,7 +96,7 @@ const VideoRecorder = () => {
   const mediaRecorderRef = React.useRef(null)
   const [capturing, setCapturing] = React.useState(false)
   const [recordedChunks, setRecordedChunks] = React.useState([])
-  const [timeLimit, setTimeLimit] = useState(10)
+  const [timeLimit] = useState(10)
   const [timeRemaining, setTimeRemaining] = useState(timeLimit)
 
   const handleStartCaptureClick = React.useCallback(() => {
