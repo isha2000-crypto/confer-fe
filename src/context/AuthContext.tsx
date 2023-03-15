@@ -54,7 +54,7 @@ const AuthProvider = ({ children }: Props) => {
         try {
           const { data } = await validateUserQuery()
           setLoading(false)
-          setUser({ ...data.validateToken })
+          setUser({ ...data.validateToken, id: data.validateToken._id })
         } catch (error) {
           Cookies.remove(ACCESS_TOKEN)
           setUser(null)
@@ -95,7 +95,8 @@ const AuthProvider = ({ children }: Props) => {
       .then(response => {
         Cookies.set(ACCESS_TOKEN, response.data.loginUser.access_token)
         const returnUrl = router.query.returnUrl
-        setUser({ ...response.data.loginUser.user })
+        const userData = response.data.loginUser.user
+        setUser({ ...userData, id: userData._id })
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
         router.replace(redirectURL as string)
       })
@@ -136,7 +137,8 @@ const AuthProvider = ({ children }: Props) => {
       .then(response => {
         Cookies.set(ACCESS_TOKEN, response.data.loginGoogle.access_token)
         const returnUrl = router.query.returnUrl
-        setUser({ ...response.data.loginGoogle.user })
+        const userData = response.data.loginGoogle.user
+        setUser({ ...userData, id: userData._id })
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
         router.replace(redirectURL as string)
       })
