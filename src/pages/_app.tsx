@@ -64,6 +64,7 @@ import client from '../lib/apollo/client'
 // ** Global css styles
 import '../../styles/globals.css'
 import { ApolloProvider } from '@apollo/client'
+import '../../styles/globals.scss'
 
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
