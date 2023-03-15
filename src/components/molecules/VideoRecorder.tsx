@@ -177,7 +177,7 @@ const VideoRecorder = () => {
       )}
       {recordedChunks.length > 0 && (
         <div>
-          <video controls>
+          <video controls width='100%' height='auto'>
             {recordedChunks.map((chunk, index) => (
               <source key={index} src={URL.createObjectURL(chunk)} />
             ))}
