@@ -16,6 +16,11 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'mdi:calendar-check-outline',
       action: 'read',
       subject: ASSESSMENTS
+    },
+    {
+      title: 'Recorder',
+      path: '/recorder',
+      icon: 'mdi:record'
     }
   ]
 }

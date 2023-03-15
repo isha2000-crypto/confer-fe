@@ -8,6 +8,7 @@ const Timeline = (props: Timeline) => {
 
   const renderLine = () => {
     const linePosition: number = Math.round(-1 * (parentHeight / 2)) - 3
+
     return (
       <div className='line' style={{ top: linePosition }}>
         <svg height='5' width='100%'>
