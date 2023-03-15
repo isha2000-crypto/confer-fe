@@ -169,7 +169,7 @@ const UserThemeOptions = (): ThemeOptions => {
             '0px 11px 15px -7px rgba(20, 21, 33, 0.2), 0px 24px 38px 3px rgba(20, 21, 33, 0.14), 0px 9px 46px 8px rgba(20, 21, 33, 0.12)'
           ],
     zIndex: {
-      appBar: 1200,
+      appBar: 1000,
       drawer: 1100
     }
   }

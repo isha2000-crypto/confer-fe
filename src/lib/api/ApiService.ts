@@ -1,8 +1,9 @@
-import * as ApiUsers from './ApiUsers'
+// import * as ApiUsers from './ApiUsers'
 
-const ApiService = () => {
-  return {
-    ...ApiUsers
-  }
-}
-export default ApiService
+// const ApiService = () => {
+//   return {
+//     ...ApiUsers
+//   }
+// }
+
+export default {}
