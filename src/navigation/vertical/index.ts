@@ -1,4 +1,5 @@
 // ** Type import
+import { ASSESSMENTS, ASSESSMENT_URL } from '@custom-types/constants'
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
 
 const navigation = (): VerticalNavItemsType => {
@@ -6,21 +7,21 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Home',
       path: '/home',
-      icon: 'mdi:home-outline'
+      icon: 'mdi:home-outline',
+      subject: 'home'
     },
     {
       title: 'Assessments',
-      path: '/assessments',
-      icon: 'mdi:calendar-check-outline'
+      path: ASSESSMENT_URL,
+      icon: 'mdi:calendar-check-outline',
+      action: 'read',
+      subject: ASSESSMENTS
     },
     {
-      path: '/acl',
-      action: 'read',
-      subject: 'acl-page',
-      title: 'Access Control',
-      icon: 'mdi:shield-outline'
+      title: 'Recorder',
+      path: '/recorder',
+      icon: 'mdi:record'
     }
   ]
 }
-
 export default navigation

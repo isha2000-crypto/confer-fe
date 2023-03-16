@@ -1,20 +1,20 @@
 import { gql } from '@apollo/client'
 
 export const LOAD_ASSESSMENT = gql`
-query Assessments {
-  assessments {
-    authorId
-    description
-    id
-    title
-    type
-    tasks {
+  query Assessments {
+    assessments {
+      authorId
       description
-      duration
       id
+      title
+      type
+      tasks {
+        description
+        duration
+        id
+      }
     }
   }
-}
 `
 export const VALIDATE_USERS = gql`
   query validateToken {
@@ -22,8 +22,9 @@ export const VALIDATE_USERS = gql`
       email
       id
       role
+      email_verified
+      picture
+      permissions
     }
   }
-
 `
-

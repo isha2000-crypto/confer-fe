@@ -5,18 +5,20 @@ import Cookies from 'js-cookie'
 // ** Next Import
 import { useRouter } from 'next/router'
 
-// ** Axios
-import axios from 'axios'
-
 // ** Config
 import authConfig from 'src/configs/auth'
 import { useMutation } from '@apollo/client'
-import LOGIN_USER_MUTATION from '../lib/graphql/Mutation/index'
+
+import { SIGNUP_USER_MUTATION } from '../lib/graphql/Mutation/index'
+import { LOGIN_USER_MUTATION } from '../lib/graphql/Mutation/index'
+import { LOGIN_GOOGLE_MUTATION } from '../lib/graphql/Mutation/index'
 import { VALIDATE_USERS } from '../lib/graphql/Query/index'
 
 // ** Types
 import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataType } from '@custom-types/contextTypes'
 import client from 'src/lib/apollo/client'
+import { ACCESS_TOKEN } from '@custom-types/constants'
+import { CodeResponse } from '@react-oauth/google'
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -25,6 +27,7 @@ const defaultProvider: AuthValuesType = {
   setUser: () => null,
   setLoading: () => Boolean,
   login: () => Promise.resolve(),
+  loginGoogle: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   register: () => Promise.resolve()
 }
@@ -45,7 +48,7 @@ const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const authInit = async (): Promise<void> => {
-      const storedToken = Cookies.get('access_token')
+      const storedToken = Cookies.get(ACCESS_TOKEN)
       if (storedToken) {
         setLoading(true)
         try {
@@ -53,7 +56,7 @@ const AuthProvider = ({ children }: Props) => {
           setLoading(false)
           setUser({ ...data.validateToken })
         } catch (error) {
-          Cookies.remove('access_token')
+          Cookies.remove(ACCESS_TOKEN)
           setUser(null)
           if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
             router.replace('/login')
@@ -70,14 +73,13 @@ const AuthProvider = ({ children }: Props) => {
         fetchPolicy: 'network-only',
         context: {
           headers: {
-            Authorization: `Bearer ${Cookies.get('access_token')}`
+            Authorization: `Bearer ${Cookies.get(ACCESS_TOKEN)}`
           }
         }
       })
     }
 
     authInit()
-    console.log('Auth complete')
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -91,7 +93,7 @@ const AuthProvider = ({ children }: Props) => {
       }
     })
       .then(response => {
-        Cookies.set('access_token', response.data.loginUser.access_token)
+        Cookies.set(ACCESS_TOKEN, response.data.loginUser.access_token)
         const returnUrl = router.query.returnUrl
         setUser({ ...response.data.loginUser.user })
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
@@ -105,23 +107,43 @@ const AuthProvider = ({ children }: Props) => {
 
   const handleLogout = () => {
     setUser(null)
-    Cookies.remove('access_token')
+    Cookies.remove(ACCESS_TOKEN)
     window.localStorage.removeItem('userData')
     window.localStorage.removeItem(authConfig.storageTokenKeyName)
     router.push('/login')
   }
+  const [signupUserMutation] = useMutation(SIGNUP_USER_MUTATION)
 
-  const handleRegister = (params: RegisterParams, errorCallback?: ErrCallbackType) => {
-    axios
-      .post(authConfig.registerEndpoint, params)
-      .then(res => {
-        if (res.data.error) {
-          if (errorCallback) errorCallback(res.data.error)
-        } else {
-          handleLogin({ email: params.email, password: params.password })
-        }
+  const handleRegister = (params: RegisterParams) => {
+    router.push('/login')
+    signupUserMutation({
+      variables: {
+        name: params.username,
+        email: params.email,
+        password: params.password
+      }
+    })
+  }
+
+  const [loginGoogleMutation] = useMutation(LOGIN_GOOGLE_MUTATION)
+
+  const handleGoogleLogin = (params: CodeResponse, errorCallback?: ErrCallbackType) => {
+    loginGoogleMutation({
+      variables: {
+        ...params
+      }
+    })
+      .then(response => {
+        Cookies.set(ACCESS_TOKEN, response.data.loginGoogle.access_token)
+        const returnUrl = router.query.returnUrl
+        setUser({ ...response.data.loginGoogle.user })
+        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+        router.replace(redirectURL as string)
       })
-      .catch((err: { [key: string]: string }) => (errorCallback ? errorCallback(err) : null))
+      .catch(err => {
+        console.log('Error', err)
+        if (errorCallback) errorCallback(err)
+      })
   }
 
   const values = {
@@ -130,6 +152,7 @@ const AuthProvider = ({ children }: Props) => {
     setUser,
     setLoading,
     login: handleLogin,
+    loginGoogle: handleGoogleLogin,
     logout: handleLogout,
     register: handleRegister
   }

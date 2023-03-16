@@ -1,11 +1,14 @@
 // ** React Imports
 import { ReactNode, ReactElement, useEffect } from 'react'
 import Cookies from 'js-cookie'
+
 // ** Next Import
 import { useRouter } from 'next/router'
 
 // ** Hooks Import
 import { useAuth } from 'src/hooks/useAuth'
+import Cookies from 'js-cookie'
+import { ACCESS_TOKEN } from '@custom-types/constants'
 
 interface GuestGuardProps {
   children: ReactNode
@@ -22,7 +25,7 @@ const GuestGuard = (props: GuestGuardProps) => {
       return
     }
 
-    if (Cookies.get('access_token')) {
+    if (Cookies.get(ACCESS_TOKEN)) {
       router.replace('/')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

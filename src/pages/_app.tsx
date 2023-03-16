@@ -1,6 +1,8 @@
 // ** React Imports
 import { ReactNode } from 'react'
 
+import { GoogleOAuthProvider } from '@react-oauth/google'
+
 // ** Next Imports
 import Head from 'next/head'
 import { Router } from 'next/router'
@@ -22,9 +24,6 @@ import type { EmotionCache } from '@emotion/cache'
 
 import { defaultACLObj } from 'src/configs/acl'
 import themeConfig from 'src/configs/themeConfig'
-
-// ** Fake-DB Import
-import 'src/@fake-db'
 
 // ** Third Party Import
 import { Toaster } from 'react-hot-toast'
@@ -63,8 +62,8 @@ import 'src/iconify-bundle/icons-bundle-react'
 import client from '../lib/apollo/client'
 
 // ** Global css styles
-import '../../styles/globals.css'
 import { ApolloProvider } from '@apollo/client'
+import '../../styles/globals.scss'
 
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
@@ -122,42 +121,44 @@ const App = (props: ExtendedAppProps) => {
 
   return (
     <ApolloProvider client={client}>
-      <Provider store={store}>
-        <CacheProvider value={emotionCache}>
-          <Head>
-            <title>{`${themeConfig.templateName} - Material Design React Admin Template`}</title>
-            <meta
-              name='description'
-              content={`${themeConfig.templateName} – Material Design React Admin Dashboard Template – is the most developer friendly & highly customizable Admin Dashboard Template based on MUI v5.`}
-            />
-            <meta name='keywords' content='Material Design, MUI, Admin Template, React Admin Template' />
-            <meta name='viewport' content='initial-scale=1, width=device-width' />
-          </Head>
+      <GoogleOAuthProvider clientId='660472262456-d1d87f1rdn8t709d1ib1utsco2v20s10.apps.googleusercontent.com'>
+        <Provider store={store}>
+          <CacheProvider value={emotionCache}>
+            <Head>
+              <title>{`${themeConfig.templateName} - Complete Interviews with Excellence`}</title>
+              <meta
+                name='description'
+                content={`${themeConfig.templateName} – A platform which will help you boost confidence in acing video interviews.`}
+              />
+              <meta name='keywords' content='Confer, Interviews, Assessments' />
+              <meta name='viewport' content='initial-scale=1, width=device-width' />
+            </Head>
 
-          <AuthProvider>
-            <SettingsProvider {...(setConfig ? { pageSettings: setConfig() } : {})}>
-              <SettingsConsumer>
-                {({ settings }) => {
-                  return (
-                    <ThemeComponent settings={settings}>
-                      <WindowWrapper>
-                        <Guard authGuard={authGuard} guestGuard={guestGuard}>
-                          <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
-                            {getLayout(<Component {...pageProps} />)}
-                          </AclGuard>
-                        </Guard>
-                      </WindowWrapper>
-                      <ReactHotToast>
-                        <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
-                      </ReactHotToast>
-                    </ThemeComponent>
-                  )
-                }}
-              </SettingsConsumer>
-            </SettingsProvider>
-          </AuthProvider>
-        </CacheProvider>
-      </Provider>
+            <AuthProvider>
+              <SettingsProvider {...(setConfig ? { pageSettings: setConfig() } : {})}>
+                <SettingsConsumer>
+                  {({ settings }) => {
+                    return (
+                      <ThemeComponent settings={settings}>
+                        <WindowWrapper>
+                          <Guard authGuard={authGuard} guestGuard={guestGuard}>
+                            <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
+                              {getLayout(<Component {...pageProps} />)}
+                            </AclGuard>
+                          </Guard>
+                        </WindowWrapper>
+                        <ReactHotToast>
+                          <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
+                        </ReactHotToast>
+                      </ThemeComponent>
+                    )
+                  }}
+                </SettingsConsumer>
+              </SettingsProvider>
+            </AuthProvider>
+          </CacheProvider>
+        </Provider>
+      </GoogleOAuthProvider>
     </ApolloProvider>
   )
 }
