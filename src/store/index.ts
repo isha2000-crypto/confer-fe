@@ -2,11 +2,15 @@
 import { configureStore } from '@reduxjs/toolkit'
 
 // ** Reducers
-import assessments from 'src/store/assessments'
+//import assessments from 'src/store/assessments'
+import assessmentsReducer from './assessments/ assessmentsSlice'
+
+//import { useDispatch } from 'react-redux'
+//import { fetchAssessments } from './assessments/ assessmentsSlice'
 
 export const store = configureStore({
   reducer: {
-    assessments
+    assessments: assessmentsReducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
@@ -16,3 +20,6 @@ export const store = configureStore({
 
 export type AppDispatch = typeof store.dispatch
 export type RootState = ReturnType<typeof store.getState>
+
+// Fetch assessments data on app load
+//store.dispatch(fetchAssessments())
