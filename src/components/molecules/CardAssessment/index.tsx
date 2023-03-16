@@ -21,6 +21,8 @@ interface Props {
 }
 
 function CardAssessment({ type, title, time, responses, tasks, author }: Props) {
+  console.log(type, title, time, responses, tasks, author)
+
   return (
     <CardBasic sxContent={{ display: 'flex', textAlign: 'center', alignItems: 'center', flexDirection: 'column' }}>
       <CustomAvatar skin='light' sx={{ width: 100, height: 100, mb: 2 }}>

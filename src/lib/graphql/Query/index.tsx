@@ -5,13 +5,13 @@ export const LOAD_ASSESSMENT = gql`
     assessments {
       authorId
       description
-      id
+      _id
       title
       type
       tasks {
         description
         duration
-        id
+        _id
       }
     }
   }
@@ -20,7 +20,7 @@ export const VALIDATE_USERS = gql`
   query validateToken {
     validateToken {
       email
-      id
+      _id
       role
       email_verified
       picture

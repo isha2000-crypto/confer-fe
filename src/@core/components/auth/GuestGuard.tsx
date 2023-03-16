@@ -1,6 +1,5 @@
 // ** React Imports
 import { ReactNode, ReactElement, useEffect } from 'react'
-import Cookies from 'js-cookie'
 
 // ** Next Import
 import { useRouter } from 'next/router'
