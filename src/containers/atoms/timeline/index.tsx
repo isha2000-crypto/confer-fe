@@ -36,6 +36,7 @@ const Timeline = (props: Timeline) => {
                   width: index === props.currentCheckPoint ? '3vh' : '2vh',
                   height: index === props.currentCheckPoint ? '3vh' : '2vh'
                 }}
+                onClick={() => props.handlePointClick(index)}
               ></div>
             </div>
           )
