@@ -19,8 +19,9 @@ export const LOAD_ASSESSMENT = gql`
 export const VALIDATE_USERS = gql`
   query validateToken {
     validateToken {
-      email
       _id
+      name
+      email
       role
       email_verified
       picture

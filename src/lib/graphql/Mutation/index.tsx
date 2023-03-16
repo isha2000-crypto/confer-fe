@@ -14,6 +14,7 @@ export const LOGIN_USER_MUTATION = gql`
     loginUser(loginUserInput: { email: $email, password: $password }) {
       access_token
       user {
+        _id
         name
         email
         role
@@ -29,6 +30,7 @@ export const LOGIN_GOOGLE_MUTATION = gql`
     loginGoogle(googleLoginInput: { authuser: $authuser, code: $code, hd: $hd, prompt: $prompt, scope: $scope }) {
       access_token
       user {
+        _id
         name
         email
         role

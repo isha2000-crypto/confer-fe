@@ -84,10 +84,14 @@ import Webcam from 'react-webcam'
 import { useState, useRef } from 'react'
 import React from 'react'
 
-const VideoRecorder = () => {
+interface props {
+  timeoutDuration: number
+}
+
+const VideoRecorder = ({ timeoutDuration }: props) => {
   const videoConstraints: MediaTrackConstraints = {
-    width: 1280,
-    height: 720,
+    width: 1920,
+    height: 1080,
     facingMode: 'user',
     echoCancellation: true
   }
@@ -95,8 +99,7 @@ const VideoRecorder = () => {
   const mediaRecorderRef: any = React.useRef(null)
   const [capturing, setCapturing] = React.useState(false)
   const [recordedChunks, setRecordedChunks] = React.useState([])
-  const [timeLimit] = useState(10)
-  const [timeRemaining, setTimeRemaining] = useState(timeLimit)
+  const [timeRemaining, setTimeRemaining] = useState(timeoutDuration)
 
   const handleStartCaptureClick = React.useCallback(() => {
     setCapturing(true)
@@ -165,8 +168,20 @@ const VideoRecorder = () => {
   }, [timeRemaining, handleStopCaptureClick])
 
   return (
-    <>
-      <Webcam audio={false} ref={webcamRef} videoConstraints={videoConstraints} mirrored />
+    <div
+      style={{ display: 'flex', flexWrap: 'nowrap', justifyContent: 'center', alignItems: 'center', height: '52vh' }}
+    >
+      {recordedChunks.length == 0 && (
+        <Webcam
+          audio={true}
+          muted={true}
+          ref={webcamRef}
+          videoConstraints={videoConstraints}
+          mirrored
+          width={'100%'}
+          height={'480px'}
+        />
+      )}
       {capturing ? (
         <div>
           <div>Recording time left: {timeRemaining}</div>
@@ -176,17 +191,17 @@ const VideoRecorder = () => {
         <button onClick={handleStartCaptureClick}>Start Capture</button>
       )}
       {recordedChunks.length > 0 && (
-        <div>
-          <video controls>
+        <>
+          <video controls muted={false} width='100%' height='480px'>
             {recordedChunks.map((chunk, index) => (
               <source key={index} src={URL.createObjectURL(chunk)} />
             ))}
           </video>
           <button onClick={handleDownload}>Download</button>
           <button onClick={handleRetake}>Retake</button>
-        </div>
+        </>
       )}
-    </>
+    </div>
   )
 }
 
