@@ -9,7 +9,26 @@ const assessments: Assessment[] = [
     title: 'Leading a Team',
     time: '15m',
     responses: '21',
-    tasks: '5',
+    tasks: [
+      {
+        id: '1',
+        type: 'TEXTUAL',
+        description: 'Please Solve This Task',
+        duration: 300
+      },
+      {
+        id: '2',
+        type: 'TEXTUAL',
+        description: 'Please Solve This Task',
+        duration: 300
+      },
+      {
+        id: '3',
+        type: 'TEXTUAL',
+        description: 'Please Solve This Task',
+        duration: 300
+      }
+    ],
     author: 'Husnain'
   },
   {
@@ -18,7 +37,26 @@ const assessments: Assessment[] = [
     title: 'Mern Application',
     time: '15m',
     responses: '21',
-    tasks: '5',
+    tasks: [
+      {
+        id: '1',
+        type: 'TEXTUAL',
+        description: 'Please Solve This Task',
+        duration: 300
+      },
+      {
+        id: '2',
+        type: 'TEXTUAL',
+        description: 'Please Solve This Task',
+        duration: 300
+      },
+      {
+        id: '3',
+        type: 'TEXTUAL',
+        description: 'Please Solve This Task',
+        duration: 300
+      }
+    ],
     author: 'Husnain'
   },
   {
@@ -27,7 +65,26 @@ const assessments: Assessment[] = [
     title: 'Node Application',
     time: '15m',
     responses: '21',
-    tasks: '5',
+    tasks: [
+      {
+        id: '1',
+        type: 'TEXTUAL',
+        description: 'Please Solve This Task',
+        duration: 300
+      },
+      {
+        id: '2',
+        type: 'TEXTUAL',
+        description: 'Please Solve This Task',
+        duration: 300
+      },
+      {
+        id: '3',
+        type: 'TEXTUAL',
+        description: 'Please Solve This Task',
+        duration: 300
+      }
+    ],
     author: 'Husnain'
   },
   {
@@ -36,7 +93,26 @@ const assessments: Assessment[] = [
     title: 'Nextjs Application',
     time: '15m',
     responses: '21',
-    tasks: '5',
+    tasks: [
+      {
+        id: '1',
+        type: 'TEXTUAL',
+        description: 'Please Solve This Task',
+        duration: 300
+      },
+      {
+        id: '2',
+        type: 'TEXTUAL',
+        description: 'Please Solve This Task',
+        duration: 300
+      },
+      {
+        id: '3',
+        type: 'TEXTUAL',
+        description: 'Please Solve This Task',
+        duration: 300
+      }
+    ],
     author: 'Husnain'
   },
   {
@@ -45,7 +121,26 @@ const assessments: Assessment[] = [
     title: 'Heroku Deployment',
     time: '15m',
     responses: '21',
-    tasks: '5',
+    tasks: [
+      {
+        id: '1',
+        type: 'TEXTUAL',
+        description: 'Please Solve This Task',
+        duration: 300
+      },
+      {
+        id: '2',
+        type: 'TEXTUAL',
+        description: 'Please Solve This Task',
+        duration: 300
+      },
+      {
+        id: '3',
+        type: 'TEXTUAL',
+        description: 'Please Solve This Task',
+        duration: 300
+      }
+    ],
     author: 'Husnain'
   },
   {
@@ -54,7 +149,26 @@ const assessments: Assessment[] = [
     title: 'Distributing tasks in team',
     time: '15m',
     responses: '21',
-    tasks: '5',
+    tasks: [
+      {
+        id: '1',
+        type: 'TEXTUAL',
+        description: 'Please Solve This Task',
+        duration: 300
+      },
+      {
+        id: '2',
+        type: 'TEXTUAL',
+        description: 'Please Solve This Task',
+        duration: 300
+      },
+      {
+        id: '3',
+        type: 'TEXTUAL',
+        description: 'Please Solve This Task',
+        duration: 300
+      }
+    ],
     author: 'Husnain'
   }
 ]

@@ -84,7 +84,11 @@ import Webcam from 'react-webcam'
 import { useState, useRef } from 'react'
 import React from 'react'
 
-const VideoRecorder = () => {
+interface props {
+  timeoutDuration: number
+}
+
+const VideoRecorder = ({ timeoutDuration }: props) => {
   const videoConstraints: MediaTrackConstraints = {
     width: 1920,
     height: 1080,
@@ -95,8 +99,7 @@ const VideoRecorder = () => {
   const mediaRecorderRef: any = React.useRef(null)
   const [capturing, setCapturing] = React.useState(false)
   const [recordedChunks, setRecordedChunks] = React.useState([])
-  const [timeLimit] = useState(10)
-  const [timeRemaining, setTimeRemaining] = useState(timeLimit)
+  const [timeRemaining, setTimeRemaining] = useState(timeoutDuration)
 
   const handleStartCaptureClick = React.useCallback(() => {
     setCapturing(true)

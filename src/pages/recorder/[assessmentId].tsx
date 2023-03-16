@@ -10,13 +10,26 @@ import dynamic from 'next/dynamic'
 import BlankLayoutWithAppBar from 'src/@core/layouts/BlankLayoutWithAppBar'
 import { ReactNode } from 'react'
 import { useRouter } from 'next/router'
+import { useSelector } from 'react-redux'
+import { getAssessmentById } from 'src/store/assessments/assessments.selectors'
+import { RootState } from 'src/store'
+import { Task } from '@custom-types/assessmentsType'
+import React from 'react'
 
 const VideoRecorder = dynamic(() => import('../../components/molecules/VideoRecorder'))
 
 const Recorder = () => {
   const router = useRouter()
   const { assessmentId } = router.query
-  console.log('AssessmentID', assessmentId)
+
+  const assessment = useSelector((state: RootState) =>
+    state.assessments.assessments.find(assess => assess.id === assessmentId)
+  )
+
+  const [currentTask, setCurrentTask] = React.useState<Task>(assessment?.tasks[0])
+  const [currentCheckPoint, setCurrentCheckpoint] = React.useState<number>(0)
+
+  console.log('Assessment: ', assessment)
 
   return (
     <Grid container>
@@ -38,11 +51,11 @@ const Recorder = () => {
                 <Card className='questionContainer'>
                   <CardContent>
                     <div className='timelineContainer' style={{ width: '100%' }}>
-                      <Timeline totalCheckPoints={10} currentCheckPoint={6} />
+                      <Timeline totalCheckPoints={assessment?.tasks.length} currentCheckPoint={currentCheckPoint} />
                     </div>
                     <Card className='questionCard'>
                       <CardContent>
-                        <Typography paragraph={true}>Question Question Question Question Question Question </Typography>
+                        <Typography paragraph={true}>{currentTask.description}</Typography>
                       </CardContent>
                     </Card>
                     <div className='buttonsContainer'>
