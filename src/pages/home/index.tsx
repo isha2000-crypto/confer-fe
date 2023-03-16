@@ -4,10 +4,12 @@ import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
+import UploadFileButton from '@components/molecules/UploadFileButton'
 
 const HomePage = () => {
   return (
     <Grid container spacing={6}>
+      <UploadFileButton />
       <Grid item xs={12}>
         <Card>
           <CardHeader title='Kick start your project 🚀'></CardHeader>

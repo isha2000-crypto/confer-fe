@@ -1,9 +1,9 @@
-// import * as ApiUsers from './ApiUsers'
+import * as ApiFiles from './FileUpload'
 
-// const ApiService = () => {
-//   return {
-//     ...ApiUsers
-//   }
-// }
+const ApiService = () => {
+  return {
+    ...ApiFiles
+  }
+}
 
-export default {}
+export default ApiService
