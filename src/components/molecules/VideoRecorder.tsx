@@ -86,8 +86,8 @@ import React from 'react'
 
 const VideoRecorder = () => {
   const videoConstraints: MediaTrackConstraints = {
-    width: 1280,
-    height: 720,
+    width: 1920,
+    height: 1080,
     facingMode: 'user',
     echoCancellation: true
   }
@@ -165,8 +165,20 @@ const VideoRecorder = () => {
   }, [timeRemaining, handleStopCaptureClick])
 
   return (
-    <>
-      <Webcam audio={false} ref={webcamRef} videoConstraints={videoConstraints} mirrored />
+    <div
+      style={{ display: 'flex', flexWrap: 'nowrap', justifyContent: 'center', alignItems: 'center', height: '52vh' }}
+    >
+      {recordedChunks.length == 0 && (
+        <Webcam
+          audio={true}
+          muted={true}
+          ref={webcamRef}
+          videoConstraints={videoConstraints}
+          mirrored
+          width={'100%'}
+          height={'480px'}
+        />
+      )}
       {capturing ? (
         <div>
           <div>Recording time left: {timeRemaining}</div>
@@ -176,17 +188,17 @@ const VideoRecorder = () => {
         <button onClick={handleStartCaptureClick}>Start Capture</button>
       )}
       {recordedChunks.length > 0 && (
-        <div>
-          <video controls width='100%' height='auto'>
+        <>
+          <video controls muted={false} width='100%' height='480px'>
             {recordedChunks.map((chunk, index) => (
               <source key={index} src={URL.createObjectURL(chunk)} />
             ))}
           </video>
           <button onClick={handleDownload}>Download</button>
           <button onClick={handleRetake}>Retake</button>
-        </div>
+        </>
       )}
-    </>
+    </div>
   )
 }
 

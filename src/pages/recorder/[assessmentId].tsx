@@ -7,16 +7,23 @@ import Icon from 'src/@core/components/icon'
 import Timeline from 'src/containers/atoms/timeline'
 import RecordTimer from 'src/containers/atoms/recordTimer'
 import dynamic from 'next/dynamic'
+import BlankLayoutWithAppBar from 'src/@core/layouts/BlankLayoutWithAppBar'
+import { ReactNode } from 'react'
+import { useRouter } from 'next/router'
 
 const VideoRecorder = dynamic(() => import('../../components/molecules/VideoRecorder'))
 
 const Recorder = () => {
+  const router = useRouter()
+  const { assessmentId } = router.query
+  console.log('AssessmentID', assessmentId)
+
   return (
-    <Grid container spacing={12}>
+    <Grid container>
       <Grid item xs={12}>
-        <Card className='container' sx={{ flexWrap: 'wrap', height: '100%' }}>
+        <Card sx={{ flexWrap: 'wrap', height: '100%' }}>
           <CardHeader title='Assessment Name'></CardHeader>
-          <CardContent sx={{ flexWrap: 'wrap', height: '100%' }}>
+          <CardContent sx={{ flexWrap: 'wrap', height: '80%' }}>
             <Grid container sx={{ flexWrap: 'wrap', height: '100%' }} spacing={6} columnGap={6}>
               <Grid item xs={12}>
                 <Card
@@ -54,4 +61,5 @@ const Recorder = () => {
   )
 }
 
+Recorder.getLayout = (page: ReactNode) => <BlankLayoutWithAppBar>{page}</BlankLayoutWithAppBar>
 export default Recorder
