@@ -63,9 +63,14 @@ import { RootState } from 'src/store'
 import { fetchAssessments } from '../../store/assessments/assessmentsSlice'
 import { Assessment } from '@custom-types/assessmentsType'
 import { duration } from '@mui/material'
+import DiaologRecorder from '@components/molecules/Dialog/DiaologRecorder'
+import { useRouter } from 'next/router'
 
 const ListAssessments = () => {
-  // const [dTime, setDtime] = useState(0)
+  const router = useRouter()
+  const [durationTime, setDurationime] = useState(0)
+  const [openPopup, setOpenPopup] = useState<boolean>(false)
+  const [popupAssessment, setPopupAssessment] = useState<Assessment>()
   const dispatch = useDispatch()
   const { loading, assessments, error } = useSelector((state: RootState) => state.assessments)
 
@@ -95,28 +100,54 @@ const ListAssessments = () => {
         }, 0)
       )
     }, 0)
+    console.log('me durations here ', durations)
 
-    console.log('Total huuuduration:', durations)
+    setDurationime(durations)
   }
-  console.log('Total total:', display())
+
+  const handleOpenPopup = assessmentId => {
+    setOpenPopup(true)
+    setPopupAssessment(assessments.find(assessment => assessment._id === assessmentId))
+  }
+
+  // console.log('Total total:', display())
+  console.log('this is the setDuration result', durationTime)
+  const handleAgree = () => {
+    router.push(`/recorder/${popupAssessment?._id}`)
+  }
 
   return (
-    <ul>
-      {assessments?.map((assessment: Assessment) => (
-        <Grid key={assessment._id} item xs={12} md={6} lg={4}>
-          <CardAssessment
-            type={assessment.type}
-            title={assessment.title}
-            time={assessment.time}
-            responses={assessment.responses}
-            tasks={[...assessment.tasks]}
-            display={display}
+    <>
+      <ul>
+        {assessments?.map((assessment: Assessment) => (
+          <Grid key={assessment._id} item xs={12} md={6} lg={4}>
+            <CardAssessment
+              _id={assessment._id}
+              type={assessment.type}
+              title={assessment.title}
+              time={durationTime}
+              responses={assessment.responses}
+              tasks={assessment.tasks}
+              handlePopup={handleOpenPopup}
+              display={display}
 
-            // author={assessment.author}
-          />
-        </Grid>
-      ))}
-    </ul>
+              // author={assessment.author}
+            />
+          </Grid>
+        ))}
+      </ul>
+      <DiaologRecorder
+        id={popupAssessment?._id}
+        title='Confirmation'
+        text='hello there'
+        agreeText='Yes'
+        cancelText='No'
+        assessment={popupAssessment}
+        open={openPopup}
+        setOpen={setOpenPopup}
+        handleAgree={handleAgree}
+      />
+    </>
   )
 }
 
