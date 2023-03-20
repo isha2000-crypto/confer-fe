@@ -67,7 +67,6 @@ const Recorder = () => {
   return (
     <Grid container>
       <Grid item xs={12}>
-        <CardHeader title={assessment.title}></CardHeader>
         <ContainerVideoRecorder assessment={assessment} />
       </Grid>
     </Grid>

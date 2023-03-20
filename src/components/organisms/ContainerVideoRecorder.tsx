@@ -1,5 +1,5 @@
 import { Assessment, Task } from '@custom-types/assessmentsType'
-import { Grid, Card, CardContent, Typography } from '@mui/material'
+import { Grid, Card, CardContent, Typography, CardHeader } from '@mui/material'
 import Icon from 'src/@core/components/icon'
 import React from 'react'
 import Timeline from 'src/containers/atoms/timeline'
@@ -8,6 +8,7 @@ import { useState, useRef } from 'react'
 import DialogAction from '@components/molecules/Dialog/DialogAction'
 import IconButton from '@mui/material/IconButton'
 import CardVideoStatus from '@components/molecules/CardVideoStatus'
+import PermissionDeniedFallback from './PermissionDeniedFallback'
 
 interface props {
   assessment: Assessment
@@ -22,6 +23,8 @@ function ContainerVideoRecorder({ assessment }: props) {
   }
   const webcamRef: any = React.useRef(null)
   const mediaRecorderRef: any = React.useRef(null)
+  const [loading, setLoading] = React.useState(true)
+  const [allowed, setAllowed] = React.useState(true)
   const [capturing, setCapturing] = React.useState(false)
   const [recordedChunks, setRecordedChunks] = React.useState([])
   const [currentTask, setCurrentTask] = React.useState<Task>(assessment?.tasks[0])
@@ -69,23 +72,33 @@ function ContainerVideoRecorder({ assessment }: props) {
     // handleRecording(false)
   }, [mediaRecorderRef, setCapturing])
 
-  // const handleDownload = React.useCallback(() => {
-  //   if (recordedChunks.length) {
-  //     const blob = new Blob(recordedChunks, {
-  //       type: 'video/mp4'
-  //     })
-  //     const url = URL.createObjectURL(blob)
-  //     const a = document.createElement('a')
-  //     document.body.appendChild(a)
+  const handleUserMediaError = React.useCallback(() => {
+    setAllowed(false)
+    setLoading(false)
+  }, [])
 
-  //     // a.style = 'display: none'
-  //     a.href = url
-  //     a.download = 'react-webcam-stream-capture.mp4'
-  //     a.click()
-  //     window.URL.revokeObjectURL(url)
-  //     setRecordedChunks([])
-  //   }
-  // }, [recordedChunks])
+  const handleUserMediaCreated = React.useCallback(() => {
+    setAllowed(true)
+    setLoading(false)
+  }, [])
+
+  const handleDownload = React.useCallback(() => {
+    if (recordedChunks.length) {
+      const blob = new Blob(recordedChunks, {
+        type: 'video/mp4'
+      })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      document.body.appendChild(a)
+
+      // a.style = 'display: none'
+      a.href = url
+      a.download = 'react-webcam-stream-capture.mp4'
+      a.click()
+      window.URL.revokeObjectURL(url)
+      setRecordedChunks([])
+    }
+  }, [recordedChunks])
 
   const handleRetakeClick = () => {
     if (!capturing && recordedChunks.length > 0) setRetakePopup(true)
@@ -98,6 +111,7 @@ function ContainerVideoRecorder({ assessment }: props) {
   const handleRetake = () => {
     if (recordedChunks.length == 0 || capturing) return
     setRecordedChunks([])
+    setTimeRemaining(currentTask?.duration)
   }
 
   const startTimer = () => {
@@ -115,118 +129,132 @@ function ContainerVideoRecorder({ assessment }: props) {
     }
   }, [timeRemaining, handleStopCaptureClick])
 
-  return (
-    <Grid container sx={{ flexWrap: 'wrap', height: '100%' }} spacing={6} columnGap={6}>
-      <Grid item xs={12}>
-        <Grid
-          container
-          gap={20}
-          style={{
-            display: 'flex',
-            flexWrap: 'nowrap',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '52vh'
-          }}
-        >
-          {recordedChunks.length == 0 && (
-            <Webcam
-              audio={true}
-              muted={true}
-              ref={webcamRef}
-              videoConstraints={videoConstraints}
-              mirrored
-              width={'47%'}
-              height={'480px'}
-            />
-          )}
-          {recordedChunks.length > 0 && (
-            <>
-              <video className='video-js' controls muted={false} width='47%%' height='480px' data-setup='{}'>
-                {recordedChunks.map((chunk, index) => (
-                  <source key={index} src={URL.createObjectURL(chunk)} />
-                ))}
-              </video>
-            </>
-          )}
+  if (allowed === false) {
+    return <PermissionDeniedFallback />
+  }
 
-          <Grid container sx={{ display: 'flex', flexDirection: 'column', width: '20%' }} spacing={5}>
-            <Grid item xs={12}>
-              <CardVideoStatus
-                text={mediaRecorderRef?.current?.state?.toUpperCase() ?? 'INACTIVE'}
-                title={'STATUS'}
-                icon={<Icon icon={capturing ? 'mdi:record' : 'mdi-stop'} fontSize={30} />}
-                color={capturing ? 'error' : 'secondary'}
+  return (
+    <>
+      {!loading && <CardHeader title={assessment.title}></CardHeader>}
+      <Grid container sx={{ flexWrap: 'wrap', height: '100%' }} spacing={6} columnGap={6}>
+        <Grid item xs={12}>
+          <Grid
+            container
+            gap={20}
+            style={{
+              display: 'flex',
+              flexWrap: 'nowrap',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '52vh'
+            }}
+          >
+            {recordedChunks.length == 0 && (
+              <Webcam
+                audio={true}
+                muted={true}
+                ref={webcamRef}
+                videoConstraints={videoConstraints}
+                mirrored
+                width={'47%'}
+                height={'500px'}
+                onUserMediaError={handleUserMediaError}
+                onUserMedia={handleUserMediaCreated}
               />
-            </Grid>
-            <Grid item xs={12}>
-              <CardVideoStatus
-                text={`${new Date(timeRemaining * 1000).toISOString().substring(14, 19)}`}
-                title={'Time Remaining'}
-                icon={<Icon icon={'mdi:clock'} fontSize={30} />}
-                color={capturing ? 'primary' : 'secondary'}
-              />
-            </Grid>
+            )}
+            {recordedChunks.length > 0 && (
+              <>
+                <video className='video-js' controls muted={false} width='47%' height='500px' data-setup='{}'>
+                  {recordedChunks.map((chunk, index) => (
+                    <source key={index} src={URL.createObjectURL(chunk)} />
+                  ))}
+                </video>
+                <button onClick={handleDownload}>Download</button>
+              </>
+            )}
+
+            {!loading && (
+              <Grid container sx={{ display: 'flex', flexDirection: 'column', width: '20%' }} spacing={5}>
+                <Grid item xs={12}>
+                  <CardVideoStatus
+                    text={mediaRecorderRef?.current?.state?.toUpperCase() ?? 'INACTIVE'}
+                    title={'STATUS'}
+                    icon={<Icon icon={capturing ? 'mdi:record' : 'mdi-stop'} fontSize={30} />}
+                    color={capturing ? 'error' : 'secondary'}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <CardVideoStatus
+                    text={`${new Date(timeRemaining * 1000).toISOString().substring(14, 19)}`}
+                    title={'Time Remaining'}
+                    icon={<Icon icon={'mdi:clock'} fontSize={30} />}
+                    color={capturing ? 'primary' : 'secondary'}
+                  />
+                </Grid>
+              </Grid>
+            )}
           </Grid>
         </Grid>
-      </Grid>
 
-      <Grid item xs={12}>
-        <Card className='questionContainer'>
-          <CardContent>
-            <div className='timelineContainer' style={{ width: '100%' }}>
-              <Timeline
-                totalCheckPoints={assessment?.tasks.length}
-                currentCheckPoint={currentCheckPoint}
-                handlePointClick={handlePointClick}
-              />
-            </div>
-            <Card className='questionCard'>
+        {!loading && (
+          <Grid item xs={12}>
+            <Card className='questionContainer'>
               <CardContent>
-                <Typography paragraph={true}>{currentTask.description}</Typography>
+                <div className='timelineContainer' style={{ width: '100%' }}>
+                  <Timeline
+                    totalCheckPoints={assessment?.tasks.length}
+                    currentCheckPoint={currentCheckPoint}
+                    handlePointClick={handlePointClick}
+                  />
+                </div>
+                <Card className='questionCard'>
+                  <CardContent>
+                    <Typography paragraph={true}>{currentTask.description}</Typography>
+                  </CardContent>
+                </Card>
+                <div className='buttonsContainer'>
+                  <IconButton
+                    color={recordedChunks.length > 0 && !capturing ? 'primary' : 'secondary'}
+                    onClick={handleRetakeClick}
+                    disabled={recordedChunks.length == 0}
+                  >
+                    <Icon icon='mdi:refresh' fontSize={30} color={recordedChunks.length == 0 ? 'grey' : undefined} />
+                  </IconButton>
+                  {capturing ? (
+                    <IconButton color={'error'} onClick={handleStopCaptureClick}>
+                      <Icon icon='mdi:stop' fontSize={30} />
+                    </IconButton>
+                  ) : (
+                    <IconButton color={'error'} onClick={handleStartCaptureClick} disabled={recordedChunks.length != 0}>
+                      <Icon icon='mdi:play' fontSize={30} color={recordedChunks.length != 0 ? 'grey' : undefined} />
+                    </IconButton>
+                  )}
+                  <IconButton disabled={recordedChunks.length == 0} color='primary' onClick={handleSubmitTask}>
+                    <Icon icon='mdi:tick' fontSize={30} color={recordedChunks.length == 0 ? 'grey' : undefined} />
+                  </IconButton>
+                  <DialogAction
+                    title='Confirm Retake of Video?'
+                    text='Are you sure you want to discard current video and go for retake?'
+                    open={retakePopup}
+                    setOpen={setRetakePopup}
+                    handleAgree={handleRetake}
+                    agreeText='Retake'
+                  />
+                  <DialogAction
+                    title='Confirm Submission of Video?'
+                    text='Once video for task is submitted, you cannot go back!'
+                    open={submitPopup}
+                    setOpen={setSubmitPopup}
+                    handleAgree={() => setSubmitPopup(false)}
+                    agreeText='Submit'
+                  />
+                </div>
               </CardContent>
             </Card>
-            <div className='buttonsContainer'>
-              <IconButton
-                color={recordedChunks.length > 0 && !capturing ? 'primary' : 'secondary'}
-                onClick={handleRetakeClick}
-                disabled={recordedChunks.length == 0}
-              >
-                <Icon icon='mdi:refresh' fontSize={30} color={recordedChunks.length == 0 ? 'grey' : undefined} />
-              </IconButton>
-              {capturing ? (
-                <IconButton color={'error'} onClick={handleStopCaptureClick}>
-                  <Icon icon='mdi:stop' fontSize={30} />
-                </IconButton>
-              ) : (
-                <IconButton color={'error'} onClick={handleStartCaptureClick} disabled={recordedChunks.length != 0}>
-                  <Icon icon='mdi:play' fontSize={30} color={recordedChunks.length != 0 ? 'grey' : undefined} />
-                </IconButton>
-              )}
-              <IconButton disabled={recordedChunks.length == 0} color='primary' onClick={handleSubmitTask}>
-                <Icon icon='mdi:tick' fontSize={30} color={recordedChunks.length == 0 ? 'grey' : undefined} />
-              </IconButton>
-              <DialogAction
-                title='Confirm Retake of Video?'
-                text='Are you sure you want to discard current video and go for retake?'
-                open={retakePopup}
-                setOpen={setRetakePopup}
-                handleAgree={handleRetake}
-                agreeText='Retake'
-              />
-              <DialogAction
-                title='Confirm Submission of Video?'
-                text='Once video for task is submitted, you cannot go back!'
-                open={submitPopup}
-                setOpen={setSubmitPopup}
-                handleAgree={() => setSubmitPopup(false)}
-                agreeText='Submit'
-              />
-            </div>
-          </CardContent>
-        </Card>
+          </Grid>
+        )}
       </Grid>
-    </Grid>
+    </>
   )
 }
 
