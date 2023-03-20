@@ -12,15 +12,19 @@ const navigation = (): VerticalNavItemsType => {
     },
     {
       title: 'Assessments',
-      path: ASSESSMENT_URL,
       icon: 'mdi:calendar-check-outline',
       action: 'read',
-      subject: ASSESSMENTS
-    },
-    {
-      title: 'Recorder',
-      path: '/recorder',
-      icon: 'mdi:record'
+      subject: ASSESSMENTS,
+      children: [
+        {
+          title: 'Available',
+          path: ASSESSMENT_URL
+        },
+        {
+          title: 'Submitted',
+          path: `${ASSESSMENT_URL}/submitted`
+        }
+      ]
     }
   ]
 }

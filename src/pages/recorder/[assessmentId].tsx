@@ -1,7 +1,4 @@
-import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
-import CardHeader from '@mui/material/CardHeader'
-import CardContent from '@mui/material/CardContent'
 import dynamic from 'next/dynamic'
 import BlankLayoutWithAppBar from 'src/@core/layouts/BlankLayoutWithAppBar'
 import { ReactNode } from 'react'
@@ -22,37 +19,37 @@ const Recorder = () => {
   // )
 
   const assessment: Assessment = {
-    id: '1',
+    _id: '1',
     author: 'Husnain',
     type: 'CODING',
     time: '3000',
     tasks: [
       {
-        id: '1',
+        _id: '1',
         type: 'TEXTUAL',
         description: 'Explain the difference between useMemo and useCallback in React.',
         duration: 300
       },
       {
-        id: '2',
+        _id: '2',
         type: 'TEXTUAL',
         description: 'What is promise constructor anti-pattern?',
         duration: 300
       },
       {
-        id: '3',
+        _id: '3',
         type: 'TEXTUAL',
         description: 'useRef can store references to DOM nodes, what other things can it do?',
         duration: 300
       },
       {
-        id: '4',
+        _id: '4',
         type: 'TEXTUAL',
         description: 'Explain cyclic dependency in Node.js and how to resolve it?',
         duration: 300
       },
       {
-        id: '5',
+        _id: '5',
         type: 'TEXTUAL',
         description: 'Difference between setImmediate and setInterval function in Node.js',
         duration: 300

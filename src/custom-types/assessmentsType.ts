@@ -1,12 +1,12 @@
 export interface Task {
-  id: string
+  _id: string
   type: string
   description: string
   duration: number
 }
 
 export interface Assessment {
-  id: string
+  _id: string
   type: string
   title: string
   time: string
