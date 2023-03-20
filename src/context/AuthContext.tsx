@@ -53,7 +53,6 @@ const AuthProvider = ({ children }: Props) => {
         setLoading(true)
         try {
           const { data } = await validateUserQuery()
-          setLoading(false)
           setUser({ ...data.validateToken, id: data.validateToken._id })
         } catch (error) {
           Cookies.remove(ACCESS_TOKEN)
@@ -62,6 +61,7 @@ const AuthProvider = ({ children }: Props) => {
             router.replace('/login')
           }
         }
+        setLoading(false)
       } else {
         setLoading(false)
       }
