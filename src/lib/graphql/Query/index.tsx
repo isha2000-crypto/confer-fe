@@ -3,6 +3,9 @@ import { gql } from '@apollo/client'
 export const LOAD_ASSESSMENT = gql`
   query Assessments {
     assessments {
+      author {
+        name
+      }
       authorId
       description
       _id
