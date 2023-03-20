@@ -3,7 +3,7 @@ import { configureStore } from '@reduxjs/toolkit'
 
 // ** Reducers
 //import assessments from 'src/store/assessments'
-import assessmentsReducer from './assessments/ assessmentsSlice'
+import assessmentsReducer from './assessments/assessmentsSlice'
 
 //import { useDispatch } from 'react-redux'
 //import { fetchAssessments } from './assessments/ assessmentsSlice'

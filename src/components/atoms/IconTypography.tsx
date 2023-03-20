@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Tooltip from '@mui/material/Tooltip'
 import Grid from '@mui/material/Grid'
+import { display } from '@mui/system'
 
 interface Props {
   icon: string

@@ -5,6 +5,12 @@ import Icon from 'src/@core/components/icon'
 import CustomAvatar from 'src/@core/components/mui/avatar'
 import IconBoxAssessment from './IconBoxAssessment'
 import IconTypography from '@components/atoms/IconTypography'
+import { useRouter } from 'next/router'
+import Button from '@mui/material/Button'
+import DiaologRecorder from '../Dialog/DiaologRecorder'
+import { useState } from 'react'
+import { useSelector } from 'react-redux'
+import { RootState } from 'src/store'
 
 const avatarIcons: any = {
   leadership: 'mdi:lead-pencil',
@@ -12,16 +18,37 @@ const avatarIcons: any = {
 }
 
 interface Props {
+  _id: string
   type: string
   title: string
-  time: string
+  time: any
   responses: string
-  tasks: string
-  author: string
+  tasks: []
+  display: Function
+  handlePopup: any
+
+  //onClick?: () => void
+
+  // author: string[]
 }
 
-function CardAssessment({ type, title, time, responses, tasks, author }: Props) {
-  console.log(type, title, time, responses, tasks, author)
+function CardAssessment({ _id, type, title, time, responses, tasks, display, handlePopup }: Props) {
+  const [open, setOpen] = useState(false)
+  console.log('icon time', time)
+
+  // const assessment = useSelector+=>
+  //   state.assessments.assessments.find(assess => assess._id === assessmentId)
+  // )
+
+  // const OnclickCard = () => {
+  //   console.log('hello')
+
+  //   router.push('/recorder')
+  // }
+  // console.log('Total total1:', display())
+  // console.log('we are from', tasks)
+
+  console.log(' iam cardid ', _id)
 
   return (
     <CardBasic sxContent={{ display: 'flex', textAlign: 'center', alignItems: 'center', flexDirection: 'column' }}>
@@ -30,7 +57,10 @@ function CardAssessment({ type, title, time, responses, tasks, author }: Props) 
       </CustomAvatar>
       <Heading variant={HeadingVariant.h6}>{title}</Heading>
       <IconBoxAssessment time={time} responses={responses} tasks={tasks} />
-      <IconTypography icon='mdi:account-outline' text={author} tooltip='Author' />
+      {/* <IconTypography icon='mdi:account-outline' text={author} tooltip='Author' /> */}
+      <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 7 }} onClick={() => handlePopup(_id)}>
+        Record
+      </Button>
     </CardBasic>
   )
 }

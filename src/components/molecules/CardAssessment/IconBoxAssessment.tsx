@@ -18,9 +18,10 @@ const StyledBox = styled(Box, { shouldForwardProp: props => props !== 'last' })<
 )
 
 interface Props {
-  time: string
+  time: any
   responses: string
-  tasks: string
+
+  tasks: []
 }
 
 function IconBoxAssessment({ time, responses, tasks }: Props) {
@@ -37,10 +38,17 @@ function IconBoxAssessment({ time, responses, tasks }: Props) {
     },
     {
       icon: 'mdi:chat-question-outline',
-      text: tasks,
+
+      // text: tasks[1]?.duration,
+      text: '',
+
+      // text: tasks,
+
       tooltip: 'Tasks'
     }
   ]
+
+  console.log('I am from the IconComponent', tasks[0]?.description)
 
   return (
     <Grid container spacing={4}>
