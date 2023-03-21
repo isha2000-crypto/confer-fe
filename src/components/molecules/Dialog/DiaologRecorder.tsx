@@ -21,7 +21,7 @@ interface props {
   assessment: Assessment
   id: any
 }
-const DiaologRecorder = ({ title, text, agreeText, cancelText, handleAgree, open, setOpen, assessment, id }: props) => {
+const DiaologRecorder = ({ title, agreeText, cancelText, handleAgree, open, setOpen, assessment }: props) => {
   console.log('props here', title)
   const handleClose = () => {
     setOpen(false)
@@ -31,11 +31,6 @@ const DiaologRecorder = ({ title, text, agreeText, cancelText, handleAgree, open
     handleAgree()
     handleClose()
   }
-
-  // console.log('i am the popup id ......', id)
-  // console.log('Assessment in popup jjjijk', assessment?.tasks[0].description)
-  // const task = assessment?.tasks.find(task => task._id === id)
-  // console.log('here the task', task?._id)
 
   return (
     <Fragment>

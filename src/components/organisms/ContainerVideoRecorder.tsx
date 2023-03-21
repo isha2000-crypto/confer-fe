@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Assessment, Task } from '@custom-types/assessmentsType'
 import { Grid, Card, CardContent, Typography, CardHeader } from '@mui/material'
 import Icon from 'src/@core/components/icon'
@@ -13,6 +14,9 @@ import { uploadFile } from 'src/lib/api/FileUpload'
 import { useAuth } from 'src/hooks/useAuth'
 import { UserDataType } from '@custom-types/contextTypes'
 import DialogSubmissionComplete from '@components/molecules/Dialog/DialogSubmissionComplete'
+import { useMutation } from '@apollo/client'
+import { CREATE_ASSESSMENT_SUBMISSION } from 'src/lib/graphql/Mutation'
+import { useRouter } from 'next/router'
 
 interface props {
   assessment: Assessment
@@ -38,13 +42,17 @@ function ContainerVideoRecorder({ assessment }: props) {
   const [submitPopup, setSubmitPopup] = useState<boolean>(false)
   const [allSubmitPopup, setAllSubmittedPopup] = useState<boolean>(false)
   const [recordings, setRecordings] = useState<any>({})
-  const [allSubmitted, setAllSubmitted] = useState<boolean>(false)
+  const [allUploaded, setAllUploaded] = useState<boolean>(false)
+  const [submitted, setSubmitted] = useState<boolean>(false)
+  const router = useRouter()
+  const [createAssessment] = useMutation(CREATE_ASSESSMENT_SUBMISSION)
   const auth = useAuth()
   React.useEffect(() => {
     if (!recordings.length) {
       const recordingData: any = {}
       assessment.tasks.forEach(task => {
         recordingData[task._id] = {
+          _id: task._id,
           status: 'open',
           videoUrl: null
         }
@@ -161,6 +169,7 @@ function ContainerVideoRecorder({ assessment }: props) {
       setRecordings((prev: any) => ({
         ...prev,
         [currentTask._id]: {
+          _id: currentTask._id,
           status: 'uploading',
           videoUrl: null
         }
@@ -169,12 +178,13 @@ function ContainerVideoRecorder({ assessment }: props) {
       if (taskIndex >= 0 && assessment.tasks[taskIndex + 1]) {
         handlePointClick(taskIndex + 1)
       } else {
-        submitAssessment()
+        openSubmitPopup()
       }
       const url = await uploadFile(blob, auth?.user as UserDataType, assessment, currentTask._id)
       setRecordings((prev: any) => ({
         ...prev,
         [currentTask._id]: {
+          _id: currentTask._id,
           status: 'submitted',
           videoUrl: url
         }
@@ -184,15 +194,41 @@ function ContainerVideoRecorder({ assessment }: props) {
     }
   }
 
-  const submitAssessment = async () => {
+  const openSubmitPopup = async () => {
     setAllSubmittedPopup(true)
   }
 
-  const handleFinalAgree = () => {
-    if (allSubmitted) {
-      console.log('All Submitted')
+  React.useEffect(() => {
+    const submitAssessment = async () => {
+      const responseArray = Object.values(recordings)
+      const inputData = {
+        userId: auth?.user?.id,
+        assessmentId: assessment._id,
+        taskResponses: responseArray.map((res: any) => {
+          return {
+            taskId: res._id,
+            videoUrl: res.videoUrl
+          }
+        })
+      }
+
+      const result = await createAssessment({
+        variables: {
+          createSubmittedAssessmentInput: inputData
+        }
+      })
+
+      console.log('Submitted Assessment result', result)
+      if (result.data) {
+        setSubmitted(true)
+        router.push(`/assessments/submitted/${result.data.createSubmittedAssessment._id}`)
+      }
     }
-  }
+    console.log('Running when submitted')
+    if (Object.keys(recordings).length) {
+      submitAssessment()
+    }
+  }, [allUploaded])
 
   React.useEffect(() => {
     const taskIds = Object.keys(recordings)
@@ -205,7 +241,7 @@ function ContainerVideoRecorder({ assessment }: props) {
       done = false
     }
     if (done) {
-      setAllSubmitted(true)
+      setAllUploaded(true)
     }
   }, [recordings])
 
@@ -331,12 +367,11 @@ function ContainerVideoRecorder({ assessment }: props) {
                   />
                   <DialogSubmissionComplete
                     title='Please wait for all video submissions.'
-                    text='We are uploading your videos, please give us a minute.'
+                    text='Assessment is being submitted, Please wait'
                     open={allSubmitPopup}
-                    complete={allSubmitted}
+                    allUploaded={allUploaded}
+                    completed={submitted}
                     setOpen={setAllSubmittedPopup}
-                    handleAgree={handleFinalAgree}
-                    agreeText='Submit'
                   />
                 </div>
               </CardContent>

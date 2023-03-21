@@ -11,5 +11,5 @@ export interface IconText {
   icon: string
   text: string
   tooltip: string
-  display?: Function
+  display?: any
 }

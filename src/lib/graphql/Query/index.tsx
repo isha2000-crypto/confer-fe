@@ -19,6 +19,31 @@ export const LOAD_ASSESSMENT = gql`
     }
   }
 `
+
+export const LOAD_AVAILABLE_ASSESSMENTS = gql`
+  query AvailableAssessments {
+    availableAssessments {
+      _id
+      title
+      description
+      type
+      authorId
+      author {
+        name
+      }
+      tasks {
+        _id
+        type
+        description
+        duration
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`
 export const VALIDATE_USERS = gql`
   query validateToken {
     validateToken {
@@ -32,6 +57,32 @@ export const VALIDATE_USERS = gql`
     }
   }
 `
+
+export const FETCH_ASSESSMENT_BY_ID = gql`
+  query Assessment($assessmentId: ObjectID!) {
+    assessment(id: $assessmentId) {
+      _id
+      title
+      description
+      type
+      authorId
+      author {
+        name
+      }
+      tasks {
+        _id
+        type
+        description
+        duration
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`
+
 export const SUBMITTED_ASSESSMENTS_USER = gql`
   query SubmittedAssessmentsUser($submittedAssessmentsUserId: ObjectID!) {
     submittedAssessmentsUser(id: $submittedAssessmentsUserId) {

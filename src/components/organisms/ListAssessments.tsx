@@ -14,7 +14,7 @@ const ListAssessments = () => {
   const router = useRouter()
   const [openPopup, setOpenPopup] = useState<boolean>(false)
   const [popupAssessment, setPopupAssessment] = useState<Assessment>()
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<any>()
   const { loading, assessments, error } = useSelector((state: RootState) => state.assessments)
 
   useEffect(() => {
@@ -44,7 +44,7 @@ const ListAssessments = () => {
 
   return (
     <>
-      {assessments?.map((assessment: Assessment) => (
+      {assessments?.map((assessment: any) => (
         <Grid key={assessment._id} item xs={12} md={6} lg={4}>
           <CardAssessment
             _id={assessment._id}

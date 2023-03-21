@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import Webcam from 'react-webcam'
 import { useState, useRef } from 'react'
 import React from 'react'
@@ -7,7 +8,7 @@ interface props {
   recording: boolean
 }
 
-const VideoRecorder = ({ timeoutDuration, handleRecordingm, recording }: props) => {
+const VideoRecorder = ({ timeoutDuration }: props) => {
   const videoConstraints: MediaTrackConstraints = {
     width: 1920,
     height: 1080,

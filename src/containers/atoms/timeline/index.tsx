@@ -18,7 +18,7 @@ const Timeline = (props: Timeline) => {
     )
   }
 
-  const getStatus = index => {
+  const getStatus = (index: number) => {
     const taskID = props.tasks[index]._id
 
     return props.recordings[taskID].status
