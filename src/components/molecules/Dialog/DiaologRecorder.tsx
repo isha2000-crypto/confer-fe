@@ -33,7 +33,6 @@ const DialogRecorder = ({ title, agreeText, cancelText, handleAgree, open, setOp
 
     return `${duration / 60} m`
   }
-  console.log('I am the time ', displayTime(assessment))
 
   return (
     <Fragment>
