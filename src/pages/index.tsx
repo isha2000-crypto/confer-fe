@@ -10,7 +10,6 @@ import Spinner from 'src/@core/components/spinner'
 // ** Hook Imports
 import { useAuth } from 'src/hooks/useAuth'
 import { Roles } from '../custom-types/enum'
-import { ASSESSMENT_URL } from '@custom-types/constants'
 
 /**
  *  Set Home URL based on User Roles
@@ -18,7 +17,7 @@ import { ASSESSMENT_URL } from '@custom-types/constants'
 export const getHomeRoute = (role: string) => {
   if (Roles.ADMIN === role) return '/home'
   if (Roles.USER === role) {
-    return ASSESSMENT_URL
+    return '/home'
   }
 
   return '/login'

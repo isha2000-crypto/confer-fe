@@ -7,6 +7,7 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Home',
       path: '/home',
+      action: 'read',
       icon: 'mdi:home-outline',
       subject: 'home'
     },
