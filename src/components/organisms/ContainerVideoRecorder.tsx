@@ -9,6 +9,10 @@ import DialogAction from '@components/molecules/Dialog/DialogAction'
 import IconButton from '@mui/material/IconButton'
 import CardVideoStatus from '@components/molecules/CardVideoStatus'
 import PermissionDeniedFallback from './PermissionDeniedFallback'
+import { uploadFile } from 'src/lib/api/FileUpload'
+import { useAuth } from 'src/hooks/useAuth'
+import { UserDataType } from '@custom-types/contextTypes'
+import DialogSubmissionComplete from '@components/molecules/Dialog/DialogSubmissionComplete'
 
 interface props {
   assessment: Assessment
@@ -32,11 +36,30 @@ function ContainerVideoRecorder({ assessment }: props) {
   const [timeRemaining, setTimeRemaining] = useState(currentTask?.duration)
   const [retakePopup, setRetakePopup] = useState<boolean>(false)
   const [submitPopup, setSubmitPopup] = useState<boolean>(false)
+  const [allSubmitPopup, setAllSubmittedPopup] = useState<boolean>(false)
+  const [recordings, setRecordings] = useState<any>({})
+  const [allSubmitted, setAllSubmitted] = useState<boolean>(false)
+  const auth = useAuth()
+  React.useEffect(() => {
+    if (!recordings.length) {
+      const recordingData: any = {}
+      assessment.tasks.forEach(task => {
+        recordingData[task._id] = {
+          status: 'open',
+          videoUrl: null
+        }
+      })
+      setRecordings(recordingData)
+    }
+  }, [assessment])
 
   const handlePointClick = (index: number) => {
-    setCurrentCheckpoint(index)
-    setCurrentTask(assessment.tasks[index])
-    setTimeRemaining(assessment.tasks[index].duration)
+    const taskId = assessment.tasks[index]._id
+    if (recordings[taskId].status === 'open') {
+      setCurrentCheckpoint(index)
+      setCurrentTask(assessment.tasks[index])
+      setTimeRemaining(assessment.tasks[index].duration)
+    }
   }
 
   const handleDataAvailable = React.useCallback(
@@ -82,23 +105,23 @@ function ContainerVideoRecorder({ assessment }: props) {
     setLoading(false)
   }, [])
 
-  const handleDownload = React.useCallback(() => {
-    if (recordedChunks.length) {
-      const blob = new Blob(recordedChunks, {
-        type: 'video/mp4'
-      })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      document.body.appendChild(a)
+  // const handleDownload = React.useCallback(() => {
+  //   if (recordedChunks.length) {
+  //     const blob = new Blob(recordedChunks, {
+  //       type: 'video/mp4'
+  //     })
+  //     const url = URL.createObjectURL(blob)
+  //     const a = document.createElement('a')
+  //     document.body.appendChild(a)
 
-      // a.style = 'display: none'
-      a.href = url
-      a.download = 'react-webcam-stream-capture.mp4'
-      a.click()
-      window.URL.revokeObjectURL(url)
-      setRecordedChunks([])
-    }
-  }, [recordedChunks])
+  //     // a.style = 'display: none'
+  //     a.href = url
+  //     a.download = 'react-webcam-stream-capture.mp4'
+  //     a.click()
+  //     window.URL.revokeObjectURL(url)
+  //     setRecordedChunks([])
+  //   }
+  // }, [recordedChunks])
 
   const handleRetakeClick = () => {
     if (!capturing && recordedChunks.length > 0) setRetakePopup(true)
@@ -128,6 +151,63 @@ function ContainerVideoRecorder({ assessment }: props) {
       handleStopCaptureClick()
     }
   }, [timeRemaining, handleStopCaptureClick])
+
+  const handleRecordingSubmit = async () => {
+    const blob = new Blob([...recordedChunks], {
+      type: 'video/mp4'
+    })
+    setRecordedChunks([])
+    try {
+      setRecordings((prev: any) => ({
+        ...prev,
+        [currentTask._id]: {
+          status: 'uploading',
+          videoUrl: null
+        }
+      }))
+      const taskIndex = assessment.tasks.findIndex(task => task._id === currentTask._id)
+      if (taskIndex >= 0 && assessment.tasks[taskIndex + 1]) {
+        handlePointClick(taskIndex + 1)
+      } else {
+        submitAssessment()
+      }
+      const url = await uploadFile(blob, auth?.user as UserDataType, assessment, currentTask._id)
+      setRecordings((prev: any) => ({
+        ...prev,
+        [currentTask._id]: {
+          status: 'submitted',
+          videoUrl: url
+        }
+      }))
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const submitAssessment = async () => {
+    setAllSubmittedPopup(true)
+  }
+
+  const handleFinalAgree = () => {
+    if (allSubmitted) {
+      console.log('All Submitted')
+    }
+  }
+
+  React.useEffect(() => {
+    const taskIds = Object.keys(recordings)
+    let done = true
+    if (taskIds.length > 0) {
+      taskIds.forEach(tid => {
+        if (recordings[tid].status !== 'submitted') done = false
+      })
+    } else {
+      done = false
+    }
+    if (done) {
+      setAllSubmitted(true)
+    }
+  }, [recordings])
 
   if (allowed === false) {
     return <PermissionDeniedFallback />
@@ -169,7 +249,6 @@ function ContainerVideoRecorder({ assessment }: props) {
                     <source key={index} src={URL.createObjectURL(chunk)} />
                   ))}
                 </video>
-                <button onClick={handleDownload}>Download</button>
               </>
             )}
 
@@ -202,6 +281,8 @@ function ContainerVideoRecorder({ assessment }: props) {
               <CardContent>
                 <div className='timelineContainer' style={{ width: '100%' }}>
                   <Timeline
+                    recordings={recordings}
+                    tasks={assessment?.tasks}
                     totalCheckPoints={assessment?.tasks.length}
                     currentCheckPoint={currentCheckPoint}
                     handlePointClick={handlePointClick}
@@ -245,7 +326,16 @@ function ContainerVideoRecorder({ assessment }: props) {
                     text='Once video for task is submitted, you cannot go back!'
                     open={submitPopup}
                     setOpen={setSubmitPopup}
-                    handleAgree={() => setSubmitPopup(false)}
+                    handleAgree={handleRecordingSubmit}
+                    agreeText='Submit'
+                  />
+                  <DialogSubmissionComplete
+                    title='Please wait for all video submissions.'
+                    text='We are uploading your videos, please give us a minute.'
+                    open={allSubmitPopup}
+                    complete={allSubmitted}
+                    setOpen={setAllSubmittedPopup}
+                    handleAgree={handleFinalAgree}
                     agreeText='Submit'
                   />
                 </div>

@@ -18,6 +18,12 @@ const Timeline = (props: Timeline) => {
     )
   }
 
+  const getStatus = index => {
+    const taskID = props.tasks[index]._id
+
+    return props.recordings[taskID].status
+  }
+
   return (
     <div ref={parentSection}>
       <div className='outerContainer'>
@@ -32,7 +38,9 @@ const Timeline = (props: Timeline) => {
               <div
                 className='checkpoint'
                 style={{
-                  background: index === props.currentCheckPoint ? '#083a54' : '#0ebbb2',
+                  // background: index === props.currentCheckPoint ? '#083a54' : '#0ebbb2',
+                  background:
+                    index === props.currentCheckPoint ? '#083a54' : getStatus(index) === 'open' ? 'gray' : '#0ebbb2',
                   width: index === props.currentCheckPoint ? '3vh' : '2vh',
                   height: index === props.currentCheckPoint ? '3vh' : '2vh'
                 }}
