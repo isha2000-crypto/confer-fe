@@ -45,13 +45,10 @@ const DialogRecorder = ({ title, agreeText, cancelText, handleAgree, open, setOp
             handleClose()
           }
         }}
-        PaperProps={{
-          style: {
-            backgroundColor: '#F5F5F5' // Change the background color of the Dialog component
-          }
-        }}
       >
-        <DialogTitle style={{ color: '#333', fontSize: '1.2rem', padding: '24px' }}>{title}</DialogTitle>
+        <DialogTitle style={{ fontSize: '1.2rem', padding: '24px' }} color='primary'>
+          {title}
+        </DialogTitle>
         <DialogContent> Total Questions:{assessment.tasks.length}</DialogContent>
         <DialogContent> Max Time:{displayTime(assessment)}</DialogContent>
         <DialogContent dividers>
