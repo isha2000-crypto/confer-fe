@@ -9,6 +9,7 @@ import { useLazyQuery } from '@apollo/client'
 import { SUBMITTED_ASSESSMENTS_USER } from 'src/lib/graphql/Query'
 import { useAuth } from 'src/hooks/useAuth'
 import CardSubmittedAssessment from '@components/molecules/CardSubmittedAssessment'
+import Spinner from 'src/@core/components/spinner'
 
 function ListSubmittedAssessments() {
   const [submittedAssessments, setSubmittedAssessments] = useState<any>([])
@@ -30,7 +31,7 @@ function ListSubmittedAssessments() {
   }, [auth, getData])
 
   if (loading) {
-    return <div>Loading...</div>
+    return <Spinner />
   }
 
   if (error) {
@@ -42,7 +43,7 @@ function ListSubmittedAssessments() {
   }
 
   return (
-    <>
+    <Grid container spacing={6}>
       {submittedAssessments.map((item: any, index: number) => {
         return (
           <Grid key={index} item xs={12} md={6} lg={4}>
@@ -50,7 +51,7 @@ function ListSubmittedAssessments() {
           </Grid>
         )
       })}
-    </>
+    </Grid>
   )
 }
 

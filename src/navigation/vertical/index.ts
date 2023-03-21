@@ -18,7 +18,7 @@ const navigation = (): VerticalNavItemsType => {
       children: [
         {
           title: 'Available',
-          path: ASSESSMENT_URL
+          path: `${ASSESSMENT_URL}/available`
         },
         {
           title: 'Submitted',

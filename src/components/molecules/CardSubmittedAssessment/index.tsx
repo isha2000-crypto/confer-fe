@@ -5,6 +5,8 @@ import Icon from 'src/@core/components/icon'
 import CustomAvatar from 'src/@core/components/mui/avatar'
 import IconBoxAssessment from '../CardAssessment/IconBoxAssessment'
 import IconTypography from '@components/atoms/IconTypography'
+import { Button } from '@mui/material'
+import { useRouter } from 'next/router'
 
 const avatarIcons: any = {
   LEADERSHIP: 'mdi:lead-pencil',
@@ -12,8 +14,12 @@ const avatarIcons: any = {
 }
 
 function CardAssessment(props: any) {
-  const time = props.assessment.tasks.reduce((a, b) => a + b.duration, 0)
-  console.log('Avatar', props.assessment.type)
+  const time = props.assessment.tasks.reduce((a: any, b: any) => a + b.duration, 0)
+  const router = useRouter()
+
+  const handleClick = () => {
+    router.push(`/assessments/submitted/${props._id}`)
+  }
 
   return (
     <CardBasic sxContent={{ display: 'flex', textAlign: 'center', alignItems: 'center', flexDirection: 'column' }}>
@@ -23,6 +29,9 @@ function CardAssessment(props: any) {
       <Heading variant={HeadingVariant.h6}>{props.assessment.title}</Heading>
       <IconBoxAssessment time={time} responses={'1'} tasks={props.assessment.tasks.length} />
       <IconTypography icon='mdi:account-outline' text={props.assessment.author.name} tooltip='Author' />
+      <Button variant='contained' onClick={handleClick}>
+        View Details
+      </Button>
     </CardBasic>
   )
 }

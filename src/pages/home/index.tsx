@@ -11,7 +11,7 @@ const HomePage = () => {
   const router = useRouter()
 
   const handleClick = () => {
-    router.push('/assessments')
+    router.push('/assessments/available')
   }
 
   return (

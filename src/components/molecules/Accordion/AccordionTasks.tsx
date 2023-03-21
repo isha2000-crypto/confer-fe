@@ -10,7 +10,7 @@ import Icon from 'src/@core/components/icon'
 const AccordionTasks = ({ tasks, responses }: any) => {
   return (
     <>
-      {tasks.map((task, index) => {
+      {tasks.map((task: any, index: number) => {
         return (
           <Accordion key={task._id}>
             <AccordionSummary

@@ -3,7 +3,8 @@ import dynamic from 'next/dynamic'
 import BlankLayoutWithAppBar from 'src/@core/layouts/BlankLayoutWithAppBar'
 import { ReactNode } from 'react'
 import { useRouter } from 'next/router'
-import { Assessment } from '@custom-types/assessmentsType'
+import Spinner from 'src/@core/components/spinner'
+import { useSelector } from 'react-redux'
 import React from 'react'
 
 const ContainerVideoRecorder = dynamic(() => import('@components/organisms/ContainerVideoRecorder'))
@@ -14,52 +15,15 @@ const Recorder = () => {
   const router = useRouter()
   const { assessmentId } = router.query
 
-  // const assessment = useSelector((state: RootState) =>
-  //   state.assessments.assessments.find(assess => assess.id === assessmentId)
-  // )
+  const { loading, assessments, error } = useSelector((state: RootState) => state.assessments)
 
-  const assessment: Assessment = {
-    _id: '1',
-    author: 'Husnain',
-    type: 'CODING',
-    time: '3000',
-    tasks: [
-      {
-        _id: '1',
-        type: 'TEXTUAL',
-        description: 'Explain the difference between useMemo and useCallback in React.',
-        duration: 300
-      },
-      {
-        _id: '2',
-        type: 'TEXTUAL',
-        description: 'What is promise constructor anti-pattern?',
-        duration: 300
-      },
-      {
-        _id: '3',
-        type: 'TEXTUAL',
-        description: 'useRef can store references to DOM nodes, what other things can it do?',
-        duration: 300
-      },
-      {
-        _id: '4',
-        type: 'TEXTUAL',
-        description: 'Explain cyclic dependency in Node.js and how to resolve it?',
-        duration: 300
-      },
-      {
-        _id: '5',
-        type: 'TEXTUAL',
-        description: 'Difference between setImmediate and setInterval function in Node.js',
-        duration: 300
-      }
-    ],
-    title: 'MERN stack application Assesment',
-    responses: '33'
-  }
+  const assessment = assessments.find(assess => assess._id === assessmentId)
 
   console.log('Assessment: ', assessment)
+
+  if (loading) return <Spinner />
+
+  if (error) return <div>Error Occured</div>
 
   return (
     <Grid container>
