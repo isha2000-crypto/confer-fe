@@ -18,7 +18,7 @@ const AccordionTasks = ({ tasks, responses }: any) => {
               aria-controls={`submitted-task-content-${task._id}`}
               expandIcon={<Icon icon='mdi:chevron-down' />}
             >
-              <Typography>{task.description}</Typography>
+              <Typography variant='body1' sx={{ fontWeight: 'bold' }}>{`${index + 1}. ${task.description}`}</Typography>
             </AccordionSummary>
             <AccordionDetails sx={{ textAlign: 'center' }}>
               <video width='750' height='500' controls>

@@ -44,20 +44,22 @@ const ListAssessments = () => {
 
   return (
     <>
-      {assessments?.map((assessment: any) => (
-        <Grid key={assessment._id} item xs={12} md={6} lg={4}>
-          <CardAssessment
-            _id={assessment._id}
-            type={assessment.type}
-            title={assessment.title}
-            time={displayTime(assessment)}
-            responses={'1'}
-            tasks={assessment.tasks.length}
-            handlePopup={handleOpenPopup}
-            author={assessment.author.name}
-          />
-        </Grid>
-      ))}
+      <Grid container spacing={6}>
+        {assessments?.map((assessment: any) => (
+          <Grid key={assessment._id} item xs={12} md={6} lg={4}>
+            <CardAssessment
+              _id={assessment._id}
+              type={assessment.type}
+              title={assessment.title}
+              time={displayTime(assessment)}
+              responses={'1'}
+              tasks={assessment.tasks.length}
+              handlePopup={handleOpenPopup}
+              author={assessment.author.name}
+            />
+          </Grid>
+        ))}
+      </Grid>
       {popupAssessment && (
         <DiaologRecorder
           id={popupAssessment?._id}
