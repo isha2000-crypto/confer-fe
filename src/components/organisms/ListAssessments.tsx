@@ -63,7 +63,7 @@ const ListAssessments = () => {
       {popupAssessment && (
         <DiaologRecorder
           id={popupAssessment?._id}
-          title='Confirmation'
+          title='Are You sure You want to record the assessment ?'
           text='hello there'
           agreeText='Yes'
           cancelText='No'
