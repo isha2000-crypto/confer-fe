@@ -52,7 +52,7 @@ const DiaologRecorder = ({ title, text, agreeText, cancelText, handleAgree, open
       >
         <DialogTitle id='alert-dialog-title'>{title}</DialogTitle>
         <DialogContent>
-          {assessment.tasks.map(task => (
+          {assessment?.tasks.map(task => (
             <DialogContentText key={task._id} id='alert-dialog-description'>
               {task?.description}
             </DialogContentText>
