@@ -22,7 +22,7 @@ const assessmentSlice = createSlice({
   initialState,
   reducers: {
     getAssessmentsStart(state) {
-      state.loading = false
+      state.loading = true
       state.assessments = []
       state.error = null
     },

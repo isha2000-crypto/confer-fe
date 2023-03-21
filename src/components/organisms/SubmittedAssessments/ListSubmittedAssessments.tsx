@@ -10,13 +10,21 @@ import { SUBMITTED_ASSESSMENTS_USER } from 'src/lib/graphql/Query'
 import { useAuth } from 'src/hooks/useAuth'
 import CardSubmittedAssessment from '@components/molecules/CardSubmittedAssessment'
 import Spinner from 'src/@core/components/spinner'
+import { useRouter } from 'next/router'
+import { Box, Typography, Button } from '@mui/material'
+import Icon from 'src/@core/components/icon'
 
 function ListSubmittedAssessments() {
+  const router = useRouter()
   const [submittedAssessments, setSubmittedAssessments] = useState<any>([])
   const auth = useAuth()
   const [getData, { loading, error }] = useLazyQuery(SUBMITTED_ASSESSMENTS_USER, {
     variables: { submittedAssessmentsUserId: auth.user?.id }
   })
+
+  const handleEmptyClick = () => {
+    router.push('/assessments/available')
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,7 +47,20 @@ function ListSubmittedAssessments() {
   }
 
   if (submittedAssessments.length == 0) {
-    return <div>You have not submitted any assessments.</div>
+    return (
+      <Box
+        sx={{ display: 'flex', textAlign: 'center', alignItems: 'center', flexDirection: 'column', '& svg': { mb: 2 } }}
+      >
+        <Icon icon='mdi:pencil-outline' fontSize='2rem' />
+        <Typography sx={{ mb: 4, fontWeight: 600 }}>No Assessments Submitted</Typography>
+        <Typography sx={{ mb: 3 }}>
+          You have not submitted any assessments yet, Please click on below button to view available assessments.
+        </Typography>
+        <Button sx={{ mb: 8 }} variant='contained' onClick={handleEmptyClick}>
+          Available Assessments
+        </Button>
+      </Box>
+    )
   }
 
   return (
