@@ -45,14 +45,14 @@ import ButtonGoogle from '@components/molecules/ButtonGoogle'
 
 const defaultValues = {
   email: '',
-  username: '',
+  name: '',
   password: '',
   terms: false
 }
 interface FormData {
   email: string
   terms: boolean
-  username: string
+  name: string
   password: string
 }
 
@@ -121,7 +121,7 @@ const Register = () => {
   const { skin } = settings
   const schema = yup.object().shape({
     password: yup.string().min(5).required(),
-    username: yup.string().min(3).required(),
+    name: yup.string().min(3).required(),
     email: yup.string().email().required(),
     terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms')
   })
@@ -138,18 +138,18 @@ const Register = () => {
   })
 
   const onSubmit = (data: FormData) => {
-    const { email, username, password } = data
-    register({ email, username, password }, err => {
+    const { email, name, password } = data
+    register({ email, name, password }, err => {
       if (err.email) {
         setError('email', {
           type: 'manual',
           message: err.email
         })
       }
-      if (err.username) {
-        setError('username', {
+      if (err.name) {
+        setError('name', {
           type: 'manual',
-          message: err.username
+          message: err.name
         })
       }
     })
@@ -273,7 +273,7 @@ const Register = () => {
             <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
-                  name='username'
+                  name='name'
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
@@ -281,16 +281,14 @@ const Register = () => {
                       autoFocus
                       value={value}
                       onBlur={onBlur}
-                      label='Username'
+                      label='Name'
                       onChange={onChange}
                       placeholder='johndoe'
-                      error={Boolean(errors.username)}
+                      error={Boolean(errors.name)}
                     />
                   )}
                 />
-                {errors.username && (
-                  <FormHelperText sx={{ color: 'error.main' }}>{errors.username.message}</FormHelperText>
-                )}
+                {errors.name && <FormHelperText sx={{ color: 'error.main' }}>{errors.name.message}</FormHelperText>}
               </FormControl>
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
