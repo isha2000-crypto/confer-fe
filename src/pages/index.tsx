@@ -15,6 +15,7 @@ import { Roles } from '../custom-types/enum'
  *  Set Home URL based on User Roles
  */
 export const getHomeRoute = (role: string) => {
+  if (Roles.SUPER_ADMIN === role) return '/home'
   if (Roles.ADMIN === role) return '/home'
   if (Roles.USER === role) {
     return '/home'

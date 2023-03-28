@@ -22,7 +22,9 @@ export type ACLObj = {
 const defineRulesFor = (role: string, subject: string) => {
   const { can, rules } = new AbilityBuilder(AppAbility)
 
-  if (Roles.ADMIN === role) {
+  if (role === Roles.SUPER_ADMIN) {
+    can('manage', 'all')
+  } else if (Roles.ADMIN === role) {
     can('manage', 'all')
   } else if (Roles.USER === role) {
     // can(['read', 'write'], ASSESSMENTS)
