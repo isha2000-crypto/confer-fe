@@ -30,13 +30,7 @@ const Recorder = () => {
 
   if (error) return <div>Error Occured</div>
 
-  return (
-    <Grid container>
-      <Grid item xs={12}>
-        {assessment && <ContainerVideoRecorder assessment={assessment} />}
-      </Grid>
-    </Grid>
-  )
+  return <>{assessment && <ContainerVideoRecorder assessment={assessment} />}</>
 }
 
 Recorder.getLayout = (page: ReactNode) => <BlankLayoutWithAppBar>{page}</BlankLayoutWithAppBar>

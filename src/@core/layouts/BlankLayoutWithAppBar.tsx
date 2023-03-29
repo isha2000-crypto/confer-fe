@@ -11,6 +11,7 @@ import AppBar from 'src/@core/layouts/components/blank-layout-with-appBar'
 // Styled component for Blank Layout with AppBar component
 const BlankLayoutWithAppBarWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   height: '100vh',
+  overflow: 'hidden',
 
   // For V1 Blank layout pages
   '& .content-center': {

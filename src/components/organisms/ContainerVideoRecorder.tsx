@@ -17,6 +17,7 @@ import DialogSubmissionComplete from '@components/molecules/Dialog/DialogSubmiss
 import { useMutation } from '@apollo/client'
 import { CREATE_ASSESSMENT_SUBMISSION } from 'src/lib/graphql/Mutation'
 import { useRouter } from 'next/router'
+import classnames from './ContainerVideoRecorder.module.scss'
 
 interface props {
   assessment: Assessment
@@ -33,6 +34,7 @@ function ContainerVideoRecorder({ assessment }: props) {
   const mediaRecorderRef: any = React.useRef(null)
   const [loading, setLoading] = React.useState(true)
   const [allowed, setAllowed] = React.useState(true)
+  const [startedCapture, setStartedCapture] = React.useState(false)
   const [capturing, setCapturing] = React.useState(false)
   const [recordedChunks, setRecordedChunks] = React.useState([])
   const [currentTask, setCurrentTask] = React.useState<Task>(assessment?.tasks[0])
@@ -83,16 +85,20 @@ function ContainerVideoRecorder({ assessment }: props) {
   )
 
   const handleStartCaptureClick = React.useCallback(() => {
-    setCapturing(true)
+    setStartedCapture(true)
+    setTimeout(() => {
+      setStartedCapture(false)
+      setCapturing(true)
 
-    // handleRecording(true)
-    // setTimeRemaining(timeoutDuration)
-    mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
-      mimeType: 'video/webm'
-    })
-    mediaRecorderRef.current.addEventListener('dataavailable', handleDataAvailable)
-    mediaRecorderRef.current.start()
-    startTimer()
+      // handleRecording(true)
+      // setTimeRemaining(timeoutDuration)
+      mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
+        mimeType: 'video/webm'
+      })
+      mediaRecorderRef.current.addEventListener('dataavailable', handleDataAvailable)
+      mediaRecorderRef.current.start()
+      startTimer()
+    }, 3000)
   }, [handleDataAvailable])
 
   const handleStopCaptureClick = React.useCallback(() => {
@@ -224,9 +230,20 @@ function ContainerVideoRecorder({ assessment }: props) {
         router.push(`/assessments/submitted/${result.data.createSubmittedAssessment._id}`)
       }
     }
-    console.log('Running when submitted')
     if (Object.keys(recordings).length) {
-      submitAssessment()
+      console.log('Running when submitted')
+      const taskIds = Object.keys(recordings)
+      let done = true
+      if (taskIds.length > 0) {
+        taskIds.forEach(tid => {
+          if (recordings[tid].status !== 'submitted') done = false
+        })
+      } else {
+        done = false
+      }
+      if (done) {
+        submitAssessment()
+      }
     }
   }, [allUploaded])
 
@@ -251,44 +268,86 @@ function ContainerVideoRecorder({ assessment }: props) {
 
   return (
     <>
-      {!loading && <CardHeader title={assessment.title}></CardHeader>}
-      <Grid container sx={{ flexWrap: 'wrap', height: '100%' }} spacing={6} columnGap={6}>
-        <Grid item xs={12}>
+      {/* {!loading && <CardHeader title={assessment.title}></CardHeader>} */}
+      <Grid container sx={{ height: '100vh' }} padding={6}>
+        <Grid item xs={6}>
           <Grid
             container
             gap={20}
+            spacing={6}
+            columnGap={6}
+            padding={6}
             style={{
               display: 'flex',
               flexWrap: 'nowrap',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '52vh'
+              height: '100%'
             }}
           >
-            {recordedChunks.length == 0 && (
-              <Webcam
-                audio={true}
-                muted={true}
-                ref={webcamRef}
-                videoConstraints={videoConstraints}
-                mirrored
-                width={'47%'}
-                height={'500px'}
-                onUserMediaError={handleUserMediaError}
-                onUserMedia={handleUserMediaCreated}
-              />
-            )}
-            {recordedChunks.length > 0 && (
-              <>
-                <video className='video-js' controls muted={false} width='47%' height='500px' data-setup='{}'>
-                  {recordedChunks.map((chunk, index) => (
-                    <source key={index} src={URL.createObjectURL(chunk)} />
-                  ))}
-                </video>
-              </>
-            )}
-
-            {!loading && (
+            <div className={classnames.video_wrapper}>
+              {recordedChunks.length == 0 && (
+                <>
+                  <Webcam
+                    className={classnames.video_component}
+                    audio={true}
+                    muted={true}
+                    ref={webcamRef}
+                    videoConstraints={videoConstraints}
+                    onUserMediaError={handleUserMediaError}
+                    onUserMedia={handleUserMediaCreated}
+                  />
+                  <div
+                    className={classnames.video_controls}
+                    style={{ background: startedCapture ? 'cornsilk' : 'none', opacity: startedCapture ? '0.5' : '1' }}
+                  >
+                    {!capturing && !startedCapture && (
+                      <div>
+                        Hit <span className={classnames.record_label}>RECORD</span> to start
+                      </div>
+                    )}
+                    {startedCapture && <div className={classnames.get_ready_text}>Get Ready</div>}
+                    {capturing ? (
+                      <IconButton color={'error'} onClick={handleStopCaptureClick}>
+                        <Icon icon='mdi:stop' fontSize={150} />
+                      </IconButton>
+                    ) : (
+                      !startedCapture && (
+                        <IconButton
+                          color={'error'}
+                          onClick={handleStartCaptureClick}
+                          disabled={recordedChunks.length != 0}
+                        >
+                          <Icon
+                            icon='mdi:record'
+                            fontSize={150}
+                            color={recordedChunks.length != 0 ? 'grey' : undefined}
+                          />
+                        </IconButton>
+                      )
+                    )}
+                  </div>
+                </>
+              )}
+              {recordedChunks.length > 0 && (
+                <>
+                  <video
+                    className='video-js'
+                    controls
+                    muted={false}
+                    width='100%'
+                    height='100%'
+                    style={{ objectFit: 'cover' }}
+                    data-setup='{}'
+                  >
+                    {recordedChunks.map((chunk, index) => (
+                      <source key={index} src={URL.createObjectURL(chunk)} />
+                    ))}
+                  </video>
+                </>
+              )}
+            </div>
+            {/* {!loading && (
               <Grid container sx={{ display: 'flex', flexDirection: 'column', width: '20%' }} spacing={5}>
                 <Grid item xs={12}>
                   <CardVideoStatus
@@ -307,12 +366,12 @@ function ContainerVideoRecorder({ assessment }: props) {
                   />
                 </Grid>
               </Grid>
-            )}
+            )} */}
           </Grid>
         </Grid>
 
         {!loading && (
-          <Grid item xs={12}>
+          <Grid item xs={6}>
             <Card className='questionContainer'>
               <CardContent>
                 <div className='timelineContainer' style={{ width: '100%' }}>
