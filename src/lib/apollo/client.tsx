@@ -1,13 +1,19 @@
 import { ApolloClient, InMemoryCache, HttpLink, ApolloLink } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
 import Cookies from 'js-cookie'
+import { toast } from 'react-hot-toast'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     graphQLErrors.map(({ message }) => {
-      alert(`Graphql error ${message}`)
+      toast.error(message)
+
+      //alert(`Graphql error ${message}`)
     })
+  }
+  if (networkError) {
+    toast.error('Server is not connected ')
   }
 })
 
