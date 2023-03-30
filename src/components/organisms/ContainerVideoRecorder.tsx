@@ -18,12 +18,15 @@ import { useMutation } from '@apollo/client'
 import { CREATE_ASSESSMENT_SUBMISSION } from 'src/lib/graphql/Mutation'
 import { useRouter } from 'next/router'
 import classnames from './ContainerVideoRecorder.module.scss'
+import { useTheme } from '@mui/material'
+import IconButtonTimeRemaining from '@components/molecules/Progress/IconButtonTimeRemaining'
 
 interface props {
   assessment: Assessment
 }
 
 function ContainerVideoRecorder({ assessment }: props) {
+  const theme = useTheme()
   const videoConstraints: MediaTrackConstraints = {
     width: 1920,
     height: 1080,
@@ -32,6 +35,7 @@ function ContainerVideoRecorder({ assessment }: props) {
   }
   const webcamRef: any = React.useRef(null)
   const mediaRecorderRef: any = React.useRef(null)
+  const [fullScreen, setFullScreen] = React.useState(false)
   const [loading, setLoading] = React.useState(true)
   const [allowed, setAllowed] = React.useState(true)
   const [startedCapture, setStartedCapture] = React.useState(false)
@@ -170,6 +174,12 @@ function ContainerVideoRecorder({ assessment }: props) {
     const blob = new Blob([...recordedChunks], {
       type: 'video/mp4'
     })
+    const video = document.createElement('video')
+    video.src = URL.createObjectURL(blob)
+
+    video.addEventListener('loadedmetadata', () => {
+      console.log('Video Duration: ', video.duration)
+    })
     setRecordedChunks([])
     try {
       setRecordings((prev: any) => ({
@@ -202,6 +212,14 @@ function ContainerVideoRecorder({ assessment }: props) {
 
   const openSubmitPopup = async () => {
     setAllSubmittedPopup(true)
+  }
+
+  const handleFullScreen = () => {
+    setFullScreen(prev => !prev)
+  }
+
+  const getProgressValue = () => {
+    return (timeRemaining / currentTask.duration) * 100
   }
 
   React.useEffect(() => {
@@ -269,14 +287,36 @@ function ContainerVideoRecorder({ assessment }: props) {
   return (
     <>
       {/* {!loading && <CardHeader title={assessment.title}></CardHeader>} */}
-      <Grid container sx={{ height: '100vh' }} padding={6}>
-        <Grid item xs={6}>
+      <Card className={classnames.timeline_wrapper}>
+        <div className='timelineContainer'>
+          {!loading && (
+            <Timeline
+              recordings={recordings}
+              tasks={assessment?.tasks}
+              totalCheckPoints={assessment?.tasks.length}
+              currentCheckPoint={currentCheckPoint}
+              handlePointClick={handlePointClick}
+            />
+          )}
+        </div>
+      </Card>
+
+      <Grid container sx={{ height: '83vh', flexWrap: 'nowrap' }} padding={3} className={classnames.animater_wrapper}>
+        <Grid
+          item
+          spacing={2}
+          padding={'0 2rem'}
+          xs={fullScreen ? 12 : 9}
+          style={{
+            transition: theme.transitions.create('all', {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.leavingScreen
+            })
+          }}
+        >
           <Grid
             container
             gap={20}
-            spacing={6}
-            columnGap={6}
-            padding={6}
             style={{
               display: 'flex',
               flexWrap: 'nowrap',
@@ -299,8 +339,16 @@ function ContainerVideoRecorder({ assessment }: props) {
                   />
                   <div
                     className={classnames.video_controls}
-                    style={{ background: startedCapture ? 'cornsilk' : 'none', opacity: startedCapture ? '0.5' : '1' }}
+                    style={{
+                      background: startedCapture ? 'cornsilk' : 'none',
+                      opacity: startedCapture ? '0.5' : '1'
+                    }}
                   >
+                    <div className={classnames.upper_control_bar}>
+                      <IconButton color={'primary'} onClick={handleFullScreen}>
+                        <Icon icon='mdi:fit-to-screen' fontSize={50} />
+                      </IconButton>
+                    </div>
                     {!capturing && !startedCapture && (
                       <div>
                         Hit <span className={classnames.record_label}>RECORD</span> to start
@@ -308,9 +356,19 @@ function ContainerVideoRecorder({ assessment }: props) {
                     )}
                     {startedCapture && <div className={classnames.get_ready_text}>Get Ready</div>}
                     {capturing ? (
-                      <IconButton color={'error'} onClick={handleStopCaptureClick}>
-                        <Icon icon='mdi:stop' fontSize={150} />
-                      </IconButton>
+                      <>
+                        <Typography
+                          variant='h5'
+                          color={timeRemaining <= 30 ? (timeRemaining % 2 == 0 ? '#FDB528' : 'error') : 'error'}
+                        >
+                          &#128308;{new Date(timeRemaining * 1000).toISOString().substring(14, 19)}
+                        </Typography>
+                        <IconButtonTimeRemaining
+                          timeRemaining={timeRemaining}
+                          value={getProgressValue()}
+                          handleClick={handleStopCaptureClick}
+                        />
+                      </>
                     ) : (
                       !startedCapture && (
                         <IconButton
@@ -320,7 +378,7 @@ function ContainerVideoRecorder({ assessment }: props) {
                         >
                           <Icon
                             icon='mdi:record'
-                            fontSize={150}
+                            fontSize={100}
                             color={recordedChunks.length != 0 ? 'grey' : undefined}
                           />
                         </IconButton>
@@ -331,19 +389,35 @@ function ContainerVideoRecorder({ assessment }: props) {
               )}
               {recordedChunks.length > 0 && (
                 <>
-                  <video
-                    className='video-js'
-                    controls
-                    muted={false}
-                    width='100%'
-                    height='100%'
-                    style={{ objectFit: 'cover' }}
-                    data-setup='{}'
-                  >
+                  <video className={classnames.video_ready_player} muted={false}>
                     {recordedChunks.map((chunk, index) => (
                       <source key={index} src={URL.createObjectURL(chunk)} />
                     ))}
                   </video>
+                  <div className={classnames.video_controls_completed}>
+                    {!capturing && recordedChunks.length > 0 && (
+                      <>
+                        <IconButton
+                          color={recordedChunks.length > 0 && !capturing ? 'primary' : 'secondary'}
+                          onClick={handleRetakeClick}
+                          disabled={recordedChunks.length == 0}
+                        >
+                          <Icon
+                            icon='mdi:refresh'
+                            fontSize={100}
+                            color={recordedChunks.length == 0 ? 'grey' : undefined}
+                          />
+                        </IconButton>
+                        <IconButton disabled={recordedChunks.length == 0} color='primary' onClick={handleSubmitTask}>
+                          <Icon
+                            icon='mdi:tick'
+                            fontSize={100}
+                            color={recordedChunks.length == 0 ? 'grey' : undefined}
+                          />
+                        </IconButton>
+                      </>
+                    )}
+                  </div>
                 </>
               )}
             </div>
@@ -370,74 +444,63 @@ function ContainerVideoRecorder({ assessment }: props) {
           </Grid>
         </Grid>
 
-        {!loading && (
-          <Grid item xs={6}>
-            <Card className='questionContainer'>
+        {!loading && !fullScreen && (
+          <Grid
+            item
+            xs={3}
+            style={{
+              transition: theme.transitions.create('all', {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.leavingScreen
+              })
+            }}
+          >
+            <Card className={`questionContainer`}>
+              <Card className='questionNumberCard' color='primary'>
+                <Typography className='questionNumberCard-paragraph' paragraph={true}>
+                  {`Question ${assessment.tasks.findIndex(it => it._id === currentTask._id) + 1}/${
+                    assessment.tasks.length
+                  }`}
+                </Typography>
+              </Card>
               <CardContent>
-                <div className='timelineContainer' style={{ width: '100%' }}>
-                  <Timeline
-                    recordings={recordings}
-                    tasks={assessment?.tasks}
-                    totalCheckPoints={assessment?.tasks.length}
-                    currentCheckPoint={currentCheckPoint}
-                    handlePointClick={handlePointClick}
-                  />
-                </div>
                 <Card className='questionCard'>
                   <CardContent>
-                    <Typography paragraph={true}>{currentTask.description}</Typography>
+                    <Typography className='questionCard-paragraph' paragraph={true}>
+                      {currentTask.description}
+                    </Typography>
                   </CardContent>
                 </Card>
-                <div className='buttonsContainer'>
-                  <IconButton
-                    color={recordedChunks.length > 0 && !capturing ? 'primary' : 'secondary'}
-                    onClick={handleRetakeClick}
-                    disabled={recordedChunks.length == 0}
-                  >
-                    <Icon icon='mdi:refresh' fontSize={30} color={recordedChunks.length == 0 ? 'grey' : undefined} />
-                  </IconButton>
-                  {capturing ? (
-                    <IconButton color={'error'} onClick={handleStopCaptureClick}>
-                      <Icon icon='mdi:stop' fontSize={30} />
-                    </IconButton>
-                  ) : (
-                    <IconButton color={'error'} onClick={handleStartCaptureClick} disabled={recordedChunks.length != 0}>
-                      <Icon icon='mdi:play' fontSize={30} color={recordedChunks.length != 0 ? 'grey' : undefined} />
-                    </IconButton>
-                  )}
-                  <IconButton disabled={recordedChunks.length == 0} color='primary' onClick={handleSubmitTask}>
-                    <Icon icon='mdi:tick' fontSize={30} color={recordedChunks.length == 0 ? 'grey' : undefined} />
-                  </IconButton>
-                  <DialogAction
-                    title='Confirm Retake of Video?'
-                    text='Are you sure you want to discard current video and go for retake?'
-                    open={retakePopup}
-                    setOpen={setRetakePopup}
-                    handleAgree={handleRetake}
-                    agreeText='Retake'
-                  />
-                  <DialogAction
-                    title='Confirm Submission of Video?'
-                    text='Once video for task is submitted, you cannot go back!'
-                    open={submitPopup}
-                    setOpen={setSubmitPopup}
-                    handleAgree={handleRecordingSubmit}
-                    agreeText='Submit'
-                  />
-                  <DialogSubmissionComplete
-                    title='Please wait for all video submissions.'
-                    text='Assessment is being submitted, Please wait'
-                    open={allSubmitPopup}
-                    allUploaded={allUploaded}
-                    completed={submitted}
-                    setOpen={setAllSubmittedPopup}
-                  />
-                </div>
               </CardContent>
             </Card>
           </Grid>
         )}
       </Grid>
+
+      <DialogAction
+        title='Confirm Retake of Video?'
+        text='Are you sure you want to discard current video and go for retake?'
+        open={retakePopup}
+        setOpen={setRetakePopup}
+        handleAgree={handleRetake}
+        agreeText='Retake'
+      />
+      <DialogAction
+        title='Confirm Submission of Video?'
+        text='Once video for task is submitted, you cannot go back!'
+        open={submitPopup}
+        setOpen={setSubmitPopup}
+        handleAgree={handleRecordingSubmit}
+        agreeText='Submit'
+      />
+      <DialogSubmissionComplete
+        title='Please wait for all video submissions.'
+        text='Assessment is being submitted, Please wait'
+        open={allSubmitPopup}
+        allUploaded={allUploaded}
+        completed={submitted}
+        setOpen={setAllSubmittedPopup}
+      />
     </>
   )
 }

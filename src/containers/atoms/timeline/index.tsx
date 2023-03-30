@@ -25,7 +25,7 @@ const Timeline = (props: Timeline) => {
   }
 
   return (
-    <div ref={parentSection}>
+    <div ref={parentSection} style={{ width: '50%' }}>
       <div className='outerContainer'>
         {Array.from(Array(props.totalCheckPoints).keys()).map((index: number) => {
           return (
