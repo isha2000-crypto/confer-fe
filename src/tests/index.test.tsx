@@ -5,7 +5,7 @@ describe('Home', () => {
   it('Renders a paragraph', () => {
     render(<HomePage />)
 
-    const heading = screen.getByText(/Kick start your project/i)
+    const heading = screen.getByText(/Welcome To Confer/i)
 
     expect(heading).toBeInTheDocument()
   })

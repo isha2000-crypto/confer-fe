@@ -59,7 +59,7 @@ export const VALIDATE_USERS = gql`
 `
 
 export const FETCH_ASSESSMENT_BY_ID = gql`
-  query Assessment($assessmentId: ObjectID!) {
+  query Assessment($assessmentId: ObjectId!) {
     assessment(id: $assessmentId) {
       _id
       title
@@ -84,7 +84,7 @@ export const FETCH_ASSESSMENT_BY_ID = gql`
 `
 
 export const SUBMITTED_ASSESSMENTS_USER = gql`
-  query SubmittedAssessmentsUser($submittedAssessmentsUserId: ObjectID!) {
+  query SubmittedAssessmentsUser($submittedAssessmentsUserId: ObjectId!) {
     submittedAssessmentsUser(id: $submittedAssessmentsUserId) {
       _id
       userId
@@ -117,7 +117,7 @@ export const SUBMITTED_ASSESSMENTS_USER = gql`
   }
 `
 export const SUBMITTED_ASSESSMENT_BY_ID = gql`
-  query SubmittedAssessment($submittedAssessmentId: ObjectID!) {
+  query SubmittedAssessment($submittedAssessmentId: ObjectId!) {
     submittedAssessment(id: $submittedAssessmentId) {
       _id
       userId

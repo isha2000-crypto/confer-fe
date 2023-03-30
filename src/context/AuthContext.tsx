@@ -119,7 +119,7 @@ const AuthProvider = ({ children }: Props) => {
     router.push('/login')
     signupUserMutation({
       variables: {
-        name: params.username,
+        name: params.name,
         email: params.email,
         password: params.password
       }
