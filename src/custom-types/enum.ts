@@ -3,3 +3,9 @@ export enum Roles {
   ADMIN = 'ADMIN',
   USER = 'USER'
 }
+
+export enum Task_Types {
+  PROGRAMMING = 'PROGRAMMING',
+  LEADERSHIP = 'LEADERSHIP',
+  COMMUNICATION = 'COMMUNICATION'
+}
