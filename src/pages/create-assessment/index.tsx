@@ -29,6 +29,7 @@ const FormLayoutsSeparator = () => {
     }
     setQuestions([...questions, newQuestion])
     setCount(count + 1)
+    setShowQuestionForm(false)
   }
 
   return (
@@ -62,6 +63,7 @@ const FormLayoutsSeparator = () => {
                   <Select
                     labelId='task-type-select-label'
                     id='task-type-select'
+
                     // value={taskType}
                     label='Task Type'
 
@@ -84,6 +86,7 @@ const FormLayoutsSeparator = () => {
             {/* <Button color='secondary' onClick={handleQuestionForm} startIcon={<AddIcon />} sx={{ mt: 3 }}>
               Add Question
             </Button> */}
+            {showQuestionForm}
 
             <Divider sx={{ mb: '0 !important' }} />
             <Grid item container justifyContent='center'>
