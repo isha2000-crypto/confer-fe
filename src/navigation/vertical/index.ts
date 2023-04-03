@@ -1,5 +1,5 @@
 // ** Type import
-import { ASSESSMENTS, ASSESSMENT_URL } from '@custom-types/constants'
+import { ASSESSMENTS, ASSESSMENT_URL, ADMIN_URL, INVITE } from '@custom-types/constants'
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
 
 const navigation = (): VerticalNavItemsType => {
@@ -24,6 +24,19 @@ const navigation = (): VerticalNavItemsType => {
         {
           title: 'Submitted',
           path: `${ASSESSMENT_URL}/submitted`
+        }
+      ]
+    },
+
+    {
+      title: 'Admin',
+      icon: 'mdi-account-settings-variant',
+      action: 'read',
+      subject: INVITE,
+      children: [
+        {
+          title: 'Invite',
+          path: `${ADMIN_URL}/invite`
         }
       ]
     }
