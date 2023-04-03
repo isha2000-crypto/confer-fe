@@ -24,6 +24,10 @@ const navigation = (): VerticalNavItemsType => {
         {
           title: 'Submitted',
           path: `${ASSESSMENT_URL}/submitted`
+        },
+        {
+          title: 'Create Assessment',
+          path: `${ASSESSMENT_URL}/create`
         }
       ]
     }

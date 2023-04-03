@@ -1,4 +1,4 @@
-import AssessmentForm from '../../components/organisms/Forms/CreateAssessmentForm'
+import AssessmentForm from '../../../components/organisms/Forms/CreateAssessmentForm'
 
 const FormLayoutsSeparator = () => {
   return <AssessmentForm />
