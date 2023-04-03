@@ -17,7 +17,12 @@ import Box from '@mui/material/Box'
 import { Task_Types } from '../../custom-types/enum'
 
 const FormLayoutsSeparator = () => {
-  const [questions, setQuestions] = useState([])
+  interface Question {
+    id: number
+    question: JSX.Element
+  }
+
+  const [questions, setQuestions] = useState<Question[]>([])
 
   const [showQuestionForm, setShowQuestionForm] = useState(false)
   const [count, setCount] = useState(0)
@@ -63,8 +68,6 @@ const FormLayoutsSeparator = () => {
                   <Select
                     labelId='task-type-select-label'
                     id='task-type-select'
-
-                    // value={taskType}
                     label='Task Type'
 
                     // onChange={e => setTaskType(e.target.value)}
