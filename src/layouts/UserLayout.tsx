@@ -5,6 +5,8 @@ import { ReactNode } from 'react'
 import { Theme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 
+import { useAuth } from 'src/hooks/useAuth'
+
 // ** Layout Imports
 // !Do not remove this Layout import
 import Layout from 'src/@core/layouts/Layout'
@@ -32,6 +34,7 @@ interface Props {
 const UserLayout = ({ children, contentHeightFixed }: Props) => {
   // ** Hooks
   const { settings, saveSettings } = useSettings()
+  const auth = useAuth()
 
   // ** Vars for server side navigation
   // const { menuItems: verticalMenuItems } = ServerSideVerticalNavItems()
@@ -50,6 +53,8 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
   if (hidden && settings.layout === 'horizontal') {
     settings.layout = 'vertical'
   }
+  console.log('user', auth.user?.role)
+  const role = auth.user?.role
 
   return (
     <Layout
@@ -59,7 +64,7 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
       contentHeightFixed={contentHeightFixed}
       verticalLayoutProps={{
         navMenu: {
-          navItems: VerticalNavItems()
+          navItems: VerticalNavItems(role)
 
           // Uncomment the below line when using server-side menu in vertical layout and comment the above line
           // navItems: verticalMenuItems

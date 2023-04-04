@@ -1,32 +1,12 @@
-// ** React Imports
-import { ChangeEvent, MouseEvent, useState } from 'react'
-
-// ** MUI Imports
-
+import React, { useState } from 'react'
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
-import Checkbox from '@mui/material/Checkbox'
 import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
-
 import Typography from '@mui/material/Typography'
-import InputLabel from '@mui/material/InputLabel'
-import IconButton from '@mui/material/IconButton'
+import Chip from '@mui/material/Chip'
+import CancelIcon from '@mui/icons-material/Cancel'
 
-import FormControl from '@mui/material/FormControl'
-import OutlinedInput from '@mui/material/OutlinedInput'
-import InputAdornment from '@mui/material/InputAdornment'
-import FormControlLabel from '@mui/material/FormControlLabel'
-
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
-
-interface State {
-  password: string
-  showPassword: boolean
-}
-
-// Styled component for the form
 const Form = styled('form')(({ theme }) => ({
   maxWidth: 400,
   padding: theme.spacing(12),
@@ -35,68 +15,87 @@ const Form = styled('form')(({ theme }) => ({
 }))
 
 const InviteForm = () => {
-  // ** State
-  const [values, setValues] = useState<State>({
-    password: '',
-    showPassword: false
-  })
+  const [emails, setEmails] = useState([])
+  const [inputValue, setInputValue] = useState('')
 
-  // Handle Password
-  const handleChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
-    setValues({ ...values, [prop]: event.target.value })
+  const handleEmailsChange = event => {
+    setInputValue(event.target.value)
   }
-  const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword })
+  const handleKeyPress = event => {
+    if (event.key === 'Enter') {
+      handleAddEmail(event)
+    }
   }
-  const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
+
+  // const handleAddEmail = event => {
+  //   event.preventDefault()
+  //   const newEmails = inputValue.split(' ').filter(email => email !== '')
+  //   setEmails([...emails, ...newEmails])
+  //   setInputValue('')
+  // }
+  const handleAddEmail = event => {
     event.preventDefault()
+    const newEmails = inputValue.split(' ').filter(email => email !== '')
+
+    // Email regex pattern
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+    const validEmails = newEmails.filter(email => emailPattern.test(email))
+
+    setEmails([...emails, ...validEmails])
+    setInputValue('')
+  }
+
+  const handleSubmit = event => {
+    event.preventDefault()
+    console.log(emails)
+  }
+  const handleRemoveEmail = email => {
+    setEmails(emails.filter(e => e !== email))
   }
 
   return (
-    <Form onSubmit={e => e.preventDefault()}>
+    <Form onSubmit={handleSubmit}>
       <Grid container spacing={5}>
         <Grid item xs={12}>
-          <Typography variant='h5'>Sign In</Typography>
+          <Typography variant='h5'>Invitation</Typography>
         </Grid>
         <Grid item xs={12}>
-          <TextField fullWidth label='Username' placeholder='carterLeonard' />
-        </Grid>
-        <Grid item xs={12}>
-          <FormControl fullWidth>
-            <InputLabel htmlFor='form-layouts-alignment-password'>Password</InputLabel>
-            <OutlinedInput
-              label='Password'
-              value={values.password}
-              onChange={handleChange('password')}
-              id='form-layouts-alignment-password'
-              type={values.showPassword ? 'text' : 'password'}
-              endAdornment={
-                <InputAdornment position='end'>
-                  <IconButton
-                    edge='end'
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    aria-label='toggle password visibility'
-                  >
-                    <Icon icon={values.showPassword ? 'mdi:eye-outline' : 'mdi:eye-off-outline'} />
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-          </FormControl>
-        </Grid>
-        <Grid item xs={12}>
-          <FormControlLabel
-            label='Remember me'
-            control={<Checkbox name='form-layouts-alignment-checkbox' />}
-            sx={{ '& .MuiButtonBase-root': { pt: 0, pb: 0 } }}
+          <TextField
+            fullWidth
+            label='Emails'
+            multiline
+            rows={4}
+            placeholder='Enter emails separated by a single space'
+            value={inputValue}
+            onChange={handleEmailsChange}
+            onKeyPress={handleKeyPress}
           />
         </Grid>
-        <Grid item xs={12}>
-          <Button size='large' type='submit' variant='contained' sx={{ width: '100%' }}>
-            Login
-          </Button>
-        </Grid>
+      </Grid>
+      <br />
+      <Grid item xs={12}>
+        <Button size='large' type='button' variant='contained' sx={{ width: '100%' }} onClick={handleAddEmail}>
+          Add
+        </Button>
+      </Grid>
+      <br />
+      <Grid item xs={12}>
+        {emails.map(email => (
+          <Chip
+            key={email}
+            label={email}
+            onDelete={() => handleRemoveEmail(email)}
+            deleteIcon={<CancelIcon />}
+            sx={{ mr: 1, mb: 1 }}
+          />
+        ))}
+      </Grid>
+      <br />
+      <Grid item xs={12}>
+        <Button size='large' type='submit' variant='contained' sx={{ width: '100%' }}>
+          Send Invite
+        </Button>
       </Grid>
     </Form>
   )
