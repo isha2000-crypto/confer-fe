@@ -74,3 +74,12 @@ export const CREATE_ASSESSMENT_SUBMISSION = gql`
     }
   }
 `
+
+export const INVITE_USER_MUTATION = gql`
+  mutation ($usersInvitationInput: UsersInvitationInput!) {
+    inviteUsers(usersInvitationInput: $usersInvitationInput) {
+      failed
+      sent
+    }
+  }
+`
