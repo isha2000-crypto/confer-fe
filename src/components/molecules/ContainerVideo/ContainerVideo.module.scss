@@ -1,10 +1,3 @@
-.timeline_wrapper {
-  border: 1px solid #00aca1;
-  width: 50%;
-  padding: 1rem;
-  margin: 1rem auto;
-}
-
 .video_wrapper {
   -webkit-box-align: center;
   align-items: center;
@@ -80,19 +73,4 @@
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-}
-
-.animater_wrapper {
-  position: relative;
-  .animater_grid {
-    transition: all ease-in-out 0.2s !important;
-  }
-  .animater_grid_left {
-    flex-grow: 1;
-    transition: all ease-in-out 0.2s !important;
-  }
-
-  .animater_grid_right {
-    width: 35%;
-  }
 }

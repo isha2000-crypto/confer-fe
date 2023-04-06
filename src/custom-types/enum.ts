@@ -3,3 +3,9 @@ export enum Roles {
   ADMIN = 'ADMIN',
   USER = 'USER'
 }
+
+export enum TaskStatus {
+  OPEN = 'OPEN',
+  UPLOADING = 'UPLOADING',
+  SUBMITTED = 'SUBMITTED'
+}
