@@ -50,10 +50,21 @@ export const VALIDATE_USERS = gql`
       _id
       name
       email
-      role
+      roleId
+      role {
+        _id
+        title
+        permissions {
+          assessment_submission
+          assessments
+          roles
+          tenants
+          user_invitation
+          users
+        }
+      }
       email_verified
       picture
-      permissions
     }
   }
 `
