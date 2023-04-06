@@ -14,9 +14,15 @@ export type RegisterParams = {
   password: string
 }
 
+export type Role = {
+  _id: string
+  title: string
+  permissons: any
+}
+
 export type UserDataType = {
   id: number
-  role: string
+  role: Role
   email: string
   name: string
   fullName: string

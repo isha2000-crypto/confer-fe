@@ -9,15 +9,13 @@ import Spinner from 'src/@core/components/spinner'
 
 // ** Hook Imports
 import { useAuth } from 'src/hooks/useAuth'
-import { Roles } from '../custom-types/enum'
+import { Role } from '@custom-types/contextTypes'
 
 /**
  *  Set Home URL based on User Roles
  */
-export const getHomeRoute = (role: string) => {
-  if (Roles.SUPER_ADMIN === role) return '/home'
-  if (Roles.ADMIN === role) return '/home'
-  if (Roles.USER === role) {
+export const getHomeRoute = (role: Role) => {
+  if (Object.keys(role).length !== 0) {
     return '/home'
   }
 

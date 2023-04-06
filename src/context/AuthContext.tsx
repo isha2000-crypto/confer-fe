@@ -143,7 +143,7 @@ const AuthProvider = ({ children }: Props) => {
         router.replace(redirectURL as string)
       })
       .catch(err => {
-        console.log('Error', err)
+        console.log('Error in LoginGoogle', err)
         if (errorCallback) errorCallback(err)
       })
   }
