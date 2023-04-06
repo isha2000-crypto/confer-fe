@@ -1,0 +1,34 @@
+.questionContainer {
+  display: grid;
+  align-self: end;
+  height: 100%;
+  width: 100%;
+  background: white !important;
+  box-shadow: none !important;
+  border: 1px solid #00aca1;
+  border-radius: 45px !important;
+}
+
+.questionCard {
+  display: grid;
+  height: 15vh;
+  border: 1px solid #00aca1;
+  justify-content: center;
+  align-items: center;
+  justify-self: center;
+
+  .questionCard_paragraph {
+    font-size: 24px;
+  }
+}
+
+.questionNumberCard {
+  background: #00aca1 !important;
+  height: 3rem;
+
+  .questionNumberCard_paragraph {
+    font-size: 24px;
+    color: white;
+    text-align: center;
+  }
+}

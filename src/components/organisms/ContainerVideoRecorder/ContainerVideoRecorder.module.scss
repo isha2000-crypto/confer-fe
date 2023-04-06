@@ -1,0 +1,14 @@
+.animater_wrapper {
+  position: relative;
+  .animater_grid {
+    transition: all ease-in-out 0.2s !important;
+  }
+  .animater_grid_left {
+    flex-grow: 1;
+    transition: all ease-in-out 0.2s !important;
+  }
+
+  .animater_grid_right {
+    width: 35%;
+  }
+}

@@ -9,3 +9,9 @@ export enum Task_Types {
   LEADERSHIP = 'LEADERSHIP',
   COMMUNICATION = 'COMMUNICATION'
 }
+
+export enum TaskStatus {
+  OPEN = 'OPEN',
+  UPLOADING = 'UPLOADING',
+  SUBMITTED = 'SUBMITTED'
+}

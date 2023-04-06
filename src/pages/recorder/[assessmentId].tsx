@@ -1,4 +1,3 @@
-import Grid from '@mui/material/Grid'
 import dynamic from 'next/dynamic'
 import BlankLayoutWithAppBar from 'src/@core/layouts/BlankLayoutWithAppBar'
 import { ReactNode } from 'react'
@@ -30,13 +29,7 @@ const Recorder = () => {
 
   if (error) return <div>Error Occured</div>
 
-  return (
-    <Grid container>
-      <Grid item xs={12}>
-        {assessment && <ContainerVideoRecorder assessment={assessment} />}
-      </Grid>
-    </Grid>
-  )
+  return <>{assessment && <ContainerVideoRecorder assessment={assessment} />}</>
 }
 
 Recorder.getLayout = (page: ReactNode) => <BlankLayoutWithAppBar>{page}</BlankLayoutWithAppBar>
