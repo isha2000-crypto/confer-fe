@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
 import { styled } from '@mui/material/styles'
@@ -9,6 +9,11 @@ import CancelIcon from '@mui/icons-material/Cancel'
 import { useMutation } from '@apollo/client'
 import { INVITE_USER_MUTATION } from 'src/lib/graphql/Mutation'
 import CircularProgress from '@mui/material/CircularProgress'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import InputLabel from '@mui/material/InputLabel'
+import { FormControl } from '@mui/material'
+import DialogInvite from '@components/molecules/Dialog/DialogInvite'
 
 const Form = styled('form')(({ theme }) => ({
   maxWidth: 400,
@@ -25,7 +30,19 @@ const InviteForm = () => {
   const [loading, setLoading] = useState(false)
   const [inviteUserMutation] = useMutation(INVITE_USER_MUTATION)
 
+  // const [selectedRole, setSelectedRole] = useState('')
+
   // const [inviteUserMutation, { loading }] = useMutation(INVITE_USER_MUTATION)
+  const [open, setOpen] = useState(false)
+  const [userRole, setUserRole] = useState()
+
+  const handleOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
 
   const handleEmailsChange = event => {
     setInputValue(event.target.value)
@@ -52,7 +69,7 @@ const InviteForm = () => {
   const handleSubmit = event => {
     event.preventDefault()
 
-    // console.log(emails)
+    console.log(emails)
   }
   const handleRemoveEmail = email => {
     setEmails(emails.filter(e => e !== email))
@@ -75,10 +92,21 @@ const InviteForm = () => {
       .finally(() => {
         setLoading(false)
       })
+    if (userRole == null) {
+      console.log('Enter role')
+    }
   }
   const handleClear = () => {
     setEmails([])
   }
+
+  const handleRoleChange = event => {
+    setUserRole(event.target.value)
+    // console.log('role', userRole)
+  }
+  useEffect(() => {
+    console.log('role', userRole)
+  }, [userRole])
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -99,6 +127,28 @@ const InviteForm = () => {
           />
         </Grid>
       </Grid>
+
+      <Grid item xs={12} md={4}>
+        <Typography variant='body2' sx={{ fontWeight: 600 }}>
+          Role
+        </Typography>
+        <FormControl fullWidth sx={{ alignSelf: 'center' }}>
+          <InputLabel id='role-select-label'>Role</InputLabel>
+          <Select
+            labelId='role-select-label'
+            id='role-select'
+            label='role'
+            value={userRole}
+            onChange={handleRoleChange}
+
+            // onChange={e => setTaskType(e.target.value)}
+          >
+            <MenuItem value='admin'>Admin</MenuItem>
+            <MenuItem value='user'>User</MenuItem>
+            <MenuItem value='superadmin'>Superadmin</MenuItem>
+          </Select>
+        </FormControl>
+      </Grid>
       <br />
       <Grid item xs={12}>
         <Button size='large' type='button' variant='contained' sx={{ width: '100%' }} onClick={handleAddEmail}>
@@ -110,7 +160,7 @@ const InviteForm = () => {
         {emails.map(email => (
           <Chip
             key={email}
-            label={email}
+            label={`(${userRole}) ${email}`}
             onDelete={() => handleRemoveEmail(email)}
             deleteIcon={<CancelIcon />}
             sx={{ mr: 1, mb: 1 }}
@@ -119,9 +169,21 @@ const InviteForm = () => {
       </Grid>
       <br />
       <Grid item xs={12}>
-        <Button size='large' type='submit' variant='contained' sx={{ width: '100%' }} onClick={handleInvite}>
+        <Button
+          size='large'
+          type='submit'
+          variant='contained'
+          sx={{ width: '100%' }}
+          onClick={handleInvite}
+          disabled={!userRole}
+        >
           {loading ? <CircularProgress size={24} /> : 'Send Invite'}
         </Button>
+        {!userRole && (
+          <Typography color='error' variant='caption'>
+            Please select a role before adding emails.
+          </Typography>
+        )}
         {inviteSuccessCount > 0 && (
           <Typography variant='body2' color='success'>
             {inviteSuccessCount} invite{inviteSuccessCount > 1 && 's'} sent successfully

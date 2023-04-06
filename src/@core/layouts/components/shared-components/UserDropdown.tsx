@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, SyntheticEvent, Fragment } from 'react'
+import { useState, SyntheticEvent, Fragment, useEffect } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -22,6 +22,8 @@ import { useAuth } from 'src/hooks/useAuth'
 
 // ** Type Imports
 import { Settings } from 'src/@core/context/settingsContext'
+import DialogInvite from '@components/molecules/Dialog/DialogInvite'
+import { Button } from '@mui/material'
 
 interface Props {
   settings: Settings
@@ -39,6 +41,18 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
 const UserDropdown = (props: Props) => {
   // ** Props
   const { settings } = props
+
+  const [modalOpen, setModalOpen] = useState(false)
+
+  const handleOpen = () => {
+    setModalOpen(prev => !prev)
+    console.log('Modal open')
+  }
+
+  const handleClose = () => {
+    setModalOpen(prev => !prev)
+    console.log('Modal close')
+  }
 
   // ** States
   const [anchorEl, setAnchorEl] = useState<Element | null>(null)
@@ -80,6 +94,10 @@ const UserDropdown = (props: Props) => {
     logout()
     handleDropdownClose()
   }
+
+  // useEffect(() => {
+  //   console.log('modalOpen:', modalOpen)
+  // }, [modalOpen])
 
   return (
     <Fragment>
@@ -134,13 +152,15 @@ const UserDropdown = (props: Props) => {
         </Box>
         <Divider sx={{ mt: '0 !important' }} />
 
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+        <MenuItem sx={{ p: 0 }} onClick={handleOpen}>
           <Box sx={styles}>
-            <Icon icon='mdi:help-circle-outline' />
+            <Icon icon='mdi-email' />
             Invite
           </Box>
         </MenuItem>
+
         <Divider />
+
         <MenuItem
           onClick={handleLogout}
           sx={{ py: 2, '& svg': { mr: 2, fontSize: '1.375rem', color: 'text.primary' } }}
@@ -149,6 +169,7 @@ const UserDropdown = (props: Props) => {
           Logout
         </MenuItem>
       </Menu>
+      <DialogInvite open={modalOpen} onClose={handleClose} />
     </Fragment>
   )
 }
