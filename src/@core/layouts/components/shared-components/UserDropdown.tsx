@@ -24,6 +24,7 @@ import { useAuth } from 'src/hooks/useAuth'
 import { Settings } from 'src/@core/context/settingsContext'
 import DialogInvite from '@components/molecules/Dialog/DialogForm'
 import { Button } from '@mui/material'
+import InviteForm from '@components/organisms/Forms/InviteForm'
 
 interface Props {
   settings: Settings
@@ -169,7 +170,10 @@ const UserDropdown = (props: Props) => {
           Logout
         </MenuItem>
       </Menu>
-      <DialogInvite open={modalOpen} onClose={handleClose} />
+
+      <DialogInvite open={modalOpen} onClose={handleClose}>
+        <InviteForm />
+      </DialogInvite>
     </Fragment>
   )
 }

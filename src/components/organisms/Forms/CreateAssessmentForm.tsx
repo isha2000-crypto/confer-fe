@@ -48,24 +48,15 @@ const CreateAssessmentForm = () => {
         <CardContent>
           <Grid container spacing={5}>
             <Grid item xs={6}>
-              <Typography variant='body2' sx={{ fontWeight: 600 }}>
-                Title
-                <TextField fullWidth type='title' placeholder='Task' />
-              </Typography>
+              <TextField fullWidth type='title' label='Title' placeholder='Task' />
             </Grid>
             <Grid item xs={12} sm={12}>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <Typography variant='body2' sx={{ fontWeight: 600 }}>
-                  Description
-                </Typography>
-                <TextField fullWidth multiline rows={4} placeholder='Description here' />
+                <TextField fullWidth multiline label='Description' rows={4} placeholder='Description here' />
               </div>
             </Grid>
             <Grid item xs={6}>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <Typography variant='body2' sx={{ fontWeight: 600 }}>
-                  Task Type
-                </Typography>
                 <br />
                 <FormControl fullWidth sx={{ alignSelf: 'center' }}>
                   <InputLabel id='task-type-select-label'>Task Type</InputLabel>
@@ -85,17 +76,21 @@ const CreateAssessmentForm = () => {
               </div>
             </Grid>
             <br />
-            {questions.map(q => (
-              <Box key={q.id} sx={{ mb: 3 }}>
-                {q.question}
-                <br />
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Button onClick={() => removeQuestion(q.id)} size='small' variant='contained'>
-                    Remove
-                  </Button>
-                </div>
-              </Box>
-            ))}
+            <Grid>
+              {' '}
+              {questions.map(q => (
+                <Box key={q.id} sx={{ mb: 3 }}>
+                  {q.question}
+                  <br />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Button onClick={() => removeQuestion(q.id)} size='small' variant='contained'>
+                      Remove
+                    </Button>
+                  </div>
+                </Box>
+              ))}
+            </Grid>
+
             {showQuestionForm ? <Question count={count + 1} /> : null}
             {/* <Button color='secondary' onClick={handleQuestionForm} startIcon={<AddIcon />} sx={{ mt: 3 }}>
               Add Question
@@ -106,7 +101,7 @@ const CreateAssessmentForm = () => {
             <Grid item container justifyContent='center'>
               <Button
                 onClick={addQuestion}
-                startIcon={<AddIcon />}
+                className='add-question-button'
                 sx={{
                   width: '100%',
                   fontSize: '1.5rem',
@@ -114,6 +109,8 @@ const CreateAssessmentForm = () => {
                   borderRadius: '0.5rem',
                   boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
                   transition: 'all 0.3s ease',
+                  border: '4px dotted grey',
+                  color: 'grey',
                   '&:hover': {
                     backgroundColor: '#1976d2',
                     boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.25)'

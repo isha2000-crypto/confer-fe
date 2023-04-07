@@ -31,9 +31,7 @@ const DialogForm = (props: Props) => {
       }}
     >
       <DialogTitle>Invite Users</DialogTitle>
-      <DialogContent>
-        {children} {<InviteForm />}
-      </DialogContent>
+      <DialogContent>{children}</DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Close</Button>
       </DialogActions>
