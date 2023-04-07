@@ -12,7 +12,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import InputLabel from '@mui/material/InputLabel'
-import { FormControl } from '@mui/material'
+import { Alert, FormControl } from '@mui/material'
 import DialogInvite from '@components/molecules/Dialog/DialogInvite'
 
 const Form = styled('form')(({ theme }) => ({
@@ -184,13 +184,13 @@ const InviteForm = () => {
           </Typography>
         )}
         {inviteSuccessCount > 0 && (
-          <Typography variant='body2' color='success'>
+          <Alert severity='success'>
             {inviteSuccessCount} invite{inviteSuccessCount > 1 && 's'} sent successfully
-          </Typography>
+          </Alert>
         )}
         {inviteSuccessCount < 0 && (
           <div>
-            {failedInvite} to these emails invite not sent
+            <Alert severity='error'>{failedInvite} to these emails invite not sent</Alert>
             <Button size='large' type='submit' variant='contained' sx={{ width: '100%' }} onClick={handleInvite}>
               {' '}
               Retry
