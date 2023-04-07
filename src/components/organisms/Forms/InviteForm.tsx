@@ -102,6 +102,7 @@ const InviteForm = () => {
 
   const handleRoleChange = event => {
     setUserRole(event.target.value)
+
     // console.log('role', userRole)
   }
   useEffect(() => {
