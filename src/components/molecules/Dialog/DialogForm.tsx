@@ -8,10 +8,11 @@ import { Button, DialogActions } from '@mui/material'
 interface Props {
   onClose: () => void
   open: boolean
+  children: React.ReactNode // add children prop
 }
 
-const DialogInvite = (props: Props) => {
-  const { onClose, open } = props
+const DialogForm = (props: Props) => {
+  const { onClose, open, children } = props
 
   const handleDialogClick = (event: any) => {
     event.stopPropagation()
@@ -31,7 +32,7 @@ const DialogInvite = (props: Props) => {
     >
       <DialogTitle>Invite Users</DialogTitle>
       <DialogContent>
-        <InviteForm />
+        {children} {<InviteForm />}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Close</Button>
@@ -40,4 +41,4 @@ const DialogInvite = (props: Props) => {
   )
 }
 
-export default DialogInvite
+export default DialogForm

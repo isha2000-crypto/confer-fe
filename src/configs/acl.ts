@@ -1,4 +1,7 @@
 import { AbilityBuilder, Ability } from '@casl/ability'
+
+// import { Roles } from '../custom-types/enum'
+// import INVITE from '../custom-types/constants'
 import { Role } from '@custom-types/contextTypes'
 
 // import { ASSESSMENTS } from '@custom-types/constants'
@@ -21,6 +24,15 @@ export type ACLObj = {
  */
 const defineRulesFor = (role: Role, subject: string) => {
   const { can, rules } = new AbilityBuilder(AppAbility)
+
+  // if (role === Roles.SUPER_ADMIN) {
+  //   can('manage', 'all')
+  //   can(['read', 'write'], INVITE)
+  // } else if (Roles.ADMIN === role) {
+  //   can('manage', 'all')
+  //   can(['read', 'write'], INVITE)
+  // } else if (Roles.USER === role) {
+  // can(['read', 'write'], ASSESSMENTS)
   console.log(subject)
   if (Object.keys(role).length !== 0) {
     can('manage', 'all')

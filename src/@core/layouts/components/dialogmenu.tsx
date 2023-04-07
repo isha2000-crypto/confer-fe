@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import MenuItem from '../components/shared-components/UserDropdown'
-import DialogInvite from '../../../components/molecules/Dialog/DialogInvite'
+import DialogInvite from '../../../components/molecules/Dialog/DialogForm'
 
 function Menu() {
   const [showDialog, setShowDialog] = useState(false)

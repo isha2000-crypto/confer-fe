@@ -34,7 +34,7 @@ const InviteForm = () => {
 
   // const [inviteUserMutation, { loading }] = useMutation(INVITE_USER_MUTATION)
   const [open, setOpen] = useState(false)
-  const [userRole, setUserRole] = useState()
+  const [userRole, setUserRole] = useState('user')
 
   const handleOpen = () => {
     setOpen(true)
@@ -133,11 +133,10 @@ const InviteForm = () => {
           Role
         </Typography>
         <FormControl fullWidth sx={{ alignSelf: 'center' }}>
-          <InputLabel id='role-select-label'>Role</InputLabel>
+          {/* <InputLabel id='role-select-label'>Role</InputLabel> */}
           <Select
             labelId='role-select-label'
             id='role-select'
-            label='role'
             value={userRole}
             onChange={handleRoleChange}
 

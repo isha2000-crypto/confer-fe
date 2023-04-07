@@ -22,7 +22,7 @@ import { useAuth } from 'src/hooks/useAuth'
 
 // ** Type Imports
 import { Settings } from 'src/@core/context/settingsContext'
-import DialogInvite from '@components/molecules/Dialog/DialogInvite'
+import DialogInvite from '@components/molecules/Dialog/DialogForm'
 import { Button } from '@mui/material'
 
 interface Props {
