@@ -1,9 +1,3 @@
-export enum Roles {
-  SUPER_ADMIN = 'SUPER_ADMIN',
-  ADMIN = 'ADMIN',
-  USER = 'USER'
-}
-
 export enum Task_Types {
   PROGRAMMING = 'PROGRAMMING',
   LEADERSHIP = 'LEADERSHIP',

@@ -36,6 +36,9 @@ const CreateAssessmentForm = () => {
     setCount(count + 1)
     setShowQuestionForm(false)
   }
+  const removeQuestion = (id: number) => {
+    setQuestions(questions.filter(q => q.id !== id))
+  }
 
   return (
     <Card>
@@ -47,7 +50,7 @@ const CreateAssessmentForm = () => {
             <Grid item xs={6}>
               <Typography variant='body2' sx={{ fontWeight: 600 }}>
                 Title
-                <TextField fullWidth type='title' label='title' placeholder='task' />
+                <TextField fullWidth type='title' placeholder='Task' />
               </Typography>
             </Grid>
             <Grid item xs={12} sm={12}>
@@ -63,6 +66,7 @@ const CreateAssessmentForm = () => {
                 <Typography variant='body2' sx={{ fontWeight: 600 }}>
                   Task Type
                 </Typography>
+                <br />
                 <FormControl fullWidth sx={{ alignSelf: 'center' }}>
                   <InputLabel id='task-type-select-label'>Task Type</InputLabel>
                   <Select
@@ -77,12 +81,19 @@ const CreateAssessmentForm = () => {
                     <MenuItem value='testing'>{Task_Types.PROGRAMMING}</MenuItem>
                   </Select>
                 </FormControl>
+                <br />
               </div>
             </Grid>
-
+            <br />
             {questions.map(q => (
               <Box key={q.id} sx={{ mb: 3 }}>
                 {q.question}
+                <br />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Button onClick={() => removeQuestion(q.id)} size='small' variant='contained'>
+                    Remove
+                  </Button>
+                </div>
               </Box>
             ))}
             {showQuestionForm ? <Question count={count + 1} /> : null}
@@ -90,7 +101,7 @@ const CreateAssessmentForm = () => {
               Add Question
             </Button> */}
             {showQuestionForm}
-
+            <br />
             <Divider sx={{ mb: '0 !important' }} />
             <Grid item container justifyContent='center'>
               <Button

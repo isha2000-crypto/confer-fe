@@ -80,11 +80,8 @@ const navigation = (role: any): VerticalNavItemsType => {
           path: `${ASSESSMENT_URL}/create`
         }
       ]
-    }
-  ]
-
-  if (role === Roles.SUPER_ADMIN || role === Roles.ADMIN) {
-    navItems.push({
+    },
+    {
       title: 'Admin',
       icon: 'mdi-account-settings-variant',
       action: 'create',
@@ -95,8 +92,8 @@ const navigation = (role: any): VerticalNavItemsType => {
           path: `${ADMIN_URL}/invite`
         }
       ]
-    })
-  }
+    }
+  ]
 
   return navItems
 }
