@@ -6,6 +6,7 @@ import Spinner from 'src/@core/components/spinner'
 import React from 'react'
 import { useLazyQuery } from '@apollo/client'
 import { FETCH_ASSESSMENT_BY_ID } from 'src/lib/graphql/Query'
+import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 
 const ContainerVideoRecorder = dynamic(() => import('@components/organisms/ContainerVideoRecorder'))
 
@@ -30,6 +31,11 @@ const Recorder = () => {
   if (error) return <div>Error Occured</div>
 
   return <>{assessment && <ContainerVideoRecorder assessment={assessment} />}</>
+}
+
+Recorder.acl = {
+  action: ACTIONS.CREATE,
+  subject: SUBJECTS.ASSESSMENT_SUBMISSION
 }
 
 Recorder.getLayout = (page: ReactNode) => <BlankLayoutWithAppBar>{page}</BlankLayoutWithAppBar>

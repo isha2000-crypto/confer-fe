@@ -6,6 +6,9 @@ import CustomAvatar from 'src/@core/components/mui/avatar'
 import IconBoxAssessment from './IconBoxAssessment'
 import IconTypography from '@components/atoms/IconTypography'
 import Button from '@mui/material/Button'
+import { useContext } from 'react'
+import { AbilityContext } from 'src/layouts/components/acl/Can'
+import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 
 const avatarIcons: any = {
   LEADERSHIP: 'mdi:lead-pencil',
@@ -24,6 +27,8 @@ interface Props {
 }
 
 function CardAssessment({ _id, type, title, time, responses, tasks, author, handlePopup }: Props) {
+  const ability = useContext(AbilityContext)
+
   return (
     <CardBasic sxContent={{ display: 'flex', textAlign: 'center', alignItems: 'center', flexDirection: 'column' }}>
       <CustomAvatar skin='light' sx={{ width: 100, height: 100, mb: 2 }}>
@@ -32,9 +37,18 @@ function CardAssessment({ _id, type, title, time, responses, tasks, author, hand
       <Heading variant={HeadingVariant.h6}>{title}</Heading>
       <IconBoxAssessment time={time} responses={responses} tasks={tasks} />
       <IconTypography icon='mdi:account-outline' text={author} tooltip='Author' />
-      <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 7 }} onClick={() => handlePopup(_id)}>
-        Record
-      </Button>
+      {ability?.can(ACTIONS.CREATE, SUBJECTS.ASSESSMENT_SUBMISSION) && (
+        <Button
+          fullWidth
+          size='large'
+          type='submit'
+          variant='contained'
+          sx={{ mb: 7 }}
+          onClick={() => handlePopup(_id)}
+        >
+          Record
+        </Button>
+      )}
     </CardBasic>
   )
 }

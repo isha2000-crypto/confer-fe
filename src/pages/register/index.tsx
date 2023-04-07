@@ -419,6 +419,10 @@ const Register = () => {
 
 Register.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 
-Register.guestGuard = true
+// Register.guestGuard = true
+Register.acl = {
+  action: null,
+  subject: null
+}
 
 export default Register
