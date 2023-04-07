@@ -9,7 +9,7 @@ const navigation = (): VerticalNavItemsType => {
   const navItems = [
     {
       title: 'Home',
-      path: '/home',
+      path: `${URLS.HOME}`,
       icon: 'mdi:home-outline',
       action: ACTIONS.READ,
       subject: SUBJECTS.PUBLIC
@@ -46,7 +46,13 @@ const navigation = (): VerticalNavItemsType => {
           subject: SUBJECTS.USER_INVITATION,
           action: ACTIONS.CREATE,
           title: 'Invite',
-          path: `${URLS.INVITE}/invite`
+          path: `${URLS.ADMIN}/invite`
+        },
+        {
+          subject: SUBJECTS.ROLES,
+          action: ACTIONS.CREATE,
+          title: 'Roles',
+          path: `${URLS.ADMIN}/roles`
         }
       ]
     }
