@@ -4,12 +4,10 @@ import { useEffect } from 'react'
 // ** Next Imports
 import { useRouter } from 'next/router'
 
-// ** Spinner Import
-import Spinner from 'src/@core/components/spinner'
-
 // ** Hook Imports
 import { useAuth } from 'src/hooks/useAuth'
 import { Role } from '@custom-types/contextTypes'
+import FallbackSpinner from 'src/@core/components/spinner'
 
 /**
  *  Set Home URL based on User Roles
@@ -41,7 +39,7 @@ const Home = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth])
 
-  return <Spinner />
+  return <FallbackSpinner />
 }
 
 export default Home

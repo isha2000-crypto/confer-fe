@@ -1,10 +1,11 @@
 import { AbilityBuilder, Ability } from '@casl/ability'
 import { Role } from '@custom-types/contextTypes'
+import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 
 // import { ASSESSMENTS } from '@custom-types/constants'
 
 export type Subjects = string
-export type Actions = 'manage' | 'create' | 'read' | 'update' | 'delete'
+export type Actions = 'CREATE' | 'READ' | 'UPDATE' | 'DELETE'
 
 export type AppAbility = Ability<[Actions, Subjects]> | undefined
 
@@ -21,10 +22,19 @@ export type ACLObj = {
  */
 const defineRulesFor = (role: Role, subject: string) => {
   const { can, rules } = new AbilityBuilder(AppAbility)
-  console.log(subject)
-  if (Object.keys(role).length !== 0) {
-    can('manage', 'all')
+  const { permissions } = role
+  const subjects = Object.keys(permissions)
+  const typeNameIndex = subjects.indexOf('__typename')
+  if (typeNameIndex > -1) subjects.splice(typeNameIndex, 1)
+
+  if (subjects.length !== 0) {
+    subjects.forEach(sub => {
+      can(permissions[sub], sub)
+    })
   }
+
+  can(ACTIONS.READ, SUBJECTS.PUBLIC)
+  can(ACTIONS.READ, subject)
 
   return rules
 }
@@ -38,8 +48,8 @@ export const buildAbilityFor = (role: Role, subject: string): AppAbility => {
 }
 
 export const defaultACLObj: ACLObj = {
-  action: 'manage',
-  subject: 'all'
+  action: ACTIONS.READ,
+  subject: SUBJECTS.PUBLIC
 }
 
 export default defineRulesFor

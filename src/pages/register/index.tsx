@@ -278,7 +278,6 @@ const Register = () => {
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
-                      autoFocus
                       value={value}
                       onBlur={onBlur}
                       label='Name'

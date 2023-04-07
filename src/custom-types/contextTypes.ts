@@ -17,7 +17,7 @@ export type RegisterParams = {
 export type Role = {
   _id: string
   title: string
-  permissons: any
+  permissions: any
 }
 
 export type UserDataType = {

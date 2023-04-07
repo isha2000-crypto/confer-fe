@@ -1,95 +1,52 @@
-// // ** Type import
-// import { ASSESSMENTS, ASSESSMENT_URL, ADMIN_URL, INVITE } from '@custom-types/constants'
-// import { VerticalNavItemsType } from 'src/@core/layouts/types'
-
-// const navigation = (): VerticalNavItemsType => {
-//   return [
-//     {
-//       title: 'Home',
-//       path: '/home',
-//       action: 'read',
-//       icon: 'mdi:home-outline',
-//       subject: 'home'
-//     },
-//     {
-//       title: 'Assessments',
-//       icon: 'mdi:calendar-check-outline',
-//       action: 'read',
-//       subject: ASSESSMENTS,
-//       children: [
-//         {
-//           title: 'Available',
-//           path: `${ASSESSMENT_URL}/available`
-//         },
-//         {
-//           title: 'Submitted',
-//           path: `${ASSESSMENT_URL}/submitted`
-//         }
-//       ]
-//     },
-
-//     {
-//       title: 'Admin',
-//       icon: 'mdi-account-settings-variant',
-//       action: 'create',
-//       subject: INVITE,
-//       children: [
-//         {
-//           title: 'Invite',
-//           path: `${ADMIN_URL}/invite`
-//         }
-//       ]
-//     }
-//   ]
-// }
-// export default navigation
-
-import { ASSESSMENTS, ASSESSMENT_URL, ADMIN_URL, INVITE } from '@custom-types/constants'
+import { URLS } from '@custom-types/constants'
 
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
 
-import { Roles } from '../../custom-types/enum'
+import { ACTIONS, SUBJECTS } from '../../custom-types/enum'
 
-const navigation = (role: any): VerticalNavItemsType => {
-  console.log('small role ', role)
-  console.log('Big role', role)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const navigation = (): VerticalNavItemsType => {
   const navItems = [
     {
       title: 'Home',
       path: '/home',
-      action: 'read',
       icon: 'mdi:home-outline',
-      subject: 'home'
+      action: ACTIONS.READ,
+      subject: SUBJECTS.PUBLIC
     },
     {
       title: 'Assessments',
       icon: 'mdi:calendar-check-outline',
-      action: 'read',
-      subject: ASSESSMENTS,
       children: [
         {
+          action: ACTIONS.READ,
+          subject: SUBJECTS.ASSESSMENT,
           title: 'Available',
-          path: `${ASSESSMENT_URL}/available`
+          path: `${URLS.ASSESSMENT_URL}/available`
         },
         {
+          action: ACTIONS.READ,
+          subject: SUBJECTS.ASSESSMENT_SUBMISSION,
           title: 'Submitted',
-          path: `${ASSESSMENT_URL}/submitted`
+          path: `${URLS.ASSESSMENT_URL}/submitted`
         },
         {
-          title: 'Create Assessment',
-          path: `${ASSESSMENT_URL}/create`
+          action: ACTIONS.CREATE,
+          subject: SUBJECTS.ASSESSMENT,
+          title: 'Create',
+          path: `${URLS.ASSESSMENT_URL}/create`
         }
       ]
     },
     {
       title: 'Admin',
       icon: 'mdi-account-settings-variant',
-      action: 'create',
-      subject: INVITE,
       children: [
         {
+          subject: SUBJECTS.USER_INVITATION,
+          action: ACTIONS.CREATE,
           title: 'Invite',
-          path: `${ADMIN_URL}/invite`
+          path: `${URLS.INVITE}/invite`
         }
       ]
     }

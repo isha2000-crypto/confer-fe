@@ -4,7 +4,7 @@ import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
 import InviteForm from '../../../components/organisms/Forms/InviteForm'
-import { INVITE } from '../../../custom-types/constants'
+import { SUBJECTS, ACTIONS } from '@custom-types/enum'
 
 // ** Icon Imports
 // Styled component for the form
@@ -20,7 +20,7 @@ const FormLayoutsAlignment = () => {
   )
 }
 FormLayoutsAlignment.acl = {
-  action: 'create',
-  subject: INVITE
+  subject: SUBJECTS.USER_INVITATION,
+  action: ACTIONS.CREATE
 }
 export default FormLayoutsAlignment

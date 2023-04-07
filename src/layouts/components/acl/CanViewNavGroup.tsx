@@ -31,7 +31,6 @@ const CanViewNavGroup = (props: Props) => {
 
   const canViewMenuGroup = (item: NavGroup) => {
     const hasAnyVisibleChild = item.children && checkForVisibleChild(item.children)
-
     if (!(item.action && item.subject)) {
       return hasAnyVisibleChild
     }
