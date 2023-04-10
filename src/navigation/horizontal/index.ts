@@ -6,23 +6,6 @@ const navigation = (): HorizontalNavItemsType => [
     title: 'Home',
     path: '/home',
     icon: 'mdi:home-outline'
-  },
-  {
-    title: 'Second Page',
-    path: '/second-page',
-    icon: 'mdi:email-outline'
-  },
-  {
-    title: 'Recorder',
-    path: '/recorder',
-    icon: 'mdi:record'
-  },
-  {
-    path: '/acl',
-    action: 'read',
-    subject: 'acl-page',
-    title: 'Access Control',
-    icon: 'mdi:shield-outline'
   }
 ]
 

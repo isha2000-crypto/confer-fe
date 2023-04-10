@@ -9,3 +9,20 @@ export enum TaskStatus {
   UPLOADING = 'UPLOADING',
   SUBMITTED = 'SUBMITTED'
 }
+
+export enum ACTIONS {
+  CREATE = 'CREATE',
+  READ = 'READ',
+  UPDATE = 'UPDATE',
+  DELETE = 'DELETE'
+}
+
+export enum SUBJECTS {
+  PUBLIC = 'public',
+  ASSESSMENT = 'assessments',
+  ASSESSMENT_SUBMISSION = 'assessment_submission',
+  USERS = 'users',
+  USER_INVITATION = 'user_invitation',
+  TENANTS = 'tenants',
+  ROLES = 'roles'
+}

@@ -21,8 +21,9 @@ const ReactHotToast = styled(Box)<BoxProps>(({ theme }) => {
     '& .react-hot-toast': {
       fontWeight: 400,
       borderRadius: 8,
-      width: 200,
-      height: 100,
+      width: 500,
+      height: 90,
+
       fontSize: '1rem',
       letterSpacing: '0.14px',
       color: theme.palette.text.primary,

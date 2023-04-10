@@ -1,12 +1,12 @@
 // ** MUI Imports
 import ListAssessments from 'src/components/organisms/ListAssessments'
-import { ASSESSMENTS } from '@custom-types/constants'
+import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 
 const Assessments = () => {
   return <ListAssessments />
 }
 Assessments.acl = {
-  action: 'read',
-  subject: ASSESSMENTS
+  action: ACTIONS.READ,
+  subject: SUBJECTS.ASSESSMENT
 }
 export default Assessments

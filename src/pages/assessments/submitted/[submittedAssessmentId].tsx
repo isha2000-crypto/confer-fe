@@ -7,6 +7,7 @@ import { useLazyQuery } from '@apollo/client'
 import { SUBMITTED_ASSESSMENT_BY_ID } from 'src/lib/graphql/Query'
 import Spinner from 'src/@core/components/spinner'
 import { Card } from '@mui/material'
+import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 
 const SubmittedAssessmentDetail = () => {
   const router = useRouter()
@@ -32,6 +33,11 @@ const SubmittedAssessmentDetail = () => {
       {submittedAssessment && <ViewSubmittedAssessment data={submittedAssessment} />}
     </Card>
   )
+}
+
+SubmittedAssessmentDetail.acl = {
+  action: ACTIONS.READ,
+  subject: SUBJECTS.ASSESSMENT_SUBMISSION
 }
 
 export default SubmittedAssessmentDetail

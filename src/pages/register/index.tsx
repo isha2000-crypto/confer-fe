@@ -278,7 +278,6 @@ const Register = () => {
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
-                      autoFocus
                       value={value}
                       onBlur={onBlur}
                       label='Name'
@@ -420,6 +419,10 @@ const Register = () => {
 
 Register.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 
-Register.guestGuard = true
+// Register.guestGuard = true
+Register.acl = {
+  action: null,
+  subject: null
+}
 
 export default Register

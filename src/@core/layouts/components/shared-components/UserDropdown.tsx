@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, SyntheticEvent, Fragment, useEffect } from 'react'
+import { useState, SyntheticEvent, Fragment, useContext } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -23,7 +23,8 @@ import { useAuth } from 'src/hooks/useAuth'
 // ** Type Imports
 import { Settings } from 'src/@core/context/settingsContext'
 import DialogInvite from '@components/molecules/Dialog/DialogForm'
-import { Button } from '@mui/material'
+import { AbilityContext } from 'src/layouts/components/acl/Can'
+import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 import InviteForm from '@components/organisms/Forms/InviteForm'
 
 interface Props {
@@ -42,7 +43,7 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
 const UserDropdown = (props: Props) => {
   // ** Props
   const { settings } = props
-
+  const ability = useContext(AbilityContext)
   const [modalOpen, setModalOpen] = useState(false)
 
   const handleOpen = () => {
@@ -117,6 +118,7 @@ const UserDropdown = (props: Props) => {
           onClick={handleDropdownOpen}
           sx={{ width: 40, height: 40 }}
           src={user?.picture ?? '/images/avatars/1.png'}
+          imgProps={{ referrerPolicy: 'no-referrer' }}
         />
       </Badge>
       <Menu
@@ -153,12 +155,14 @@ const UserDropdown = (props: Props) => {
         </Box>
         <Divider sx={{ mt: '0 !important' }} />
 
-        <MenuItem sx={{ p: 0 }} onClick={handleOpen}>
-          <Box sx={styles}>
-            <Icon icon='mdi-email' />
-            Invite
-          </Box>
-        </MenuItem>
+        {ability?.can(ACTIONS.CREATE, SUBJECTS.USER_INVITATION) && (
+          <MenuItem sx={{ p: 0 }} onClick={handleOpen}>
+            <Box sx={styles}>
+              <Icon icon='mdi-email' />
+              Invite
+            </Box>
+          </MenuItem>
+        )}
 
         <Divider />
 

@@ -33,3 +33,19 @@ code[class*='language-'] {
   border-color: #00b4a2;
   color: #00b4a2;
 }
+.green-icon {
+  color: #00b4a2;
+}
+.red-icon {
+  color: #eb1c0d;
+}
+.question-enter {
+  opacity: 0;
+  transform: translateY(-50%);
+  transition: opacity 0.1s ease, transform 0.1s ease;
+}
+
+.question-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+}
