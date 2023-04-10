@@ -181,3 +181,19 @@ export const LOAD_ROLES = gql`
     }
   }
 `
+
+export const LOAD_USERS = gql`
+  query Users {
+    users {
+      _id
+      email
+      email_verified
+      name
+      picture
+      role {
+        title
+      }
+      roleId
+    }
+  }
+`

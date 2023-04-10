@@ -59,6 +59,7 @@ const Question = (props: { count: any }) => {
                 <Select
                   labelId='task-type-select-label'
                   id='task-type-select'
+
                   // value={taskType}
                   label='Select task type'
 

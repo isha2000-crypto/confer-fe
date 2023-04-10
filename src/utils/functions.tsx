@@ -15,3 +15,20 @@ export const getSubjectTitles = () => {
 
   return rolesArr
 }
+
+export const getPermissionsObject = (permissionsArr: any) => {
+  const titles = getSubjectTitles()
+  const permissionsObject: any = {}
+  titles.forEach((title: any) => {
+    const { value } = title
+    permissionsObject[value] = []
+    permissionsArr.forEach((permission: string) => {
+      const permissionItem: string[] = permission.split('-')
+      if (permissionItem[0] === value) {
+        permissionsObject[value].push(permissionItem[1])
+      }
+    })
+  })
+
+  return permissionsObject
+}

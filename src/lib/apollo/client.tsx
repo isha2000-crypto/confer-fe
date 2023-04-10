@@ -33,8 +33,19 @@ const authLink = new ApolloLink((operation, forward) => {
   return forward(operation)
 })
 export const client = new ApolloClient({
-  cache: new InMemoryCache(),
-  link: authLink.concat(httpLink)
+  cache: new InMemoryCache({
+    addTypename: false,
+    resultCaching: false
+  }),
+  link: authLink.concat(httpLink),
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: 'no-cache'
+    },
+    mutate: {
+      fetchPolicy: 'no-cache'
+    }
+  }
 })
 
 export default client

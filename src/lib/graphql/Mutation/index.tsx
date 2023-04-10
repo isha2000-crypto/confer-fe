@@ -104,3 +104,23 @@ export const INVITE_USER_MUTATION = gql`
     }
   }
 `
+export const UPDATE_ROLE = gql`
+  mutation UpdateRole($updateRoleId: ObjectId!, $updateRoleInput: UpdateRoleInput!) {
+    updateRole(id: $updateRoleId, updateRoleInput: $updateRoleInput) {
+      _id
+      title
+      permissions {
+        assessments
+        assessment_submission
+        users
+        user_invitation
+        tenants
+        roles
+      }
+      createdBy
+      creator {
+        name
+      }
+    }
+  }
+`

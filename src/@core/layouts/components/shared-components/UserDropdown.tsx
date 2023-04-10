@@ -142,6 +142,7 @@ const UserDropdown = (props: Props) => {
                 alt={user?.name}
                 src={user?.picture ?? '/images/avatars/1.png'}
                 sx={{ width: '2.5rem', height: '2.5rem' }}
+                imgProps={{ referrerPolicy: 'no-referrer' }}
               />
             </Badge>
             <Box sx={{ display: 'flex', ml: 3, alignItems: 'flex-start', flexDirection: 'column' }}>
