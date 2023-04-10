@@ -18,23 +18,20 @@ import { useContext, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { AppDispatch, RootState } from 'src/store'
 import { fetchRoles } from 'src/store/roles/rolesActions'
-import { fetchUsers } from 'src/store/users/usersActions'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 
 const RolesComponent = () => {
   const dispatch = useDispatch<AppDispatch>()
   const rolesStore = useSelector((store: RootState) => store.roles)
-  const usersStore = useSelector((store: RootState) => store.users)
   const ability = useContext(AbilityContext)
 
   useEffect(() => {
     dispatch(fetchRoles())
-    dispatch(fetchUsers())
   }, [dispatch])
 
   const router = useRouter()
-  if (rolesStore.loading || usersStore.loading) return <FallbackSpinner />
-  if (rolesStore.error || usersStore.error) router.push('/404')
+  if (rolesStore.loading) return <FallbackSpinner />
+  if (rolesStore.error) router.push('/404')
 
   return (
     <Grid container spacing={6}>
@@ -50,14 +47,6 @@ const RolesComponent = () => {
       <Grid item xs={12} sx={{ mb: 5 }}>
         <ListRoles roles={rolesStore.roles} />
       </Grid>
-      <PageHeader
-        title={<Typography variant='h5'>Total users with their roles</Typography>}
-        subtitle={
-          <Typography variant='body2'>
-            Find all of your company’s administrator accounts and their associate roles.
-          </Typography>
-        }
-      />
       {ability?.can(ACTIONS.READ, SUBJECTS.USERS) && (
         <Grid item xs={12}>
           <UsersList />

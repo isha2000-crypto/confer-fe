@@ -50,7 +50,7 @@ const navigation = (): VerticalNavItemsType => {
         },
         {
           subject: SUBJECTS.ROLES,
-          action: ACTIONS.CREATE,
+          action: ACTIONS.READ,
           title: 'Roles',
           path: `${URLS.ADMIN}/roles`
         }

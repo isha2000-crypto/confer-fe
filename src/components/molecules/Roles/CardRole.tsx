@@ -23,10 +23,10 @@ function CardRole({ roleItem }: Props) {
           <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography variant='body2'>{`Created By ${roleItem.creator.name}`}</Typography>
           </Box>
-          {ability?.can(ACTIONS.UPDATE, SUBJECTS.ROLES) && (
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                <Typography variant='h6'>{roleItem.title}</Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+              <Typography variant='h6'>{roleItem.title}</Typography>
+              {ability?.can(ACTIONS.UPDATE, SUBJECTS.ROLES) && (
                 <Typography
                   href='/'
                   variant='body2'
@@ -39,9 +39,9 @@ function CardRole({ roleItem }: Props) {
                 >
                   Edit Role
                 </Typography>
-              </Box>
+              )}
             </Box>
-          )}
+          </Box>
         </CardContent>
       </Card>
       {open && <DialogRolesEdit open={open} handleClose={handleClose} dialogTitle={'Edit'} role={roleItem} />}
