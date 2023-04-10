@@ -25,6 +25,7 @@ import { Settings } from 'src/@core/context/settingsContext'
 import DialogInvite from '@components/molecules/Dialog/DialogForm'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { ACTIONS, SUBJECTS } from '@custom-types/enum'
+import InviteForm from '@components/organisms/Forms/InviteForm'
 
 interface Props {
   settings: Settings
@@ -174,7 +175,10 @@ const UserDropdown = (props: Props) => {
           Logout
         </MenuItem>
       </Menu>
-      <DialogInvite open={modalOpen} onClose={handleClose} />
+
+      <DialogInvite open={modalOpen} onClose={handleClose}>
+        <InviteForm />
+      </DialogInvite>
     </Fragment>
   )
 }

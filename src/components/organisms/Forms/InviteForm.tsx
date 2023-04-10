@@ -85,6 +85,8 @@ const InviteForm = () => {
         // console.log('success count', result.data.length)
         setInviteSuccessCount(result.data.inviteUsers.sent.length)
         setFailedInvite(result.data.inviteUsers.failed)
+
+        // console.log('fail', failedInvite)
       })
       .catch(error => {
         console.error(error)
@@ -128,18 +130,19 @@ const InviteForm = () => {
           />
         </Grid>
       </Grid>
-
+      <br />
       <Grid item xs={12} md={4}>
-        <Typography variant='body2' sx={{ fontWeight: 600 }}>
+        {/* <Typography variant='body2' sx={{ fontWeight: 600 }}>
           Role
-        </Typography>
+        </Typography> */}
         <FormControl fullWidth sx={{ alignSelf: 'center' }}>
-          {/* <InputLabel id='role-select-label'>Role</InputLabel> */}
+          <InputLabel id='role-select-label'>Role</InputLabel>
           <Select
             labelId='role-select-label'
             id='role-select'
             value={userRole}
             onChange={handleRoleChange}
+            label='Role'
 
             // onChange={e => setTaskType(e.target.value)}
           >

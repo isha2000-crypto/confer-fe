@@ -44,7 +44,7 @@ type ThemeConfig = {
   horizontalMenuToggle: HorizontalMenuToggle
   afterVerticalNavMenuContentPosition: 'fixed' | 'static'
   beforeVerticalNavMenuContentPosition: 'fixed' | 'static'
-  toastPosition: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'
+  toastPosition: 'top-center' | 'top-left ' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'
 }
 
 const themeConfig: ThemeConfig = {
@@ -81,7 +81,7 @@ const themeConfig: ThemeConfig = {
   responsiveFontSizes: true /* true | false */,
   disableRipple: false /* true | false */,
   disableCustomizer: true /* true | false */,
-  toastPosition: 'top-right' /* top-left | top-center | top-right | bottom-left | bottom-center | bottom-right */
+  toastPosition: 'top-center' /* top-left | | top-right | bottom-left | bottom-center | bottom-right */
 }
 
 export default themeConfig
