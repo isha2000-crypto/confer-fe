@@ -66,11 +66,14 @@ const CreateAssessmentForm = () => {
       ) // Pass count prop to the Question component
     }
     setQuestions([...questions, newQuestion])
-    setCount(count + 1)
+    setCount(prevCount => prevCount + 1)
     setShowQuestionForm(false)
   }
   const removeQuestion = (id: number) => {
     setQuestions(questions.filter(q => q.id !== id))
+    if (count > 0) {
+      setCount(prevCount => prevCount - 1)
+    }
   }
   const handleQuestionUpdate = (index, data) => {
     setQuestions(prevState => {

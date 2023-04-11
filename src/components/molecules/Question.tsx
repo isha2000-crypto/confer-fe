@@ -101,9 +101,8 @@ const Question = (props: QuestionProps) => {
           <CardContent>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <Icon icon='mdi-comment-outline' />
-
-                {` ${props.count}.`}
+                Question{` ${props.count}.`}
+                {/* <Icon icon='mdi-comment-outline' /> */}
                 <br />
                 <FormControl fullWidth variant='standard'>
                   <InputLabel id='task-type-select-label'>Select task type</InputLabel>
@@ -138,7 +137,7 @@ const Question = (props: QuestionProps) => {
                 <TextField
                   fullWidth
                   label='Duration'
-                  type='number'
+                  type='text'
                   placeholder='Time to complete (in seconds)'
                   InputProps={{
                     endAdornment: (
