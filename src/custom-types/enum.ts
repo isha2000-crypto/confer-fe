@@ -26,3 +26,9 @@ export enum SUBJECTS {
   TENANTS = 'tenants',
   ROLES = 'roles'
 }
+
+export enum VideoFilter {
+  NONE = 'none',
+  BLUR = 'blur',
+  IMAGE = 'image'
+}
