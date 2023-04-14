@@ -24,7 +24,7 @@ export type Settings = {
   layout?: 'vertical' | 'horizontal'
   lastLayout?: 'vertical' | 'horizontal'
   verticalNavToggleType: VerticalNavToggle
-  toastPosition?: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'
+  toastPosition?: 'top-center' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'
 }
 
 export type PageSpecificSettings = {
@@ -41,7 +41,7 @@ export type PageSpecificSettings = {
   layout?: 'vertical' | 'horizontal'
   lastLayout?: 'vertical' | 'horizontal'
   verticalNavToggleType?: VerticalNavToggle
-  toastPosition?: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'
+  toastPosition?: 'top-center' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'
 }
 export type SettingsContextValue = {
   settings: Settings

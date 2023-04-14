@@ -2,7 +2,7 @@ import React from 'react'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
-import InviteForm from '../../organisms/Forms/InviteForm'
+
 import { Button, DialogActions } from '@mui/material'
 
 interface Props {
@@ -24,7 +24,6 @@ const DialogForm = (props: Props) => {
       disableEscapeKeyDown
       onClick={handleDialogClick}
       onClose={(event, reason) => {
-        console.log(reason)
         if (reason !== 'backdropClick') {
           onClose()
         }

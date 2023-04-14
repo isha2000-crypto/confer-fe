@@ -11,7 +11,7 @@ export const URLS = {
   HOME: '/home'
 }
 
-export const SUBJECT_TITLES = {
+export const SUBJECT_TITLES: any = {
   [SUBJECTS.ASSESSMENT]: 'Assessments',
   [SUBJECTS.ASSESSMENT_SUBMISSION]: 'Submission of Assessments',
   [SUBJECTS.ROLES]: 'Manage Roles',

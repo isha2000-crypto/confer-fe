@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
 import { styled } from '@mui/material/styles'
@@ -13,7 +13,6 @@ import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import InputLabel from '@mui/material/InputLabel'
 import { Alert, FormControl } from '@mui/material'
-import DialogInvite from '@components/molecules/Dialog/DialogInvite'
 
 const Form = styled('form')(({ theme }) => ({
   maxWidth: 400,
@@ -23,37 +22,25 @@ const Form = styled('form')(({ theme }) => ({
 }))
 
 const InviteForm = () => {
-  const [emails, setEmails] = useState([])
+  const [emails, setEmails] = useState<string[]>([])
   const [inputValue, setInputValue] = useState('')
   const [inviteSuccessCount, setInviteSuccessCount] = useState(0) // new state variable
   const [failedInvite, setFailedInvite] = useState([])
   const [loading, setLoading] = useState(false)
   const [inviteUserMutation] = useMutation(INVITE_USER_MUTATION)
 
-  // const [selectedRole, setSelectedRole] = useState('')
-
-  // const [inviteUserMutation, { loading }] = useMutation(INVITE_USER_MUTATION)
-  const [open, setOpen] = useState(false)
   const [userRole, setUserRole] = useState('user')
 
-  const handleOpen = () => {
-    setOpen(true)
-  }
-
-  const handleClose = () => {
-    setOpen(false)
-  }
-
-  const handleEmailsChange = event => {
+  const handleEmailsChange = (event: any) => {
     setInputValue(event.target.value)
   }
-  const handleKeyPress = event => {
+  const handleKeyPress = (event: any) => {
     if (event.key === 'Enter') {
       handleAddEmail(event)
     }
   }
 
-  const handleAddEmail = event => {
+  const handleAddEmail = (event: any) => {
     event.preventDefault()
     const newEmails = inputValue.split(' ').filter(email => email !== '')
 
@@ -66,12 +53,10 @@ const InviteForm = () => {
     setInputValue('')
   }
 
-  const handleSubmit = event => {
+  const handleSubmit = (event: any) => {
     event.preventDefault()
-
-    console.log(emails)
   }
-  const handleRemoveEmail = email => {
+  const handleRemoveEmail = (email: any) => {
     setEmails(emails.filter(e => e !== email))
   }
   const handleInvite = () => {
@@ -82,11 +67,8 @@ const InviteForm = () => {
       .then(result => {
         console.log(result.data)
 
-        // console.log('success count', result.data.length)
         setInviteSuccessCount(result.data.inviteUsers.sent.length)
         setFailedInvite(result.data.inviteUsers.failed)
-
-        // console.log('fail', failedInvite)
       })
       .catch(error => {
         console.error(error)
@@ -102,14 +84,9 @@ const InviteForm = () => {
     setEmails([])
   }
 
-  const handleRoleChange = event => {
+  const handleRoleChange = (event: any) => {
     setUserRole(event.target.value)
-
-    // console.log('role', userRole)
   }
-  useEffect(() => {
-    console.log('role', userRole)
-  }, [userRole])
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -132,9 +109,6 @@ const InviteForm = () => {
       </Grid>
       <br />
       <Grid item xs={12} md={4}>
-        {/* <Typography variant='body2' sx={{ fontWeight: 600 }}>
-          Role
-        </Typography> */}
         <FormControl fullWidth sx={{ alignSelf: 'center' }}>
           <InputLabel id='role-select-label'>Role</InputLabel>
           <Select
@@ -143,8 +117,6 @@ const InviteForm = () => {
             value={userRole}
             onChange={handleRoleChange}
             label='Role'
-
-            // onChange={e => setTaskType(e.target.value)}
           >
             <MenuItem value='admin'>Admin</MenuItem>
             <MenuItem value='user'>User</MenuItem>

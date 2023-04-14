@@ -197,3 +197,10 @@ export const LOAD_USERS = gql`
     }
   }
 `
+export const LOAD_ASSESSMENT_TYPE = gql`
+  query Query {
+    assessments {
+      type
+    }
+  }
+`

@@ -124,7 +124,7 @@ export const UPDATE_ROLE = gql`
     }
   }
 `
-export const CREATE_ASSESSMENT = gql`
+export const CREATE_ASSESSMENT_MUTATION = gql`
   mutation ($createAssessmentInput: CreateAssessmentInput!) {
     createAssessment(createAssessmentInput: $createAssessmentInput) {
       _id

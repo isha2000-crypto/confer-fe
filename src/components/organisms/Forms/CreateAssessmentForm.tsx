@@ -1,57 +1,59 @@
 import { useState } from 'react'
+import { URLS } from '@custom-types/constants'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import TextField from '@mui/material/TextField'
-import CardHeader from '@mui/material/CardHeader'
-import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import Question from '../../molecules/Question'
-import AddIcon from '@mui/icons-material/Add'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Box from '@mui/material/Box'
 import { Task_Types } from '.././../../custom-types/enum'
-import { Icon } from '@mui/material'
-import Icon1 from 'src/@core/components/icon'
-
+import { Alert } from '@mui/material'
+import { useMutation } from '@apollo/client'
+import { CREATE_ASSESSMENT_MUTATION } from 'src/lib/graphql/Mutation'
 import { CSSTransition } from 'react-transition-group'
+import { useRouter } from 'next/router'
 
 interface Question {
   id: number
-  question: JSX.Element
+  type: string
+  description: string
+  duration: number
 }
 
 const CreateAssessmentForm = () => {
   const [questions, setQuestions] = useState<Question[]>([])
 
-  const [showQuestionForm, setShowQuestionForm] = useState(false)
-  const [count, setCount] = useState(0)
+  const [submitAss, setSubmit] = useState(false)
+
   const [assessment, setAssessment] = useState({
     title: '',
     description: '',
-    type: '',
-    questions: []
+    type: ''
   })
 
-  const handleTitleChange = event => {
+  const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
+  const router = useRouter()
+  const handleTitleChange = (event: any) => {
     setAssessment(prevState => ({
       ...prevState,
       title: event.target.value
     }))
   }
 
-  const handleDescriptionChange = event => {
+  const handleDescriptionChange = (event: any) => {
     setAssessment(prevState => ({
       ...prevState,
       description: event.target.value
     }))
   }
 
-  const handleTypeChange = event => {
+  const handleTypeChange = (event: any) => {
     setAssessment(prevState => ({
       ...prevState,
       type: event.target.value
@@ -59,48 +61,57 @@ const CreateAssessmentForm = () => {
   }
 
   const addQuestion = () => {
-    const newQuestion = {
+    const newQuestion: Question = {
       id: questions.length + 1,
-      question: (
-        <Question count={count + 1} handleQuestionUpdate={handleQuestionUpdate} removeQuestion={removeQuestion} />
-      ) // Pass count prop to the Question component
+      type: '',
+      description: '',
+      duration: 60
     }
     setQuestions([...questions, newQuestion])
-    setCount(prevCount => prevCount + 1)
-    setShowQuestionForm(false)
   }
-  const removeQuestion = (id: number) => {
-    setQuestions(questions.filter(q => q.id !== id))
-    if (count > 0) {
-      setCount(prevCount => prevCount - 1)
-    }
-  }
-  const handleQuestionUpdate = (index, data) => {
-    setQuestions(prevState => {
-      const updatedQuestions = [...prevState]
-      updatedQuestions[index] = data
 
-      return updatedQuestions
-    })
+  const removeQuestion = (index: number) => {
+    const updatedQuestions = [...questions]
+    updatedQuestions.splice(index, 1)
+    setQuestions([...updatedQuestions])
   }
-  const handleAssessmentSubmit = event => {
+
+  const handleQuestionUpdate = (index: number, name: string, value: string | number) => {
+    const updateQuestions: any = [...questions]
+    updateQuestions[index][name] = value
+    setQuestions([...updateQuestions])
+  }
+
+  const handleAssessmentSubmit = (event: any) => {
     event.preventDefault()
+    router.push(`${URLS.ASSESSMENT_URL}/available`)
+    setSubmit(true)
 
-    const assessmentData = {
-      title: assessment.title,
-      description: assessment.description,
-      type: assessment.type,
-      questions: questions.map(q => q.question)
-    }
-    console.log('Assessment data here', assessmentData)
+    const modifiedQuestions = questions.map(question => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id, ...rest } = question
+      if (
+        assessment.title === '' ||
+        assessment.description === '' ||
+        assessment.type === '' ||
+        questions.length === 0
+      ) {
+        alert('Please fill in all fields')
+      }
 
-    // send assessmentData to your backend for storage
+      return rest
+    })
+
+    createAssessmentMutation({
+      variables: { createAssessmentInput: { ...assessment, tasks: modifiedQuestions } }
+    })
+      .then(result => {
+        console.log(result.data)
+      })
+      .catch(error => {
+        console.error(error)
+      })
   }
-  console.log('Asessment des', assessment.description)
-  console.log('Asessment ques', assessment.questions)
-  console.log('Asessment title', assessment.title)
-  console.log('Asessment type', assessment.type)
-  console.log('Question here', questions)
 
   return (
     <>
@@ -110,6 +121,10 @@ const CreateAssessmentForm = () => {
           <Button onClick={handleAssessmentSubmit} size='large' type='submit' variant='contained' sx={{ width: '10%' }}>
             submit
           </Button>
+          <div style={{ width: '21%', marginLeft: '37%' }}>
+            {submitAss && <Alert severity='success'>Assessment Created Successfully</Alert>}
+          </div>
+
           <h3 style={{ paddingLeft: '25px' }}> Create Assessment</h3>
         </span>
 
@@ -122,7 +137,7 @@ const CreateAssessmentForm = () => {
                   type='title'
                   label='Title'
                   placeholder='Task'
-                  value={assessment.title} // add value prop to reflect the state
+                  value={assessment.title}
                   onChange={handleTitleChange}
                 />
               </Grid>
@@ -134,28 +149,24 @@ const CreateAssessmentForm = () => {
                     label='Description'
                     rows={4}
                     placeholder='Description here'
-                    value={assessment.description} // add value prop to reflect the state
+                    value={assessment.description}
                     onChange={handleDescriptionChange}
                   />
                 </div>
               </Grid>
               <Grid item xs={6}>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <br />
                   <FormControl fullWidth sx={{ alignSelf: 'center' }}>
                     <InputLabel id='assessment-type-select-label'>Assessment Type</InputLabel>
                     <Select
                       labelId='assessment-type-select-label'
                       id='assessment-type-select'
                       label='assessment Type'
-                      value={assessment.type} // add value prop to reflect the state
+                      value={assessment.type}
                       onChange={handleTypeChange}
-
-                      // onChange={e => setTaskType(e.target.value)}
                     >
-                      <MenuItem value='design'>{Task_Types.COMMUNICATION}</MenuItem>
-                      <MenuItem value='development'>{Task_Types.LEADERSHIP}</MenuItem>
-                      <MenuItem value='testing'>{Task_Types.PROGRAMMING}</MenuItem>
+                      <MenuItem value='CODING'>{Task_Types.CODING}</MenuItem>
+                      <MenuItem value='TEXTUAL'>{Task_Types.LEADERSHIP}</MenuItem>
                     </Select>
                   </FormControl>
                   <br />
@@ -164,25 +175,24 @@ const CreateAssessmentForm = () => {
               <br />
               <Grid>
                 {' '}
-                {questions.map(q => (
-                  <Box key={q.id} sx={{ mb: 3 }}>
-                    {q.question}
-
-                    <br />
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      {/* <Button onClick={() => removeQuestion(q.id)} size='small' variant='contained'>
-                      Remove
-                    </Button> */}
-                    </div>
+                {questions.map((q, index) => (
+                  <Box key={index} sx={{ mb: 3 }}>
+                    <>
+                      <br />
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}></div>
+                      <CSSTransition classNames='question' timeout={300}>
+                        <Question
+                          count={index}
+                          {...q}
+                          removeQuestion={removeQuestion}
+                          handleQuestionUpdate={handleQuestionUpdate}
+                        />
+                      </CSSTransition>
+                    </>
                   </Box>
                 ))}
               </Grid>
 
-              {showQuestionForm && (
-                <CSSTransition classNames='question' timeout={300}>
-                  <Question count={count + 1} />
-                </CSSTransition>
-              )}
               <br />
               <Divider sx={{ mb: '0 !important' }} />
               <Grid item container justifyContent='center'>
