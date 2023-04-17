@@ -36,6 +36,7 @@ const CreateAssessmentForm = () => {
     description: '',
     type: ''
   })
+  const [isAllowed, setAllowed] = useState(false)
 
   const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
   const router = useRouter()
@@ -84,6 +85,12 @@ const CreateAssessmentForm = () => {
 
   const handleAssessmentSubmit = (event: any) => {
     event.preventDefault()
+    if (assessment.title === '' || assessment.description === '' || assessment.type === '' || questions.length === 0) {
+      alert('Please fill in all fields')
+
+      return
+    }
+
     router.push(`${URLS.ASSESSMENT_URL}/available`)
     setSubmit(true)
 
@@ -96,6 +103,7 @@ const CreateAssessmentForm = () => {
         assessment.type === '' ||
         questions.length === 0
       ) {
+        setAllowed(false)
         alert('Please fill in all fields')
       }
 
@@ -122,6 +130,7 @@ const CreateAssessmentForm = () => {
             submit
           </Button>
           <div style={{ width: '21%', marginLeft: '37%' }}>
+            {isAllowed && <Alert severity='success'>Fill the required fields</Alert>}
             {submitAss && <Alert severity='success'>Assessment Created Successfully</Alert>}
           </div>
 
