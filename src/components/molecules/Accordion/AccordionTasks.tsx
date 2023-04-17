@@ -6,8 +6,11 @@ import AccordionDetails from '@mui/material/AccordionDetails'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
+import VideoPlayer from '../VideoPlayer'
 
 const AccordionTasks = ({ tasks, responses }: any) => {
+  console.log('Tasks', tasks)
+
   return (
     <>
       {tasks.map((task: any, index: number) => {
@@ -21,9 +24,7 @@ const AccordionTasks = ({ tasks, responses }: any) => {
               <Typography variant='body1' sx={{ fontWeight: 'bold' }}>{`${index + 1}. ${task.description}`}</Typography>
             </AccordionSummary>
             <AccordionDetails sx={{ textAlign: 'center' }}>
-              <video width='750' height='500' controls>
-                <source src={responses[index].videoUrl} type='video/mp4' />
-              </video>
+              <VideoPlayer source={responses[index].videoUrl} id={task._id} />
             </AccordionDetails>
           </Accordion>
         )

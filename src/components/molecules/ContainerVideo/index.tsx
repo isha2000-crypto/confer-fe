@@ -8,6 +8,7 @@ import DialogAction from '../Dialog/DialogAction'
 import SelfieSegmentationMediapipe from './SelfieSegmentationMediapipe'
 import FilterMenu from './FilterMenu'
 import { VideoFilter } from '@custom-types/enum'
+import VideoPlayer from '../VideoPlayer'
 
 interface Props {
   currentTask: any
@@ -106,7 +107,7 @@ function ContainerVideo({
     }, 3000)
   }, [handleDataAvailable])
 
-  const handleStopCaptureClick = React.useCallback(() => {
+  const handleStopCaptureClick = React.useCallback(async () => {
     clearInterval(timerRef.current)
     mediaRecorderRef.current.stop()
     setCapturing(false)
@@ -244,11 +245,11 @@ function ContainerVideo({
           )}
           {recordedChunks.length > 0 && (
             <>
-              <video className={classnames.video_ready_player} muted={false} controls>
+              <VideoPlayer id={`${recordedChunks.length}`}>
                 {recordedChunks.map((chunk, index) => (
                   <source key={index} src={URL.createObjectURL(chunk)} />
                 ))}
-              </video>
+              </VideoPlayer>
               <div className={classnames.video_controls_completed}>
                 {!capturing && recordedChunks.length > 0 && (
                   <>

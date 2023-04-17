@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from 'react'
 import { Camera } from '@mediapipe/camera_utils'
 import { SelfieSegmentation } from '@mediapipe/selfie_segmentation'
@@ -47,6 +48,41 @@ function SelfieSegmentationMediapipe({ inputVideoRef, canvasRef, className, filt
     setSelfieSegmentation(selfieSegmentationObject)
   }
 
+  const onResults = (results: any) => {
+    ctx.current.save()
+    ctx.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
+    ctx.current.drawImage(results.segmentationMask, 0, 0, canvasRef.current.width, canvasRef.current.height)
+
+    // Only overwrite existing pixels.
+    ctx.current.globalCompositeOperation = 'source-out'
+
+    if (filterType === VideoFilter.BLUR) {
+      // console.log('Blur Filter is running')
+      ctx.current.filter = 'blur(10px)'
+      ctx.current.drawImage(results.image, 0, 0, canvasRef.current.width, canvasRef.current.height)
+    } else if (filterType === VideoFilter.IMAGE) {
+      // console.log('Image Filter is running')
+      const imgReact = document.getElementById('mediapipe-image')
+
+      // console.log('Line after ImgReact')
+      ctx.current.drawImage(imgReact, 0, 0, canvasRef.current.width, canvasRef.current.height)
+
+      // console.log('Line After DrawImage')
+    } else {
+      ctx.current.drawImage(results.image, 0, 0, canvasRef.current.width, canvasRef.current.height)
+    }
+
+    // Only overwrite missing pixels.
+    ctx.current.globalCompositeOperation = 'destination-atop'
+
+    if (filterType === VideoFilter.BLUR) {
+      ctx.current.filter = 'blur(0px)'
+    }
+    ctx.current.drawImage(results.image, 0, 0, canvasRef.current.width, canvasRef.current.height)
+
+    ctx.current.restore()
+  }
+
   useEffect(() => {
     if (inputVideoRef.current?.video) {
       init()
@@ -64,35 +100,6 @@ function SelfieSegmentationMediapipe({ inputVideoRef, canvasRef, className, filt
       selfieSegmentation.onResults(onResults)
     }
   }, [filterType])
-
-  const onResults = (results: any) => {
-    ctx.current.save()
-    ctx.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
-    ctx.current.drawImage(results.segmentationMask, 0, 0, canvasRef.current.width, canvasRef.current.height)
-
-    // Only overwrite existing pixels.
-    ctx.current.globalCompositeOperation = 'source-out'
-
-    if (filterType === VideoFilter.BLUR) {
-      ctx.current.filter = 'blur(10px)'
-      ctx.current.drawImage(results.image, 0, 0, canvasRef.current.width, canvasRef.current.height)
-    } else if (filterType === VideoFilter.IMAGE) {
-      const imgReact = document.getElementById('mediapipe-image')
-      ctx.current.drawImage(imgReact, 0, 0, canvasRef.current.width, canvasRef.current.height)
-    } else {
-      ctx.current.drawImage(results.image, 0, 0, canvasRef.current.width, canvasRef.current.height)
-    }
-
-    // Only overwrite missing pixels.
-    ctx.current.globalCompositeOperation = 'destination-atop'
-
-    if (filterType === VideoFilter.BLUR) {
-      ctx.current.filter = 'blur(0px)'
-    }
-    ctx.current.drawImage(results.image, 0, 0, canvasRef.current.width, canvasRef.current.height)
-
-    ctx.current.restore()
-  }
 
   return (
     <>

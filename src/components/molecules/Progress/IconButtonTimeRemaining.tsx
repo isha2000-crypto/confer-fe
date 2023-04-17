@@ -30,7 +30,17 @@ function IconButtonTimeRemaining(
           justifyContent: 'center'
         }}
       >
-        <IconButton color={'error'} onClick={props.handleClick} sx={{ background: 'rgba(204,204,204,0.4)' }}>
+        <IconButton
+          color={'error'}
+          onClick={props.handleClick}
+          sx={{
+            background: 'rgba(204,204,204,0.4)',
+            '&:hover': {
+              backgroundColor: 'rgba(204,204,204,0.4)',
+              transform: 'scale(1.2)'
+            }
+          }}
+        >
           <Icon icon='mdi:stop' fontSize={60} />
         </IconButton>
       </Box>
