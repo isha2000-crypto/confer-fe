@@ -48,12 +48,10 @@ const UserDropdown = (props: Props) => {
 
   const handleOpen = () => {
     setModalOpen(prev => !prev)
-    console.log('Modal open')
   }
 
   const handleClose = () => {
     setModalOpen(prev => !prev)
-    console.log('Modal close')
   }
 
   // ** States
@@ -96,10 +94,6 @@ const UserDropdown = (props: Props) => {
     logout()
     handleDropdownClose()
   }
-
-  // useEffect(() => {
-  //   console.log('modalOpen:', modalOpen)
-  // }, [modalOpen])
 
   return (
     <Fragment>

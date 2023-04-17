@@ -44,7 +44,7 @@ type ThemeConfig = {
   horizontalMenuToggle: HorizontalMenuToggle
   afterVerticalNavMenuContentPosition: 'fixed' | 'static'
   beforeVerticalNavMenuContentPosition: 'fixed' | 'static'
-  toastPosition: 'top-center' | 'top-left ' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'
+  toastPosition?: 'top-center' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'
 }
 
 const themeConfig: ThemeConfig = {

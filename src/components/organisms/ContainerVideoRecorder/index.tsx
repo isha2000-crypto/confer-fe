@@ -89,14 +89,12 @@ function ContainerVideoRecorder({ assessment }: props) {
       }
       const url = await uploadFile(blob, auth?.user as UserDataType, assessment, currentTask._id)
       handleRecording(currentTask._id, TaskStatus.SUBMITTED, url)
-    } catch (error) {
-      console.log(error)
-    }
+    } catch (error) {}
   }
 
   const submitAssessment = async () => {
     const responseArray = Object.values(recordings)
-    console.log('Assessment Submitting:', assessment)
+
     const inputData = {
       assessmentId: assessment._id,
       taskResponses: responseArray.map((res: any) => {

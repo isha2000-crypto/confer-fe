@@ -1,7 +1,6 @@
 export enum Task_Types {
-  PROGRAMMING = 'PROGRAMMING',
   LEADERSHIP = 'LEADERSHIP',
-  COMMUNICATION = 'COMMUNICATION'
+  CODING = 'CODING'
 }
 
 export enum TaskStatus {
@@ -25,6 +24,9 @@ export enum SUBJECTS {
   USER_INVITATION = 'user_invitation',
   TENANTS = 'tenants',
   ROLES = 'roles'
+}
+export enum Question_Types {
+  TEXTUAL = 'TEXTUAL'
 }
 
 export enum VideoFilter {
