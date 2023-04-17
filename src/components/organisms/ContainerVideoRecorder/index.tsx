@@ -2,7 +2,6 @@
 import { Assessment, Task } from '@custom-types/assessmentsType'
 import { Grid } from '@mui/material'
 import React from 'react'
-import Timeline from '@components/molecules/timeline'
 import { useState } from 'react'
 import PermissionDeniedFallback from './PermissionDeniedFallback'
 import { useAuth } from 'src/hooks/useAuth'
@@ -36,7 +35,6 @@ function ContainerVideoRecorder({ assessment }: props) {
   const [loading, setLoading] = React.useState(true)
   const [allowed, setAllowed] = React.useState(true)
   const [currentTask, setCurrentTask] = React.useState<Task>(assessment?.tasks[0])
-  const [currentCheckPoint, setCurrentCheckpoint] = React.useState<number>(0)
   const [allSubmitPopup, setAllSubmittedPopup] = useState<boolean>(false)
   const [recordings, setRecordings] = useState<any>({})
   const [allUploaded, setAllUploaded] = useState<boolean>(false)
@@ -58,7 +56,6 @@ function ContainerVideoRecorder({ assessment }: props) {
   const handlePointClick = (index: number) => {
     const taskId = assessment.tasks[index]._id
     if (recordings[taskId].status === TaskStatus.OPEN) {
-      setCurrentCheckpoint(index)
       setCurrentTask(assessment.tasks[index])
     }
   }
@@ -152,17 +149,7 @@ function ContainerVideoRecorder({ assessment }: props) {
 
   return (
     <>
-      {!loading && (
-        <Timeline
-          recordings={recordings}
-          tasks={assessment?.tasks}
-          totalCheckPoints={assessment?.tasks.length}
-          currentCheckPoint={currentCheckPoint}
-          handlePointClick={handlePointClick}
-        />
-      )}
-
-      <Grid container sx={{ height: '83vh', flexWrap: 'nowrap' }} padding={3} className={classnames.animater_wrapper}>
+      <Grid container sx={{ height: '94vh', flexWrap: 'nowrap' }} padding={3} className={classnames.animater_wrapper}>
         <Grid item spacing={2} padding={'0 2rem'} xs={fullScreen ? 12 : 9} style={GridTransition}>
           <ContainerVideo
             currentTask={currentTask}

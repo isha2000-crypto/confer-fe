@@ -28,3 +28,9 @@ export enum SUBJECTS {
 export enum Question_Types {
   TEXTUAL = 'TEXTUAL'
 }
+
+export enum VideoFilter {
+  NONE = 'none',
+  BLUR = 'blur',
+  IMAGE = 'image'
+}

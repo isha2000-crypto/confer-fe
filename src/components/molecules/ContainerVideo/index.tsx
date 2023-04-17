@@ -5,6 +5,10 @@ import IconButtonTimeRemaining from '../Progress/IconButtonTimeRemaining'
 import Icon from 'src/@core/components/icon'
 import classnames from './ContainerVideo.module.scss'
 import DialogAction from '../Dialog/DialogAction'
+import SelfieSegmentationMediapipe from './SelfieSegmentationMediapipe'
+import FilterMenu from './FilterMenu'
+import { VideoFilter } from '@custom-types/enum'
+import VideoPlayer from '../VideoPlayer'
 
 interface Props {
   currentTask: any
@@ -31,7 +35,9 @@ function ContainerVideo({
   // React Refs
   const webcamRef: any = React.useRef(null)
   const mediaRecorderRef: any = React.useRef(null)
+  const canvasRef: any = React.useRef(null)
   const timerRef: any = React.useRef(null)
+  const countDownRef: any = React.useRef(null)
 
   // React States
   const [recordedChunks, setRecordedChunks] = React.useState([])
@@ -40,8 +46,21 @@ function ContainerVideo({
   const [timeRemaining, setTimeRemaining] = React.useState(currentTask?.duration)
   const [retakePopup, setRetakePopup] = React.useState<boolean>(false)
   const [submitPopup, setSubmitPopup] = React.useState<boolean>(false)
+  const [menuAnchor, setMenuAnchor] = React.useState<null | HTMLElement>(null)
+  const [filterType, setFilterType] = React.useState<VideoFilter>(VideoFilter.NONE)
+  const [imageUrl, setImageUrl] = React.useState<string | null>(null)
+  const [counter, setCounter] = React.useState<number>(3)
 
   //Handler Functions
+  const handleMenuOpenClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setMenuAnchor(event.currentTarget)
+  }
+
+  const handleFilterClick = (value: VideoFilter, imageUrl: string | null) => {
+    setFilterType(value)
+    setImageUrl(imageUrl)
+  }
+
   const handleDataAvailable = React.useCallback(
     ({ data }: any) => {
       if (data.size > 0) {
@@ -61,12 +80,25 @@ function ContainerVideo({
     timerRef.current = timer
   }
 
+  const startCountdown = () => {
+    const countdown = setInterval(() => {
+      setCounter(count => count - 1)
+    }, 1000)
+    countDownRef.current = countdown
+  }
+
   const handleStartCaptureClick = React.useCallback(() => {
+    setCounter(3)
     setStartedCapture(true)
+    startCountdown()
     setTimeout(() => {
       setStartedCapture(false)
       setCapturing(true)
-      mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
+      clearInterval(countDownRef.current)
+      const audioTrack = webcamRef.current.stream.getAudioTracks()[0]
+      const canvasStream = canvasRef.current.captureStream(60)
+      canvasStream.addTrack(audioTrack)
+      mediaRecorderRef.current = new MediaRecorder(canvasStream, {
         mimeType: 'video/webm'
       })
       mediaRecorderRef.current.addEventListener('dataavailable', handleDataAvailable)
@@ -75,7 +107,7 @@ function ContainerVideo({
     }, 3000)
   }, [handleDataAvailable])
 
-  const handleStopCaptureClick = React.useCallback(() => {
+  const handleStopCaptureClick = React.useCallback(async () => {
     clearInterval(timerRef.current)
     mediaRecorderRef.current.stop()
     setCapturing(false)
@@ -145,24 +177,48 @@ function ContainerVideo({
                 onUserMediaError={handleUserMediaError}
                 onUserMedia={handleUserMediaCreated}
               />
+              <SelfieSegmentationMediapipe
+                inputVideoRef={webcamRef}
+                canvasRef={canvasRef}
+                className={classnames.video_component}
+                filterType={filterType}
+                imageUrl={imageUrl}
+              />
               <div
                 className={classnames.video_controls}
                 style={{
-                  background: startedCapture ? 'cornsilk' : 'none',
-                  opacity: startedCapture ? '0.5' : '1'
+                  background: startedCapture ? 'white' : 'none',
+                  opacity: startedCapture ? '0.7' : '1'
                 }}
               >
                 <div className={classnames.upper_control_bar}>
                   <IconButton color={'primary'} onClick={handleFullScreen}>
                     <Icon icon='mdi:fit-to-screen' fontSize={50} />
                   </IconButton>
+                  <IconButton color={'primary'} onClick={handleMenuOpenClick}>
+                    <Icon icon='mdi:creation' fontSize={50} />
+                  </IconButton>
+                  <FilterMenu
+                    filterType={filterType}
+                    menuAnchor={menuAnchor}
+                    setMenuAnchor={setMenuAnchor}
+                    handleMenuClick={handleFilterClick}
+                    imageUrl={imageUrl}
+                    setImageUrl={setImageUrl}
+                  />
                 </div>
                 {!capturing && !startedCapture && (
                   <div>
                     Hit <span className={classnames.record_label}>RECORD</span> to start
                   </div>
                 )}
-                {startedCapture && <div className={classnames.get_ready_text}>Get Ready</div>}
+                {startedCapture && (
+                  <div id='countdown-wrapper' className={classnames.get_ready_text}>
+                    <span id='countdown' className={classnames.get_ready_countdown}>
+                      {counter}
+                    </span>
+                  </div>
+                )}
                 {capturing ? (
                   <>
                     <Typography
@@ -189,11 +245,11 @@ function ContainerVideo({
           )}
           {recordedChunks.length > 0 && (
             <>
-              <video className={classnames.video_ready_player} muted={false}>
+              <VideoPlayer id={`${recordedChunks.length}`}>
                 {recordedChunks.map((chunk, index) => (
                   <source key={index} src={URL.createObjectURL(chunk)} />
                 ))}
-              </video>
+              </VideoPlayer>
               <div className={classnames.video_controls_completed}>
                 {!capturing && recordedChunks.length > 0 && (
                   <>
