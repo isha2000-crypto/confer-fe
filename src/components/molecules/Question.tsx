@@ -58,10 +58,14 @@ const Question = (props: QuestionProps) => {
         <CardContent>
           <Grid container spacing={2} sx={{ width: '100%' }}>
             <Grid item xs={12} sm={6}>
-              <Typography variant='h6' className={styles.questionTitle} sx={{ marginTop: '15px' }}>
+              <Typography
+                variant='h6'
+                className={styles.questionTitle}
+                sx={{ marginTop: '15px', marginBottom: '15px' }}
+              >
                 Question {props.count + 1}
               </Typography>
-              <FormControl fullWidth variant='standard'>
+              <FormControl fullWidth variant='outlined'>
                 <InputLabel id='task-type-select-label'>Select task type</InputLabel>
                 <Select
                   labelId='task-type-select-label'
@@ -70,6 +74,7 @@ const Question = (props: QuestionProps) => {
                   name='type'
                   value={props.type}
                   onChange={handleQuestionDataChange}
+                  required
                 >
                   <MenuItem value='TEXTUAL'>{Question_Types.TEXTUAL}</MenuItem>
                 </Select>
@@ -86,6 +91,7 @@ const Question = (props: QuestionProps) => {
                 name='description'
                 value={props.description}
                 onChange={handleQuestionDataChange}
+                required
               />
             </Grid>
             <br />
@@ -96,6 +102,7 @@ const Question = (props: QuestionProps) => {
                 label='Duration'
                 type='number'
                 placeholder='Time to complete (in seconds)'
+                required
                 onWheel={e => e.preventDefault()}
                 InputProps={{
                   endAdornment: (
