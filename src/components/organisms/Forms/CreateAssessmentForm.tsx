@@ -34,7 +34,7 @@ const CreateAssessmentForm = () => {
   const [assessment, setAssessment] = useState({
     title: '',
     description: '',
-    type: ''
+    type: 'LEADERSHIP'
   })
 
   const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
@@ -63,7 +63,7 @@ const CreateAssessmentForm = () => {
   const addQuestion = () => {
     const newQuestion: Question = {
       id: questions.length + 1,
-      type: '',
+      type: 'TEXTUAL',
       description: '',
       duration: 60
     }
@@ -84,29 +84,36 @@ const CreateAssessmentForm = () => {
 
   const handleAssessmentSubmit = (event: any) => {
     event.preventDefault()
-    router.push(`${URLS.ASSESSMENT_URL}/available`)
-    setSubmit(true)
+    let isFormValid = true
+    if (questions.length === 0 || assessment.title === '' || assessment.description === '' || assessment.type === '') {
+      alert('Please fill in all fields')
+
+      return
+    }
 
     const modifiedQuestions = questions.map(question => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { id, ...rest } = question
-      if (
-        assessment.title === '' ||
-        assessment.description === '' ||
-        assessment.type === '' ||
-        questions.length === 0
-      ) {
-        alert('Please fill in all fields')
+      if (question.type === '' || question.description === '' || question.duration < 60) {
+        alert('Please Make Sure Question Fields are Valid!!')
+        isFormValid = false
       }
 
       return rest
     })
+    if (!isFormValid) {
+      console.log('Form is Not valid')
+
+      return
+    }
 
     createAssessmentMutation({
       variables: { createAssessmentInput: { ...assessment, tasks: modifiedQuestions } }
     })
       .then(result => {
         console.log(result.data)
+        setSubmit(true)
+        router.push(`${URLS.ASSESSMENT_URL}/available`)
       })
       .catch(error => {
         console.error(error)
@@ -166,7 +173,7 @@ const CreateAssessmentForm = () => {
                       onChange={handleTypeChange}
                     >
                       <MenuItem value='CODING'>{Task_Types.CODING}</MenuItem>
-                      <MenuItem value='TEXTUAL'>{Task_Types.LEADERSHIP}</MenuItem>
+                      <MenuItem value='LEADERSHIP'>{Task_Types.LEADERSHIP}</MenuItem>
                     </Select>
                   </FormControl>
                   <br />

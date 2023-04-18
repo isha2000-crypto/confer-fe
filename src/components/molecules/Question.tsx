@@ -28,8 +28,8 @@ const Question = (props: QuestionProps) => {
     let intValue: string | number = value
     if (name === 'duration') {
       intValue = parseInt(value)
-      if (intValue < 60) {
-        intValue = 60
+      if (intValue < 0) {
+        intValue = 0
       }
     }
     props.handleQuestionUpdate(props.count, name, intValue)
@@ -107,6 +107,7 @@ const Question = (props: QuestionProps) => {
                 name='duration'
                 value={val}
                 onChange={handleQuestionDataChange}
+                helperText='Minimum value should be 60 seconds'
               />
             </Grid>
           </Grid>
