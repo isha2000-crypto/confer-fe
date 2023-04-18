@@ -148,16 +148,16 @@ const UserDropdown = (props: Props) => {
             </Box>
           </Box>
         </Box>
-        <Divider sx={{ mt: '0 !important' }} />
+        {/* <Divider sx={{ mt: '0 !important' }} /> */}
 
-        {ability?.can(ACTIONS.CREATE, SUBJECTS.USER_INVITATION) && (
+        {/* {ability?.can(ACTIONS.CREATE, SUBJECTS.USER_INVITATION) && (
           <MenuItem sx={{ p: 0 }} onClick={handleOpen}>
             <Box sx={styles}>
               <Icon icon='mdi-email' />
               Invite
             </Box>
           </MenuItem>
-        )}
+        )} */}
 
         <Divider />
 

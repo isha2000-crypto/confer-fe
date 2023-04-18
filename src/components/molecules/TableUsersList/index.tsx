@@ -148,21 +148,22 @@ const TableUsersList = ({ users }: any) => {
     console.log('Edit Role', id)
   }
   const columns = [
-    ...tableColumns,
-    {
-      flex: 0.15,
-      minWidth: 115,
-      sortable: false,
-      field: 'actions',
-      headerName: 'Actions',
-      renderCell: ({ row }: CellType) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton onClick={() => handleEditRole(row._id)}>
-            <Icon icon='mdi:pencil-outline' />
-          </IconButton>
-        </Box>
-      )
-    }
+    ...tableColumns
+
+    // {
+    //   flex: 0.15,
+    //   minWidth: 115,
+    //   sortable: false,
+    //   field: 'actions',
+    //   headerName: 'Actions',
+    //   renderCell: ({ row }: CellType) => (
+    //     <Box sx={{ display: 'flex', alignItems: 'center' }}>
+    //       <IconButton onClick={() => handleEditRole(row._id)}>
+    //         <Icon icon='mdi:pencil-outline' />
+    //       </IconButton>
+    //     </Box>
+    //   )
+    // }
   ]
 
   return (

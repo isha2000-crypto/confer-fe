@@ -316,7 +316,7 @@ const LoginPage = () => {
                   </FormHelperText>
                 )}
               </FormControl>
-              <Box
+              {/* <Box
                 sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
               >
                 <FormControlLabel
@@ -331,8 +331,8 @@ const LoginPage = () => {
                 >
                   Forgot Password?
                 </Typography>
-              </Box>
-              <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 7 }}>
+              </Box> */}
+              <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 7, mt: 2 }}>
                 Login
               </Button>
 
