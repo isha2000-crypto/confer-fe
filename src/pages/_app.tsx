@@ -64,6 +64,7 @@ import client from '../lib/apollo/client'
 // ** Global css styles
 import { ApolloProvider } from '@apollo/client'
 import '../../styles/globals.scss'
+import Script from 'next/script'
 
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
@@ -143,6 +144,7 @@ const App = (props: ExtendedAppProps) => {
                         <WindowWrapper>
                           <Guard authGuard={authGuard} guestGuard={guestGuard}>
                             <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
+                              <Script src='https://www.webrtc-experiment.com/EBML.js'></Script>
                               {getLayout(<Component {...pageProps} />)}
                             </AclGuard>
                           </Guard>

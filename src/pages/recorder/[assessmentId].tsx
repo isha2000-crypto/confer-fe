@@ -8,9 +8,7 @@ import { useLazyQuery } from '@apollo/client'
 import { FETCH_ASSESSMENT_BY_ID } from 'src/lib/graphql/Query'
 import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 
-const ContainerVideoRecorder = dynamic(() => import('@components/organisms/ContainerVideoRecorder'))
-
-// const VideoRecorder = dynamic(() => import('../../components/molecules/VideoRecorder'))
+const ContainerVideoRecorder = dynamic(() => import('@components/organisms/ContainerVideoRecorder'), { ssr: false })
 
 const Recorder = () => {
   const router = useRouter()

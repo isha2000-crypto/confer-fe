@@ -34,7 +34,7 @@ const CreateAssessmentForm = () => {
   const [assessment, setAssessment] = useState({
     title: '',
     description: '',
-    type: ''
+    type: 'LEADERSHIP'
   })
   const [isAllowed, setAllowed] = useState(false)
 
@@ -64,7 +64,7 @@ const CreateAssessmentForm = () => {
   const addQuestion = () => {
     const newQuestion: Question = {
       id: questions.length + 1,
-      type: '',
+      type: 'TEXTUAL',
       description: '',
       duration: 60
     }
@@ -85,36 +85,36 @@ const CreateAssessmentForm = () => {
 
   const handleAssessmentSubmit = (event: any) => {
     event.preventDefault()
-    if (assessment.title === '' || assessment.description === '' || assessment.type === '' || questions.length === 0) {
+    let isFormValid = true
+    if (questions.length === 0 || assessment.title === '' || assessment.description === '' || assessment.type === '') {
       alert('Please fill in all fields')
 
       return
     }
 
-    router.push(`${URLS.ASSESSMENT_URL}/available`)
-    setSubmit(true)
-
     const modifiedQuestions = questions.map(question => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { id, ...rest } = question
-      if (
-        assessment.title === '' ||
-        assessment.description === '' ||
-        assessment.type === '' ||
-        questions.length === 0
-      ) {
-        setAllowed(false)
-        alert('Please fill in all fields')
+      if (question.type === '' || question.description === '' || question.duration < 60) {
+        alert('Please Make Sure Question Fields are Valid!!')
+        isFormValid = false
       }
 
       return rest
     })
+    if (!isFormValid) {
+      console.log('Form is Not valid')
+
+      return
+    }
 
     createAssessmentMutation({
       variables: { createAssessmentInput: { ...assessment, tasks: modifiedQuestions } }
     })
       .then(result => {
         console.log(result.data)
+        setSubmit(true)
+        router.push(`${URLS.ASSESSMENT_URL}/available`)
       })
       .catch(error => {
         console.error(error)
@@ -124,24 +124,23 @@ const CreateAssessmentForm = () => {
   return (
     <>
       <Card>
-        <br />
-        <span style={{ paddingLeft: '80%', paddingTop: '10px' }}>
-          <Button onClick={handleAssessmentSubmit} size='large' type='submit' variant='contained' sx={{ width: '10%' }}>
-            submit
-          </Button>
-          <div style={{ width: '21%', marginLeft: '37%' }}>
-            {isAllowed && <Alert severity='success'>Fill the required fields</Alert>}
-            {submitAss && <Alert severity='success'>Assessment Created Successfully</Alert>}
-          </div>
+        <form onSubmit={handleAssessmentSubmit}>
+          <br />
+          <span style={{ paddingLeft: '80%', paddingTop: '10px' }}>
+            <Button size='large' type='submit' variant='contained' sx={{ width: '10%' }}>
+              submit
+            </Button>
+            <div style={{ width: '21%', marginLeft: '37%' }}>
+              {submitAss && <Alert severity='success'>Assessment Created Successfully</Alert>}
+            </div>
 
-          <h3 style={{ paddingLeft: '25px' }}> Create Assessment</h3>
-        </span>
-
-        <form onSubmit={e => e.preventDefault()}>
+            <h3 style={{ paddingLeft: '25px' }}> Create Assessment</h3>
+          </span>
           <CardContent>
             <Grid container spacing={5}>
               <Grid item xs={6}>
                 <TextField
+                  required
                   fullWidth
                   type='title'
                   label='Title'
@@ -155,6 +154,7 @@ const CreateAssessmentForm = () => {
                   <TextField
                     fullWidth
                     multiline
+                    required
                     label='Description'
                     rows={4}
                     placeholder='Description here'
@@ -173,32 +173,30 @@ const CreateAssessmentForm = () => {
                       label='assessment Type'
                       value={assessment.type}
                       onChange={handleTypeChange}
+                      required
                     >
                       <MenuItem value='CODING'>{Task_Types.CODING}</MenuItem>
-                      <MenuItem value='TEXTUAL'>{Task_Types.LEADERSHIP}</MenuItem>
+                      <MenuItem value='LEADERSHIP'>{Task_Types.LEADERSHIP}</MenuItem>
                     </Select>
                   </FormControl>
                   <br />
                 </div>
               </Grid>
               <br />
-              <Grid>
+              <Grid container>
                 {' '}
                 {questions.map((q, index) => (
-                  <Box key={index} sx={{ mb: 3 }}>
+                  <Grid item key={index} sx={{ mb: 3 }}>
                     <>
                       <br />
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}></div>
-                      <CSSTransition classNames='question' timeout={300}>
-                        <Question
-                          count={index}
-                          {...q}
-                          removeQuestion={removeQuestion}
-                          handleQuestionUpdate={handleQuestionUpdate}
-                        />
-                      </CSSTransition>
+                      <Question
+                        count={index}
+                        {...q}
+                        removeQuestion={removeQuestion}
+                        handleQuestionUpdate={handleQuestionUpdate}
+                      />
                     </>
-                  </Box>
+                  </Grid>
                 ))}
               </Grid>
 

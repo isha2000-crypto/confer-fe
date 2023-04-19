@@ -9,6 +9,7 @@ import SelfieSegmentationMediapipe from './SelfieSegmentationMediapipe'
 import FilterMenu from './FilterMenu'
 import { VideoFilter } from '@custom-types/enum'
 import VideoPlayer from '../VideoPlayer'
+import RecordRTC, { getSeekableBlob } from 'recordrtc'
 
 interface Props {
   currentTask: any
@@ -40,7 +41,6 @@ function ContainerVideo({
   const countDownRef: any = React.useRef(null)
 
   // React States
-  const [recordedChunks, setRecordedChunks] = React.useState([])
   const [startedCapture, setStartedCapture] = React.useState(false)
   const [capturing, setCapturing] = React.useState(false)
   const [timeRemaining, setTimeRemaining] = React.useState(currentTask?.duration)
@@ -50,6 +50,7 @@ function ContainerVideo({
   const [filterType, setFilterType] = React.useState<VideoFilter>(VideoFilter.NONE)
   const [imageUrl, setImageUrl] = React.useState<string | null>(null)
   const [counter, setCounter] = React.useState<number>(3)
+  const [recordeBlob, setRecordedBlob] = React.useState<Blob | null>(null)
 
   //Handler Functions
   const handleMenuOpenClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -60,18 +61,6 @@ function ContainerVideo({
     setFilterType(value)
     setImageUrl(imageUrl)
   }
-
-  const handleDataAvailable = React.useCallback(
-    ({ data }: any) => {
-      if (data.size > 0) {
-        setRecordedChunks(prev => prev.concat(data))
-      }
-      if (mediaRecorderRef.current.state === 'inactive') {
-        mediaRecorderRef.current.removeEventListener('dataavailable', handleDataAvailable)
-      }
-    },
-    [setRecordedChunks, mediaRecorderRef]
-  )
 
   const startTimer = () => {
     const timer = setInterval(() => {
@@ -98,23 +87,29 @@ function ContainerVideo({
       const audioTrack = webcamRef.current.stream.getAudioTracks()[0]
       const canvasStream = canvasRef.current.captureStream(60)
       canvasStream.addTrack(audioTrack)
-      mediaRecorderRef.current = new MediaRecorder(canvasStream, {
+      mediaRecorderRef.current = new RecordRTC(canvasStream, {
         mimeType: 'video/webm'
       })
-      mediaRecorderRef.current.addEventListener('dataavailable', handleDataAvailable)
-      mediaRecorderRef.current.start()
+
+      // mediaRecorderRef.current.addEventListener('dataavailable', handleDataAvailable)
+      mediaRecorderRef.current.startRecording()
       startTimer()
     }, 3000)
-  }, [handleDataAvailable])
+  }, [])
 
   const handleStopCaptureClick = React.useCallback(async () => {
     clearInterval(timerRef.current)
-    mediaRecorderRef.current.stop()
+    mediaRecorderRef.current.stopRecording(function () {
+      const videoBlob = mediaRecorderRef.current.getBlob()
+      getSeekableBlob(videoBlob, function (seeked) {
+        setRecordedBlob(seeked)
+      })
+    })
     setCapturing(false)
   }, [mediaRecorderRef, setCapturing])
 
   const handleRetakeClick = () => {
-    if (!capturing && recordedChunks.length > 0) setRetakePopup(true)
+    if (!capturing && recordeBlob) setRetakePopup(true)
   }
 
   const handleSubmitTask = () => {
@@ -122,8 +117,8 @@ function ContainerVideo({
   }
 
   const handleRetake = () => {
-    if (recordedChunks.length == 0 || capturing) return
-    setRecordedChunks([])
+    if (!recordeBlob || capturing) return
+    setRecordedBlob(null)
     setTimeRemaining(currentTask?.duration)
   }
 
@@ -132,11 +127,8 @@ function ContainerVideo({
   }
 
   const handleRecordingSubmit = () => {
-    const blob = new Blob([...recordedChunks], {
-      type: 'video/mp4'
-    })
-    setRecordedChunks([])
-    handleTaskUpload(blob)
+    handleTaskUpload(recordeBlob)
+    setRecordedBlob(null)
   }
 
   // React Effects
@@ -166,7 +158,7 @@ function ContainerVideo({
         }}
       >
         <div className={classnames.video_wrapper}>
-          {recordedChunks.length == 0 && (
+          {!recordeBlob && (
             <>
               <Webcam
                 className={classnames.video_component}
@@ -235,33 +227,29 @@ function ContainerVideo({
                   </>
                 ) : (
                   !startedCapture && (
-                    <IconButton color={'error'} onClick={handleStartCaptureClick} disabled={recordedChunks.length != 0}>
-                      <Icon icon='mdi:record' fontSize={100} color={recordedChunks.length != 0 ? 'grey' : undefined} />
+                    <IconButton color={'error'} onClick={handleStartCaptureClick} disabled={!!recordeBlob}>
+                      <Icon icon='mdi:record' fontSize={100} color={recordeBlob ? 'grey' : undefined} />
                     </IconButton>
                   )
                 )}
               </div>
             </>
           )}
-          {recordedChunks.length > 0 && (
+          {recordeBlob && (
             <>
-              <VideoPlayer id={`${recordedChunks.length}`}>
-                {recordedChunks.map((chunk, index) => (
-                  <source key={index} src={URL.createObjectURL(chunk)} />
-                ))}
-              </VideoPlayer>
+              <VideoPlayer id={`${recordeBlob.size}`} source={URL.createObjectURL(recordeBlob)}></VideoPlayer>
               <div className={classnames.video_controls_completed}>
-                {!capturing && recordedChunks.length > 0 && (
+                {!capturing && recordeBlob && (
                   <>
                     <IconButton
-                      color={recordedChunks.length > 0 && !capturing ? 'primary' : 'secondary'}
+                      color={recordeBlob && !capturing ? 'primary' : 'secondary'}
                       onClick={handleRetakeClick}
-                      disabled={recordedChunks.length == 0}
+                      disabled={!recordeBlob}
                     >
-                      <Icon icon='mdi:refresh' fontSize={100} color={recordedChunks.length == 0 ? 'grey' : undefined} />
+                      <Icon icon='mdi:refresh' fontSize={100} color={!recordeBlob ? 'grey' : undefined} />
                     </IconButton>
-                    <IconButton disabled={recordedChunks.length == 0} color='primary' onClick={handleSubmitTask}>
-                      <Icon icon='mdi:tick' fontSize={100} color={recordedChunks.length == 0 ? 'grey' : undefined} />
+                    <IconButton disabled={!recordeBlob} color='primary' onClick={handleSubmitTask}>
+                      <Icon icon='mdi:tick' fontSize={100} color={!recordeBlob ? 'grey' : undefined} />
                     </IconButton>
                   </>
                 )}
