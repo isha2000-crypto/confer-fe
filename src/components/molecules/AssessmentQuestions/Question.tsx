@@ -8,7 +8,7 @@ import InputLabel from '@mui/material/InputLabel'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Icon from 'src/@core/components/icon'
-import { Question_Types } from '../../custom-types/enum'
+import { Question_Types } from '../../../custom-types/enum'
 import { memo } from 'react'
 import styles from './Questions.module.scss'
 

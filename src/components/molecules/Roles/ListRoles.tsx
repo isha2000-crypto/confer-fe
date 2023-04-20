@@ -36,7 +36,7 @@ const ListRoles = ({ roles }: Props) => {
   return (
     <Grid container spacing={6} className='match-height'>
       {renderCards()}
-      {/* {ability?.can(ACTIONS.CREATE, SUBJECTS.ROLES) && (
+      {ability?.can(ACTIONS.CREATE, SUBJECTS.ROLES) && (
         <Grid item xs={12} sm={6} lg={4}>
           <Card
             sx={{ cursor: 'pointer' }}
@@ -71,7 +71,7 @@ const ListRoles = ({ roles }: Props) => {
             </Grid>
           </Card>
         </Grid>
-      )} */}
+      )}
       {open && <DialogRolesEdit open={open} handleClose={handleClose} dialogTitle={dialogTitle} role={null} />}
     </Grid>
   )

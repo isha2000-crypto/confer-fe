@@ -42,12 +42,12 @@ const navigation = (): VerticalNavItemsType => {
       title: 'Admin',
       icon: 'mdi-account-settings-variant',
       children: [
-        // {
-        //   subject: SUBJECTS.USER_INVITATION,
-        //   action: ACTIONS.CREATE,
-        //   title: 'Invite',
-        //   path: `${URLS.ADMIN}/invite`
-        // },
+        {
+          subject: SUBJECTS.USER_INVITATION,
+          action: ACTIONS.CREATE,
+          title: 'Invite',
+          path: `${URLS.ADMIN}/invite`
+        },
         {
           subject: SUBJECTS.ROLES,
           action: ACTIONS.READ,

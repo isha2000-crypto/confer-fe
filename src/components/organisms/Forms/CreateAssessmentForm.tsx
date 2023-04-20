@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { URLS } from '@custom-types/constants'
+
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import TextField from '@mui/material/TextField'
 import CardContent from '@mui/material/CardContent'
-import Question from '../../molecules/Question'
+import Question from '../../molecules/AssessmentQuestions/Question'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import Select from '@mui/material/Select'
@@ -17,9 +17,8 @@ import { Alert } from '@mui/material'
 import { useMutation } from '@apollo/client'
 import { CREATE_ASSESSMENT_MUTATION } from 'src/lib/graphql/Mutation'
 
-import { useRouter } from 'next/router'
 import { validationSchema } from '../../../lib/schema/validationSchema'
-import { Formik, Form, Field, ErrorMessage } from 'formik'
+import { Formik } from 'formik'
 
 interface Question {
   id: number
@@ -40,7 +39,7 @@ const CreateAssessmentForm = () => {
   })
 
   const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
-  const router = useRouter()
+
   const containerStyle = {
     backgroundColor: '#F0F0F0',
     borderRadius: '20px',
@@ -195,7 +194,6 @@ const CreateAssessmentForm = () => {
                           <MenuItem value='CODING'>{Task_Types.CODING}</MenuItem>
                           <MenuItem value='LEADERSHIP'>{Task_Types.LEADERSHIP}</MenuItem>
                         </Select>
-                        <ErrorMessage name='type' component={Alert} severity='error' />
                       </FormControl>
                     </div>
                   </Grid>
