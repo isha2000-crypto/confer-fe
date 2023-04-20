@@ -11,13 +11,15 @@ import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
-import Box from '@mui/material/Box'
+
 import { Task_Types } from '.././../../custom-types/enum'
 import { Alert } from '@mui/material'
 import { useMutation } from '@apollo/client'
 import { CREATE_ASSESSMENT_MUTATION } from 'src/lib/graphql/Mutation'
-import { CSSTransition } from 'react-transition-group'
+
 import { useRouter } from 'next/router'
+import { validationSchema } from '../../../lib/schema/validationSchema'
+import { Formik, Form, Field, ErrorMessage } from 'formik'
 
 interface Question {
   id: number
@@ -30,38 +32,26 @@ const CreateAssessmentForm = () => {
   const [questions, setQuestions] = useState<Question[]>([])
 
   const [submitAss, setSubmit] = useState(false)
-
+  const [showAdd, setShowAdd] = useState(false)
   const [assessment, setAssessment] = useState({
     title: '',
     description: '',
     type: 'LEADERSHIP'
   })
-  const [isAllowed, setAllowed] = useState(false)
 
   const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
   const router = useRouter()
-  const handleTitleChange = (event: any) => {
-    setAssessment(prevState => ({
-      ...prevState,
-      title: event.target.value
-    }))
-  }
-
-  const handleDescriptionChange = (event: any) => {
-    setAssessment(prevState => ({
-      ...prevState,
-      description: event.target.value
-    }))
-  }
-
-  const handleTypeChange = (event: any) => {
-    setAssessment(prevState => ({
-      ...prevState,
-      type: event.target.value
-    }))
+  const containerStyle = {
+    backgroundColor: '#F0F0F0',
+    borderRadius: '20px',
+    padding: '20px',
+    margin: '20px 0',
+    width: '100%',
+    marginLeft: '20px'
   }
 
   const addQuestion = () => {
+    setShowAdd(true)
     const newQuestion: Question = {
       id: questions.length + 1,
       type: 'TEXTUAL',
@@ -114,120 +104,160 @@ const CreateAssessmentForm = () => {
       .then(result => {
         console.log(result.data)
         setSubmit(true)
-        router.push(`${URLS.ASSESSMENT_URL}/available`)
+        setTimeout(() => {
+          resetForm()
+        }, 2000)
       })
       .catch(error => {
         console.error(error)
       })
   }
+  const resetForm = () => {
+    setAssessment({
+      title: '',
+      description: '',
+      type: ''
+    })
+    setQuestions([])
+    setSubmit(false)
+    setShowAdd(false)
+  }
 
   return (
     <>
       <Card>
-        <form onSubmit={handleAssessmentSubmit}>
-          <br />
-          <span style={{ paddingLeft: '80%', paddingTop: '10px' }}>
-            <Button size='large' type='submit' variant='contained' sx={{ width: '10%' }}>
-              submit
-            </Button>
-            <div style={{ width: '21%', marginLeft: '37%' }}>
-              {submitAss && <Alert severity='success'>Assessment Created Successfully</Alert>}
-            </div>
+        <Formik
+          initialValues={{
+            title: '',
+            description: '',
+            type: '',
+            questions: questions
+          }}
+          validationSchema={validationSchema}
+          onSubmit={handleAssessmentSubmit}
+        >
+          {formik => (
+            <form onSubmit={handleAssessmentSubmit}>
+              <h3 style={{ paddingLeft: '25px', paddingTop: '10px' }}> Create Assessment</h3>
 
-            <h3 style={{ paddingLeft: '25px' }}> Create Assessment</h3>
-          </span>
-          <CardContent>
-            <Grid container spacing={5}>
-              <Grid item xs={6}>
-                <TextField
-                  required
-                  fullWidth
-                  type='title'
-                  label='Title'
-                  placeholder='Task'
-                  value={assessment.title}
-                  onChange={handleTitleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12}>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <TextField
-                    fullWidth
-                    multiline
-                    required
-                    label='Description'
-                    rows={4}
-                    placeholder='Description here'
-                    value={assessment.description}
-                    onChange={handleDescriptionChange}
-                  />
-                </div>
-              </Grid>
-              <Grid item xs={6}>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <FormControl fullWidth sx={{ alignSelf: 'center' }}>
-                    <InputLabel id='assessment-type-select-label'>Assessment Type</InputLabel>
-                    <Select
-                      labelId='assessment-type-select-label'
-                      id='assessment-type-select'
-                      label='assessment Type'
-                      value={assessment.type}
-                      onChange={handleTypeChange}
+              <CardContent>
+                <Grid container spacing={5}>
+                  <Grid item xs={6}>
+                    <TextField
                       required
-                    >
-                      <MenuItem value='CODING'>{Task_Types.CODING}</MenuItem>
-                      <MenuItem value='LEADERSHIP'>{Task_Types.LEADERSHIP}</MenuItem>
-                    </Select>
-                  </FormControl>
-                  <br />
-                </div>
-              </Grid>
-              <br />
-              <Grid container>
-                {' '}
-                {questions.map((q, index) => (
-                  <Grid item key={index} sx={{ mb: 3 }}>
-                    <>
-                      <br />
-                      <Question
-                        count={index}
-                        {...q}
-                        removeQuestion={removeQuestion}
-                        handleQuestionUpdate={handleQuestionUpdate}
-                      />
-                    </>
+                      fullWidth
+                      type='title'
+                      label='Title'
+                      name='title'
+                      placeholder='Task'
+                      value={assessment.title}
+                      onChange={event => {
+                        setAssessment({ ...assessment, title: event.target.value })
+                        formik.handleChange(event)
+                      }}
+                      error={formik.touched.title && Boolean(formik.errors.title)}
+                      helperText={formik.touched.title && formik.errors.title}
+                    />
                   </Grid>
-                ))}
-              </Grid>
+                  <Grid item xs={12} sm={12}>
+                    <div style={{ display: 'flex', flexDirection: 'column', marginTop: '15px' }}>
+                      <TextField
+                        fullWidth
+                        multiline
+                        required
+                        label='Description'
+                        name='description'
+                        rows={4}
+                        value={assessment.description}
+                        onChange={event => {
+                          setAssessment({ ...assessment, description: event.target.value })
+                          formik.handleChange(event)
+                        }}
+                        error={formik.touched.description && Boolean(formik.errors.description)}
+                        helperText={formik.touched.description && formik.errors.description}
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <div style={{ display: 'flex', flexDirection: 'column', marginTop: '15px' }}>
+                      <FormControl fullWidth sx={{ alignSelf: 'center' }}>
+                        <InputLabel id='assessment-type-select-label'>Assessment Type</InputLabel>
+                        <Select
+                          labelId='assessment-type-select-label'
+                          id='assessment-type-select'
+                          label='assessment Type'
+                          name='type'
+                          value={formik.values.type}
+                          onChange={formik.handleChange}
+                          error={formik.touched.type && Boolean(formik.errors.type)}
+                          required
+                        >
+                          <MenuItem value='CODING'>{Task_Types.CODING}</MenuItem>
+                          <MenuItem value='LEADERSHIP'>{Task_Types.LEADERSHIP}</MenuItem>
+                        </Select>
+                        <ErrorMessage name='type' component={Alert} severity='error' />
+                      </FormControl>
+                    </div>
+                  </Grid>
+                  {showAdd && (
+                    <Grid container sx={containerStyle}>
+                      {' '}
+                      {questions.map((q, index) => (
+                        <Grid item key={index} sx={{ mb: 3 }}>
+                          <>
+                            <br />
+                            <Question
+                              count={index}
+                              {...q}
+                              removeQuestion={removeQuestion}
+                              handleQuestionUpdate={handleQuestionUpdate}
+                            />
+                          </>
+                        </Grid>
+                      ))}
+                    </Grid>
+                  )}
 
-              <br />
-              <Divider sx={{ mb: '0 !important' }} />
-              <Grid item container justifyContent='center'>
-                <Button
-                  onClick={addQuestion}
-                  className='add-question-button'
-                  sx={{
-                    width: '100%',
-                    fontSize: '1.5rem',
-                    padding: '1rem',
-                    borderRadius: '0.5rem',
-                    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
-                    transition: 'all 0.3s ease',
-                    border: '4px dotted grey',
-                    color: 'grey',
-                    '&:hover': {
-                      backgroundColor: '#1976d2',
-                      boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.25)'
-                    }
-                  }}
-                >
-                  Add Question
-                </Button>
-              </Grid>
-            </Grid>
-          </CardContent>
-          <Divider sx={{ m: '0 !important' }} />
-        </form>
+                  <Divider sx={{ mb: '0 !important' }} />
+                  <Grid item container justifyContent='center'>
+                    <Button
+                      onClick={addQuestion}
+                      className='add-question-button'
+                      sx={{
+                        width: '100%',
+                        fontSize: '1.5rem',
+                        padding: '1rem',
+                        borderRadius: '0.5rem',
+                        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
+                        transition: 'all 0.3s ease',
+                        border: '4px dotted grey',
+                        color: 'grey',
+                        '&:hover': {
+                          backgroundColor: '#1976d2',
+                          boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.25)'
+                        }
+                      }}
+                    >
+                      Add Question
+                    </Button>
+                  </Grid>
+                </Grid>
+              </CardContent>
+              <Divider sx={{ m: '0 !important' }} />
+              <Button
+                size='large'
+                type='submit'
+                variant='contained'
+                sx={{ width: '10%', marginTop: '10px', marginBottom: '10px', marginLeft: '10px' }}
+              >
+                Create
+              </Button>
+              <div style={{ width: '21%', marginLeft: '37%' }}>
+                {submitAss && <Alert severity='success'>Assessment Created Successfully</Alert>}
+              </div>
+            </form>
+          )}
+        </Formik>
       </Card>
     </>
   )
