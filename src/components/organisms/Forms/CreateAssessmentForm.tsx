@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { Formik } from 'formik'
+import { validationSchema } from '../../../lib/schema/validationSchema'
 
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
@@ -6,7 +8,7 @@ import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import TextField from '@mui/material/TextField'
 import CardContent from '@mui/material/CardContent'
-import Question from '../../molecules/AssessmentQuestions/Question'
+import CreateQuestion from '../../molecules/CreateQuestion/CreateQuestion'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import Select from '@mui/material/Select'
@@ -17,9 +19,8 @@ import { Task_Types } from '.././../../custom-types/enum'
 import { useMutation } from '@apollo/client'
 import { CREATE_ASSESSMENT_MUTATION } from 'src/lib/graphql/Mutation'
 import toast from 'react-hot-toast'
-
-import { validationSchema } from '../../../lib/schema/validationSchema'
-import { Formik } from 'formik'
+import { TransitionGroup } from 'react-transition-group'
+import { Collapse } from '@mui/material'
 
 import { useTheme } from '@mui/material/styles'
 
@@ -36,7 +37,6 @@ const CreateAssessmentForm = () => {
   const [questions, setQuestions] = useState<Question[]>([])
 
   const [submitAss, setSubmit] = useState(false)
-  const [showAdd, setShowAdd] = useState(false)
   const [assessment, setAssessment] = useState({
     title: '',
     description: '',
@@ -46,16 +46,15 @@ const CreateAssessmentForm = () => {
   const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
 
   const containerStyle = {
-    backgroundColor: '#F0F0F0',
+    backgroundColor: 'background.default',
     borderRadius: '20px',
     padding: '20px',
     margin: '20px 0',
-    width: '100%',
-    marginLeft: '20px'
+    marginLeft: '20px',
+    visibility: questions.length ? 'visible' : 'hidden'
   }
 
   const addQuestion = () => {
-    setShowAdd(true)
     const newQuestion: Question = {
       id: questions.length + 1,
       type: 'TEXTUAL',
@@ -124,7 +123,6 @@ const CreateAssessmentForm = () => {
     })
     setQuestions([])
     setSubmit(false)
-    setShowAdd(false)
   }
 
   return (
@@ -145,8 +143,8 @@ const CreateAssessmentForm = () => {
               <h3 style={{ paddingLeft: '25px', paddingTop: '10px' }}> Create Assessment</h3>
 
               <CardContent>
-                <Grid container spacing={5}>
-                  <Grid item xs={6}>
+                <Grid container spacing={5} columns={1}>
+                  <Grid item xs={12}>
                     <TextField
                       required
                       fullWidth
@@ -202,24 +200,21 @@ const CreateAssessmentForm = () => {
                       </FormControl>
                     </div>
                   </Grid>
-                  {showAdd && questions.length !== 0 && (
-                    <Grid container sx={containerStyle}>
-                      {' '}
+
+                  <Grid container sx={containerStyle} spacing={5} justifyContent={'center'}>
+                    <TransitionGroup>
                       {questions.map((q, index) => (
-                        <Grid item key={index} sx={{ mb: 3 }}>
-                          <>
-                            <br />
-                            <Question
-                              count={index}
-                              {...q}
-                              removeQuestion={removeQuestion}
-                              handleQuestionUpdate={handleQuestionUpdate}
-                            />
-                          </>
-                        </Grid>
+                        <Collapse key={index}>
+                          <CreateQuestion
+                            count={index}
+                            {...q}
+                            removeQuestion={removeQuestion}
+                            handleQuestionUpdate={handleQuestionUpdate}
+                          />
+                        </Collapse>
                       ))}
-                    </Grid>
-                  )}
+                    </TransitionGroup>
+                  </Grid>
 
                   <Divider sx={{ mb: '0 !important' }} />
                   <Grid item container justifyContent='center'>
@@ -231,14 +226,10 @@ const CreateAssessmentForm = () => {
                         fontSize: '1.5rem',
                         padding: '1rem',
                         borderRadius: '0.5rem',
-                        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
                         transition: 'all 0.3s ease',
-                        border: '4px dotted grey',
-                        color: 'grey',
-                        '&:hover': {
-                          backgroundColor: '#1976d2',
-                          boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.25)'
-                        }
+                        border: '2px dashed',
+                        borderColor: 'text.primary',
+                        color: 'text.primary'
                       }}
                     >
                       Add Question
