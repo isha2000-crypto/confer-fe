@@ -21,6 +21,8 @@ import toast from 'react-hot-toast'
 import { validationSchema } from '../../../lib/schema/validationSchema'
 import { Formik } from 'formik'
 
+import { useTheme } from '@mui/material/styles'
+
 interface Question {
   id: number
   type: string
@@ -29,6 +31,8 @@ interface Question {
 }
 
 const CreateAssessmentForm = () => {
+  const theme = useTheme()
+
   const [questions, setQuestions] = useState<Question[]>([])
 
   const [submitAss, setSubmit] = useState(false)
