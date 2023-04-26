@@ -198,7 +198,7 @@ const CreateAssessmentForm = () => {
                       </FormControl>
                     </div>
                   </Grid>
-                  {showAdd && (
+                  {showAdd && questions.length !== 0 && (
                     <Grid container sx={containerStyle}>
                       {' '}
                       {questions.map((q, index) => (
