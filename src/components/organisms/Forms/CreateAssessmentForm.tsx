@@ -13,9 +13,10 @@ import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 
 import { Task_Types } from '.././../../custom-types/enum'
-import { Alert } from '@mui/material'
+
 import { useMutation } from '@apollo/client'
 import { CREATE_ASSESSMENT_MUTATION } from 'src/lib/graphql/Mutation'
+import toast from 'react-hot-toast'
 
 import { validationSchema } from '../../../lib/schema/validationSchema'
 import { Formik } from 'formik'
@@ -246,12 +247,15 @@ const CreateAssessmentForm = () => {
                 size='large'
                 type='submit'
                 variant='contained'
-                sx={{ width: '10%', marginTop: '10px', marginBottom: '10px', marginLeft: '10px' }}
+                sx={{ width: '10%', marginTop: '10px', marginBottom: '10px', marginRight: '10px', float: 'right' }}
               >
                 Create
               </Button>
               <div style={{ width: '21%', marginLeft: '37%' }}>
-                {submitAss && <Alert severity='success'>Assessment Created Successfully</Alert>}
+                {submitAss &&
+                  toast.success('Assessment Created Successfully', {
+                    duration: 2000
+                  })}
               </div>
             </form>
           )}
