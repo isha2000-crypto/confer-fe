@@ -1,9 +1,6 @@
 // ** React Imports
 import { useContext, useState } from 'react'
 
-// ** Next Import
-import Link from 'next/link'
-
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -76,9 +73,7 @@ const tableColumns = [
           <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
             <Typography
               noWrap
-              component={Link}
               variant='subtitle2'
-              href='/apps/user/view/overview/'
               sx={{
                 fontWeight: 600,
                 color: 'text.primary',
