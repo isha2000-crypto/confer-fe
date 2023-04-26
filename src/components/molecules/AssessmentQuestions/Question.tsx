@@ -11,6 +11,7 @@ import Icon from 'src/@core/components/icon'
 import { Question_Types } from '../../../custom-types/enum'
 import { memo } from 'react'
 import styles from './Questions.module.scss'
+import { Container } from '@mui/material'
 
 interface QuestionProps {
   id: number
@@ -43,8 +44,8 @@ const Question = (props: QuestionProps) => {
 
   return (
     <>
-      <div
-        style={{
+      <Container
+        sx={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -53,7 +54,7 @@ const Question = (props: QuestionProps) => {
           marginLeft: '45%',
           width: '100%',
           borderRadius: '20px',
-          backgroundColor: 'white'
+          backgroundColor: 'background.paper'
         }}
       >
         <Grid container spacing={2} sx={{ width: '100%', paddingLeft: '20px' }}>
@@ -117,7 +118,7 @@ const Question = (props: QuestionProps) => {
             <Icon icon='mdi-cup-off' onClick={handleRemove} className={styles.red_icon} />
           </div>
         </Grid>
-      </div>
+      </Container>
     </>
   )
 }

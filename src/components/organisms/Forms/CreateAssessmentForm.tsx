@@ -42,7 +42,7 @@ const CreateAssessmentForm = () => {
   const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
 
   const containerStyle = {
-    backgroundColor: '#F0F0F0',
+    backgroundColor: 'background.default',
     borderRadius: '20px',
     padding: '20px',
     margin: '20px 0',
