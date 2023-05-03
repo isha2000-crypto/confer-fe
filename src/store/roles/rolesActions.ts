@@ -20,7 +20,7 @@ export const fetchRoles = () => async (dispatch: (arg0: { payload: any; type: st
     const { data } = await client.query({
       query: LOAD_ROLES
     })
-
+    console.log(data)
     dispatch(setRolesSuccess(data.roles))
   } catch (error: any) {
     dispatch(setRolesFailure(error.message))
@@ -48,7 +48,6 @@ export const addNewRole = (role: any) => async (dispatch: (arg0: { payload: any;
       mutation: ADD_NEW_ROLE,
       variables: { createRoleInput: role }
     })
-    console.log(data)
     dispatch(setRoleAddSuccess(data.createRole))
   } catch (error: any) {
     dispatch(setRoleAddFailure(error.message))

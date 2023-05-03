@@ -125,16 +125,24 @@ export const UPDATE_ROLE = gql`
   }
 `
 export const ADD_NEW_ROLE = gql`
-  mutation CreateRole($createRoleInput: CreateRoleInput!) {
-    createRole(createRoleInput: $createRoleInput) {
-      _id
-      createdBy
-      creator {
-        name
-      }
-      title
+mutation CreateRole($createRoleInput: CreateRoleInput!) {
+  createRole(createRoleInput: $createRoleInput) {
+    _id
+    createdBy
+    creator {
+      name
+    }
+    title
+    permissions {
+      assessment_submission
+      assessments
+      roles
+      tenants
+      user_invitation
+      users
     }
   }
+}
 `
 export const CREATE_ASSESSMENT_MUTATION = gql`
   mutation ($createAssessmentInput: CreateAssessmentInput!) {
