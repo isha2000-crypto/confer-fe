@@ -6,8 +6,9 @@ import Alert from '@mui/material/Alert'
 // ** Redux Imports
 import { useDispatch } from 'react-redux'
 import { AppDispatch, RootState } from 'src/store'
-import { updateRole } from 'src/store/roles/rolesActions'
+import { addNewRole, updateRole } from 'src/store/roles/rolesActions'
 import { useSelector } from 'react-redux'
+import { clearErrors } from 'src/store/roles/rolesSlice'
 
 interface Props {
   handleClose: any
@@ -17,15 +18,18 @@ interface Props {
 }
 
 function DialogRolesEdit({ role, handleClose, open, dialogTitle }: Props) {
-  const closeDialog = () => {
-    handleClose()
-  }
-
   const dispatch = useDispatch<AppDispatch>()
   const roleStore = useSelector((store: RootState) => store.roles)
+  const closeDialog = () => {
+    handleClose()
+    dispatch(clearErrors())
+  }
 
   const handleUpdate = (updatedRole: any) => {
     dispatch(updateRole(role._id, updatedRole))
+  }
+  const handleNewRole = (role: any) => {
+    dispatch(addNewRole(role))
   }
 
   return (
@@ -37,12 +41,14 @@ function DialogRolesEdit({ role, handleClose, open, dialogTitle }: Props) {
         <Typography variant='body2'>Set Role Permissions</Typography>
       </DialogTitle>
       <DialogContent sx={{ p: { xs: 6, sm: 12 } }}>
-        {roleStore.updateError && <Alert severity='error'>{roleStore.updateError}</Alert>}
+        {roleStore.updateError ||
+          (roleStore.addRoleError && <Alert severity='error'>{roleStore.updateError || roleStore.addRoleError}</Alert>)}
         <TableRoleEdit
           role={role}
-          loading={roleStore.updateLoading}
-          handleSubmit={handleUpdate}
+          loading={dialogTitle === 'Edit' ? roleStore.updateLoading : roleStore.addRoleLoading}
+          handleSubmit={dialogTitle === 'Edit' ? handleUpdate : handleNewRole}
           handleCancel={closeDialog}
+          buttonTitle={dialogTitle}
         />
       </DialogContent>
     </Dialog>

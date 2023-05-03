@@ -12,23 +12,24 @@ import {
   TableBody,
   FormControl,
   TextField,
-  Typography,
-  Button
+  Typography
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import { getPermissionsObject, getSubjectTitles } from 'src/utils/functions'
+import ActionButtons from '../Actions/ActionButtons'
 
 interface Props {
   role: any
   loading: boolean
   handleSubmit: any
   handleCancel: any
+  buttonTitle: string
 }
 
 const rolesArr = getSubjectTitles()
 
-function TableRoleEdit({ role, loading, handleSubmit, handleCancel }: Props) {
+function TableRoleEdit({ role, loading, handleSubmit, handleCancel, buttonTitle }: Props) {
   const [selectedCheckbox, setSelectedCheckbox] = useState<string[]>([])
   const [isIndeterminateCheckbox, setIsIndeterminateCheckbox] = useState<boolean>(false)
   const [title, setTitle] = useState(role?.title)
@@ -94,6 +95,20 @@ function TableRoleEdit({ role, loading, handleSubmit, handleCancel }: Props) {
       permissions: getPermissionsObject(selectedCheckbox)
     }
     handleSubmit(updatedData)
+
+    // dispatch(clearErrors())
+  }
+  const addRole = () => {
+    const newRole = {
+      title: title,
+      permissions: getPermissionsObject(selectedCheckbox)
+    }
+    console.log(newRole)
+
+    handleSubmit(newRole)
+    setTitle('')
+
+    // dispatch(clearErrors())
   }
 
   return (
@@ -227,14 +242,12 @@ function TableRoleEdit({ role, loading, handleSubmit, handleCancel }: Props) {
           </TableBody>
         </Table>
       </TableContainer>
-      <Box className='demo-space-x' sx={{ display: 'flex', justifyContent: 'end', alignItems: 'flex-end' }}>
-        <Button size='large' type='submit' variant='contained' onClick={update} disabled={loading}>
-          {loading ? 'Updating...' : 'Update'}
-        </Button>
-        <Button size='large' color='secondary' variant='outlined' onClick={handleCancel} disabled={loading}>
-          Cancel
-        </Button>
-      </Box>
+      <ActionButtons
+        loading={loading}
+        handleCancel={handleCancel}
+        submit={buttonTitle === 'Edit' ? update : addRole}
+        submitText={buttonTitle === 'Edit' ? 'Update' : buttonTitle}
+      />
     </>
   )
 }
