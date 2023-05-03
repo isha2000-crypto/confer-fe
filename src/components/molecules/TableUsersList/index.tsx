@@ -25,6 +25,8 @@ import Icon from 'src/@core/components/icon'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 
+import DialogUserEdit from '../Dialog/DialogUserEdit/DialogUserEdit'
+
 interface UserStatusType {
   [key: string]: ThemeColor
 }
@@ -139,8 +141,16 @@ const TableUsersList = ({ users }: any) => {
   // ** State
   const ability = useContext(AbilityContext)
   const [pageSize, setPageSize] = useState<number>(10)
-  const handleEditRole = (id: string) => {
-    console.log('Edit Role', id)
+  const [user, setUser] = useState<UsersType>()
+  const [open, setOpen] = useState<boolean>(false)
+
+  const handleEditRole = (user: UsersType) => {
+    setUser({ ...user })
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
   }
   const columns = [
     ...tableColumns,
@@ -153,7 +163,7 @@ const TableUsersList = ({ users }: any) => {
       headerName: 'Actions',
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton onClick={() => handleEditRole(row._id)}>
+          <IconButton onClick={() => handleEditRole(row)}>
             <Icon icon='mdi:pencil-outline' />
           </IconButton>
         </Box>
@@ -163,6 +173,7 @@ const TableUsersList = ({ users }: any) => {
 
   return (
     <>
+      {open && <DialogUserEdit handleClose={handleClose} open={open} user={user as UsersType} />}
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <Card>
