@@ -38,6 +38,7 @@ export const updateRole =
 
       dispatch(setRoleUpdateSuccess(data.updateRole))
     } catch (error: any) {
+      console.log(error)
       dispatch(setRoleUpdateFailure(error.message))
     }
   }

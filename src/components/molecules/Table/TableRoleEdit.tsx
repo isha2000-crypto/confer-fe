@@ -32,7 +32,7 @@ const rolesArr = getSubjectTitles()
 function TableRoleEdit({ role, loading, handleSubmit, handleCancel, buttonTitle }: Props) {
   const [selectedCheckbox, setSelectedCheckbox] = useState<string[]>([])
   const [isIndeterminateCheckbox, setIsIndeterminateCheckbox] = useState<boolean>(false)
-  const [title, setTitle] = useState(role?.title)
+  const [title, setTitle] = useState(role?.title || '')
 
   useEffect(() => {
     if (role) {
@@ -95,8 +95,6 @@ function TableRoleEdit({ role, loading, handleSubmit, handleCancel, buttonTitle 
       permissions: getPermissionsObject(selectedCheckbox)
     }
     handleSubmit(updatedData)
-
-    // dispatch(clearErrors())
   }
   const addRole = () => {
     const newRole = {
@@ -107,8 +105,6 @@ function TableRoleEdit({ role, loading, handleSubmit, handleCancel, buttonTitle 
 
     handleSubmit(newRole)
     setTitle('')
-
-    // dispatch(clearErrors())
   }
 
   return (
@@ -121,6 +117,7 @@ function TableRoleEdit({ role, loading, handleSubmit, handleCancel, buttonTitle 
             value={title}
             onChange={handleTitleChange}
             disabled={loading}
+            required
           />
         </FormControl>
       </Box>
