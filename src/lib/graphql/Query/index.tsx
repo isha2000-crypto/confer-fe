@@ -204,3 +204,14 @@ export const LOAD_ASSESSMENT_TYPE = gql`
     }
   }
 `
+export const LOAD_TENANTS = gql`
+  query Query {
+    tenants {
+      _id
+      createdAt
+      domains
+      name
+      updatedAt
+    }
+  }
+`

@@ -5,12 +5,14 @@ import { configureStore } from '@reduxjs/toolkit'
 import assessmentsReducer from './assessments/assessmentsSlice'
 import rolesReducer from './roles/rolesSlice'
 import usersSlice from './users/usersSlice'
+import tenatsSlice from './tenants/tenatsSlice'
 
 export const store = configureStore({
   reducer: {
     assessments: assessmentsReducer,
     roles: rolesReducer,
-    users: usersSlice
+    users: usersSlice,
+    tenants: tenatsSlice
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

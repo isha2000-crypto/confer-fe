@@ -1,31 +1,27 @@
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
-import InputLabel from '@mui/material/InputLabel'
-import FormControl from '@mui/material/FormControl'
 
 interface TableHeaderProps {
   value: string
-  handleFilter: (val: string) => void
+  handleSearch: (val: string) => void
 }
 
 const TableHeader = (props: TableHeaderProps) => {
   // ** Props
-  const { handleFilter, value } = props
+  const { value, handleSearch } = props
 
   return (
-    <Box sx={{ p: 5, pb: 3, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
+    <Box sx={{ p: 5, pb: 3, display: 'flex', justifyContent: 'right' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'right' }}>
         <TextField
           size='small'
+          fullWidth
           value={value}
-          placeholder='Search User'
+          placeholder='Search tenants'
           sx={{ mr: 6, mb: 2 }}
-          onChange={e => handleFilter(e.target.value)}
+          onChange={e => handleSearch(e.target.value)}
         />
-        <FormControl size='small' sx={{ mb: 2 }}>
-          <InputLabel id='plan-select'>Select Plan</InputLabel>
-        </FormControl>
       </Box>
     </Box>
   )
