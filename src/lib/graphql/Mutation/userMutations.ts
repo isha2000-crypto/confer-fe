@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'
+import { gql } from "@apollo/client"
 
 export const SIGNUP_USER_MUTATION = gql`
   mutation signupUser($name: String!, $email: String!, $password: String!) {
@@ -62,81 +62,12 @@ export const LOGIN_GOOGLE_MUTATION = gql`
     }
   }
 `
-export const CREATE_ASSESSMENT_SUBMISSION = gql`
-  mutation CreateSubmittedAssessment($createSubmittedAssessmentInput: CreateSubmittedAssessmentInput!) {
-    createSubmittedAssessment(createSubmittedAssessmentInput: $createSubmittedAssessmentInput) {
-      _id
-      userId
-      user {
-        name
-      }
-      assessmentId
-      assessment {
-        title
-        description
-        type
-        author {
-          name
-        }
-        tasks {
-          _id
-          type
-          description
-          duration
-        }
-      }
-      createdAt
-      updatedAt
-      taskResponses {
-        _id
-        taskId
-        videoUrl
-      }
-    }
-  }
-`
 
 export const INVITE_USER_MUTATION = gql`
   mutation ($usersInvitationInput: UsersInvitationInput!) {
     inviteUsers(usersInvitationInput: $usersInvitationInput) {
       failed
       sent
-    }
-  }
-`
-export const UPDATE_ROLE = gql`
-  mutation UpdateRole($updateRoleId: ObjectId!, $updateRoleInput: UpdateRoleInput!) {
-    updateRole(id: $updateRoleId, updateRoleInput: $updateRoleInput) {
-      _id
-      title
-      permissions {
-        assessments
-        assessment_submission
-        users
-        user_invitation
-        tenants
-        roles
-      }
-      createdBy
-      creator {
-        name
-      }
-    }
-  }
-`
-export const CREATE_ASSESSMENT_MUTATION = gql`
-  mutation ($createAssessmentInput: CreateAssessmentInput!) {
-    createAssessment(createAssessmentInput: $createAssessmentInput) {
-      _id
-      description
-      title
-      type
-      tasks {
-        _id
-        description
-        duration
-        type
-      }
     }
   }
 `
