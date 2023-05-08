@@ -13,7 +13,9 @@ export enum ACTIONS {
   CREATE = 'CREATE',
   READ = 'READ',
   UPDATE = 'UPDATE',
-  DELETE = 'DELETE'
+  DELETE = 'DELETE',
+  ADD = 'Add',
+  EDIT = 'Edit'
 }
 
 export enum SUBJECTS {

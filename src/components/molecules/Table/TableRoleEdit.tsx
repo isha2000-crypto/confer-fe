@@ -242,8 +242,8 @@ function TableRoleEdit({ role, loading, handleSubmit, handleCancel, buttonTitle 
       <ActionButtons
         loading={loading}
         handleCancel={handleCancel}
-        submit={buttonTitle === 'Edit' ? update : addRole}
-        submitText={buttonTitle === 'Edit' ? 'Update' : buttonTitle}
+        submit={buttonTitle === ACTIONS.EDIT ? update : addRole}
+        submitText={buttonTitle === ACTIONS.EDIT ? 'Update' : buttonTitle}
       />
     </>
   )
