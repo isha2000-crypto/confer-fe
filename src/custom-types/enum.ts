@@ -13,9 +13,7 @@ export enum ACTIONS {
   CREATE = 'CREATE',
   READ = 'READ',
   UPDATE = 'UPDATE',
-  DELETE = 'DELETE',
-  ADD = 'Add',
-  EDIT = 'Edit'
+  DELETE = 'DELETE'
 }
 
 export enum SUBJECTS {
@@ -35,4 +33,8 @@ export enum VideoFilter {
   NONE = 'none',
   BLUR = 'blur',
   IMAGE = 'image'
+}
+export enum FORM_ACTIONS {
+  ADD = 'Add',
+  EDIT = 'Edit'
 }

@@ -1,14 +1,3 @@
-import { SIGNUP_USER_MUTATION, LOGIN_GOOGLE_MUTATION, LOGIN_USER_MUTATION, INVITE_USER_MUTATION } from './userMutations'
-import { CREATE_ASSESSMENT_MUTATION, CREATE_ASSESSMENT_SUBMISSION } from './assessmentMutation'
-import { ADD_NEW_ROLE, UPDATE_ROLE } from './roleMutation'
-
-export {
-  SIGNUP_USER_MUTATION,
-  LOGIN_GOOGLE_MUTATION,
-  LOGIN_USER_MUTATION,
-  INVITE_USER_MUTATION,
-  CREATE_ASSESSMENT_MUTATION,
-  CREATE_ASSESSMENT_SUBMISSION,
-  ADD_NEW_ROLE,
-  UPDATE_ROLE
-}
+export * from './assessmentMutation'
+export * from './roleMutation'
+export * from './userMutations'

@@ -1,4 +1,4 @@
-import { ACTIONS } from '@custom-types/enum'
+import { ACTIONS, FORM_ACTIONS } from '@custom-types/enum'
 import {
   TableContainer,
   Table,
@@ -242,8 +242,8 @@ function TableRoleEdit({ role, loading, handleSubmit, handleCancel, buttonTitle 
       <ActionButtons
         loading={loading}
         handleCancel={handleCancel}
-        submit={buttonTitle === ACTIONS.EDIT ? update : addRole}
-        submitText={buttonTitle === ACTIONS.EDIT ? 'Update' : buttonTitle}
+        submit={buttonTitle === FORM_ACTIONS.EDIT ? update : addRole}
+        submitText={buttonTitle === FORM_ACTIONS.EDIT ? 'Update' : buttonTitle}
       />
     </>
   )

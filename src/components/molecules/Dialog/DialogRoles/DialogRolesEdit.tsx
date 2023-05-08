@@ -9,7 +9,7 @@ import { AppDispatch, RootState } from 'src/store'
 import { addNewRole, updateRole } from 'src/store/roles/rolesActions'
 import { useSelector } from 'react-redux'
 import { clearErrors } from 'src/store/roles/rolesSlice'
-import { ACTIONS } from '@custom-types/enum'
+import { FORM_ACTIONS } from '@custom-types/enum'
 
 interface Props {
   handleClose: any
@@ -46,8 +46,8 @@ function DialogRolesEdit({ role, handleClose, open, dialogTitle }: Props) {
           (roleStore.addRoleError && <Alert severity='error'>{roleStore.updateError || roleStore.addRoleError}</Alert>)}
         <TableRoleEdit
           role={role}
-          loading={dialogTitle === ACTIONS.EDIT ? roleStore.updateLoading : roleStore.addRoleLoading}
-          handleSubmit={dialogTitle === ACTIONS.EDIT ? handleUpdate : handleNewRole}
+          loading={dialogTitle === FORM_ACTIONS.EDIT ? roleStore.updateLoading : roleStore.addRoleLoading}
+          handleSubmit={dialogTitle === FORM_ACTIONS.EDIT ? handleUpdate : handleNewRole}
           handleCancel={closeDialog}
           buttonTitle={dialogTitle}
         />

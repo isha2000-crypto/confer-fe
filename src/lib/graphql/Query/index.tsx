@@ -1,22 +1,3 @@
-import {
-  LOAD_ASSESSMENT,
-  LOAD_ASSESSMENT_TYPE,
-  LOAD_AVAILABLE_ASSESSMENTS,
-  FETCH_ASSESSMENT_BY_ID,
-  SUBMITTED_ASSESSMENTS_USER,
-  SUBMITTED_ASSESSMENT_BY_ID
-} from './assessmentQueries'
-import { LOAD_ROLES } from './roleQueries'
-import { LOAD_USERS, VALIDATE_USERS } from './userQueries'
-
-export {
-  LOAD_ASSESSMENT,
-  LOAD_ASSESSMENT_TYPE,
-  LOAD_AVAILABLE_ASSESSMENTS,
-  FETCH_ASSESSMENT_BY_ID,
-  LOAD_ROLES,
-  LOAD_USERS,
-  VALIDATE_USERS,
-  SUBMITTED_ASSESSMENTS_USER,
-  SUBMITTED_ASSESSMENT_BY_ID
-}
+export * from './roleQueries'
+export * from './assessmentQueries'
+export * from './userQueries'
