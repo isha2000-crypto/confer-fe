@@ -17,7 +17,7 @@ import MenuItem from '@mui/material/MenuItem'
 import { Task_Types } from '.././../../custom-types/enum'
 
 import { useMutation } from '@apollo/client'
-import { CREATE_ASSESSMENT_MUTATION } from 'src/lib/graphql/Mutation'
+import { CREATE_ASSESSMENT_MUTATION } from 'src/lib/graphql/Mutation/index'
 import toast from 'react-hot-toast'
 import { TransitionGroup } from 'react-transition-group'
 import { Collapse } from '@mui/material'
