@@ -1,6 +1,6 @@
 import client from 'src/lib/apollo/client'
 import { LOAD_ROLES } from 'src/lib/graphql/Query'
-import { ADD_NEW_ROLE, UPDATE_ROLE } from 'src/lib/graphql/Mutation/index'
+import { ADD_NEW_ROLE, UPDATE_ROLE } from 'src/lib/graphql/Mutation'
 import {
   setRolesFailure,
   setRolesStart,

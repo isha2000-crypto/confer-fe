@@ -71,3 +71,11 @@ export const INVITE_USER_MUTATION = gql`
     }
   }
 `
+export const UPDATE_USER = gql`
+  mutation UpdateUser($updateUserInput: UpdateUserInput!, $updateUserId: ObjectId!) {
+    updateUser(updateUserInput: $updateUserInput, id: $updateUserId) {
+      _id
+      roleId
+    }
+  }
+`
