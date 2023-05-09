@@ -5,7 +5,7 @@ import React from 'react'
 import { RootState } from 'src/store'
 
 import { useSelector } from 'react-redux'
-import EditUser from '@components/organisms/Forms/EditUser'
+import EditUserRole from '@components/organisms/Forms/EditUserRole'
 import { UsersType } from '@custom-types/user-type'
 
 interface Props {
@@ -31,7 +31,7 @@ function DialogUserEdit({ handleClose, open, user }: Props) {
         <Typography variant='body2'>Update User Setting</Typography>
       </DialogTitle>
       <DialogContent sx={{ p: { xs: 6, sm: 12 } }}>
-        <EditUser loading={loading} handleClose={handleClose} user={user} />
+        <EditUserRole loading={loading} handleClose={handleClose} user={user} />
       </DialogContent>
     </Dialog>
   )

@@ -18,8 +18,15 @@ const Form = styled('form')(({ theme }) => ({
   padding: theme.spacing(12)
 }))
 
-const EditUser = ({ loading, handleClose, user }: { loading: boolean; handleClose: () => void; user: UsersType }) => {
-
+const EditUserRole = ({
+  loading,
+  handleClose,
+  user
+}: {
+  loading: boolean
+  handleClose: () => void
+  user: UsersType
+}) => {
   const [userRole, setUserRole] = useState(String(user.roleId))
   const rolesState = useSelector((store: RootState) => store.roles)
   const dispatch = useDispatch<AppDispatch>()
@@ -83,4 +90,4 @@ const EditUser = ({ loading, handleClose, user }: { loading: boolean; handleClos
   )
 }
 
-export default EditUser
+export default EditUserRole
