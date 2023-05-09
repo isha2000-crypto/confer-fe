@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import InputLabel from '@mui/material/InputLabel'
-import { Box, Button, FormControl } from '@mui/material'
+import { FormControl } from '@mui/material'
 import { UsersType } from '@custom-types/user-type'
 import { useSelector } from 'react-redux'
 import { AppDispatch, RootState } from 'src/store'
@@ -13,6 +13,7 @@ import { useMutation } from '@apollo/client'
 import { UPDATE_USER } from 'src/lib/graphql/Mutation'
 import { useDispatch } from 'react-redux'
 import { fetchUsers } from 'src/store/users/usersActions'
+import ActionButtons from '@components/molecules/Actions/ActionButtons'
 
 const Form = styled('form')(({ theme }) => ({
   padding: theme.spacing(12)
@@ -78,14 +79,7 @@ const EditUserRole = ({
           </Grid>
         </Grid>
       </Form>
-      <Box className='demo-space-x' sx={{ display: 'flex', justifyContent: 'end', alignItems: 'flex-end' }}>
-        <Button size='large' type='submit' variant='contained' onClick={update} disabled={loading}>
-          {loading ? 'Updating...' : 'Update'}
-        </Button>
-        <Button size='large' color='secondary' variant='outlined' onClick={handleClose} disabled={loading}>
-          Cancel
-        </Button>
-      </Box>
+      <ActionButtons loading={loading} submit={update} handleCancel={handleClose} submitText='Update' />
     </>
   )
 }
