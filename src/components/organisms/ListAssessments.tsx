@@ -14,6 +14,7 @@ import Icon from 'src/@core/components/icon'
 import { URLS } from '@custom-types/constants'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { ACTIONS, SUBJECTS } from '@custom-types/enum'
+import { displayTime } from 'src/utils/timeFuncs'
 
 const ListAssessments = () => {
   const ability = useContext(AbilityContext)
@@ -31,12 +32,6 @@ const ListAssessments = () => {
 
   if (error) {
     return <div>Error: {error}</div>
-  }
-
-  const displayTime = (assessment: Assessment) => {
-    const duration = assessment.tasks.reduce((accumulator: number, task: any) => accumulator + task.duration, 0)
-
-    return `${duration / 60} m`
   }
 
   const handleOpenPopup = (assessmentId: string) => {

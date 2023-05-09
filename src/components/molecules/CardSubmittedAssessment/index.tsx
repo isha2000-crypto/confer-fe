@@ -7,6 +7,7 @@ import IconBoxAssessment from '../CardAssessment/IconBoxAssessment'
 import IconTypography from '@components/atoms/IconTypography'
 import { Button } from '@mui/material'
 import { useRouter } from 'next/router'
+import { displayTime } from 'src/utils/timeFuncs'
 
 const avatarIcons: any = {
   LEADERSHIP: 'mdi:lead-pencil',
@@ -14,7 +15,7 @@ const avatarIcons: any = {
 }
 
 function CardAssessment(props: any) {
-  const time = props.assessment.tasks.reduce((a: any, b: any) => a + b.duration, 0)
+  const time = displayTime(props.assessment)
   const router = useRouter()
 
   const handleClick = () => {
