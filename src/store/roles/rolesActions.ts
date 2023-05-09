@@ -1,13 +1,16 @@
 import client from 'src/lib/apollo/client'
 import { LOAD_ROLES } from 'src/lib/graphql/Query'
-import { UPDATE_ROLE } from 'src/lib/graphql/Mutation'
+import { ADD_NEW_ROLE, UPDATE_ROLE } from 'src/lib/graphql/Mutation'
 import {
   setRolesFailure,
   setRolesStart,
   setRolesSuccess,
   setRoleUpdateSuccess,
   setRoleUpdateStart,
-  setRoleUpdateFailure
+  setRoleUpdateFailure,
+  setRoleAddStart,
+  setRoleAddFailure,
+  setRoleAddSuccess
 } from './rolesSlice'
 
 // Define an async thunk to fetch the user data
@@ -17,7 +20,7 @@ export const fetchRoles = () => async (dispatch: (arg0: { payload: any; type: st
     const { data } = await client.query({
       query: LOAD_ROLES
     })
-
+    console.log(data)
     dispatch(setRolesSuccess(data.roles))
   } catch (error: any) {
     dispatch(setRolesFailure(error.message))
@@ -38,3 +41,15 @@ export const updateRole =
       dispatch(setRoleUpdateFailure(error.message))
     }
   }
+export const addNewRole = (role: any) => async (dispatch: (arg0: { payload: any; type: string }) => void) => {
+  dispatch(setRoleAddStart())
+  try {
+    const { data } = await client.mutate({
+      mutation: ADD_NEW_ROLE,
+      variables: { createRoleInput: role }
+    })
+    dispatch(setRoleAddSuccess(data.createRole))
+  } catch (error: any) {
+    dispatch(setRoleAddFailure(error.message))
+  }
+}

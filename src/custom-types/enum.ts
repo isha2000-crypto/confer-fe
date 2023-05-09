@@ -34,3 +34,7 @@ export enum VideoFilter {
   BLUR = 'blur',
   IMAGE = 'image'
 }
+export enum FORM_ACTIONS {
+  ADD = 'Add',
+  EDIT = 'Edit'
+}
