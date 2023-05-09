@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client"
+import { gql } from '@apollo/client'
 
 export const SIGNUP_USER_MUTATION = gql`
   mutation signupUser($name: String!, $email: String!, $password: String!) {
@@ -22,6 +22,7 @@ export const LOGIN_USER_MUTATION = gql`
           title
           permissions {
             assessment_submission
+            assessment_submission_management
             assessments
             roles
             tenants
@@ -49,6 +50,7 @@ export const LOGIN_GOOGLE_MUTATION = gql`
           title
           permissions {
             assessment_submission
+            assessment_submission_management
             assessments
             roles
             tenants

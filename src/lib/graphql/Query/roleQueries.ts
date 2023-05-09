@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from '@apollo/client'
 
 export const LOAD_ROLES = gql`
   query Roles {
@@ -9,6 +9,7 @@ export const LOAD_ROLES = gql`
       permissions {
         assessments
         assessment_submission
+        assessment_submission_management
         users
         user_invitation
         tenants

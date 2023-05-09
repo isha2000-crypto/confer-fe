@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from '@apollo/client'
 
 export const LOAD_ASSESSMENT_TYPE = gql`
   query Query {
@@ -73,6 +73,41 @@ export const SUBMITTED_ASSESSMENTS_USER = gql`
     }
   }
 `
+
+export const FETCH_SUBMITTED_ASSESSMENTS = gql`
+  query SubmittedAssessmentsUser {
+    fetchSubmittedAssessments {
+      _id
+      userId
+      user {
+        name
+      }
+      assessmentId
+      assessment {
+        title
+        description
+        type
+        author {
+          name
+        }
+        tasks {
+          _id
+          type
+          description
+          duration
+        }
+      }
+      createdAt
+      updatedAt
+      taskResponses {
+        _id
+        taskId
+        videoUrl
+      }
+    }
+  }
+`
+
 export const FETCH_ASSESSMENT_BY_ID = gql`
   query Assessment($assessmentId: ObjectId!) {
     assessment(id: $assessmentId) {
@@ -136,6 +171,28 @@ export const LOAD_ASSESSMENT = gql`
         description
         duration
         _id
+      }
+    }
+  }
+`
+export const LIST_SUBMITTED_ASSESSMENTS = gql`
+  query SubmittedAssessments {
+    submittedAssessments {
+      _id
+      tenantId
+      tenant {
+        name
+      }
+      userId
+      user {
+        name
+        _id
+        email
+        picture
+      }
+      createdAt
+      assessment {
+        title
       }
     }
   }
