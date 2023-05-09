@@ -18,7 +18,7 @@ function CardAssessment(props: any) {
   const router = useRouter()
 
   const handleClick = () => {
-    router.push(`/assessments/submitted/${props._id}`)
+    router.push(`/assessments/submitted/${props.userId}/${props._id}/view`)
   }
 
   return (

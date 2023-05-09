@@ -3,9 +3,11 @@ import { URLS } from '@custom-types/constants'
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
 
 import { ACTIONS, SUBJECTS } from '../../custom-types/enum'
+import { useAuth } from 'src/hooks/useAuth'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const navigation = (): VerticalNavItemsType => {
+const Navigation = (): VerticalNavItemsType => {
+  const auth = useAuth()
   const navItems = [
     {
       title: 'Home',
@@ -28,7 +30,20 @@ const navigation = (): VerticalNavItemsType => {
           action: ACTIONS.READ,
           subject: SUBJECTS.ASSESSMENT_SUBMISSION,
           title: 'Submitted',
-          path: `${URLS.ASSESSMENT_URL}/submitted`
+          children: [
+            {
+              action: ACTIONS.READ,
+              subject: SUBJECTS.ASSESSMENT_SUBMISSION_MANAGEMENT,
+              title: 'List',
+              path: `${URLS.ASSESSMENT_URL}/submitted/list`
+            },
+            {
+              action: ACTIONS.READ,
+              subject: SUBJECTS.ASSESSMENT_SUBMISSION,
+              title: 'My Submissions',
+              path: `${URLS.ASSESSMENT_URL}/submitted/${auth.user?.id}`
+            }
+          ]
         },
         {
           action: ACTIONS.CREATE,
@@ -60,4 +75,4 @@ const navigation = (): VerticalNavItemsType => {
 
   return navItems
 }
-export default navigation
+export default Navigation

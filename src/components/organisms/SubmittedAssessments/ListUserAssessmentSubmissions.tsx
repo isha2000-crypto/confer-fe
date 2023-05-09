@@ -6,19 +6,19 @@ import React, { useEffect, useState } from 'react'
 
 //import ApiService from '../../lib/api/ApiService'
 import { useLazyQuery } from '@apollo/client'
-import { LIST_SUBMITTED_ASSESSMENTS } from 'src/lib/graphql/Query'
+import { FETCH_SUBMITTED_ASSESSMENTS } from 'src/lib/graphql/Query'
 import { useAuth } from 'src/hooks/useAuth'
+import CardSubmittedAssessment from '@components/molecules/CardSubmittedAssessment'
 import Spinner from 'src/@core/components/spinner'
 import { useRouter } from 'next/router'
 import { Box, Typography, Button } from '@mui/material'
 import Icon from 'src/@core/components/icon'
-import TableSubmittedAssessments from '@components/molecules/Table/TableSubmittedAssessments'
 
-function ListSubmittedAssessments() {
+function ListUserAssessmentSubmissions() {
   const router = useRouter()
   const [submittedAssessments, setSubmittedAssessments] = useState<any>([])
   const auth = useAuth()
-  const [getData, { loading, error }] = useLazyQuery(LIST_SUBMITTED_ASSESSMENTS)
+  const [getData, { loading, error }] = useLazyQuery(FETCH_SUBMITTED_ASSESSMENTS)
 
   const handleEmptyClick = () => {
     router.push('/assessments/available')
@@ -27,7 +27,7 @@ function ListSubmittedAssessments() {
   useEffect(() => {
     const fetchData = async () => {
       const result = await getData()
-      setSubmittedAssessments(result.data.submittedAssessments)
+      setSubmittedAssessments(result.data.fetchSubmittedAssessments)
     }
     if (!auth.loading && auth.user) {
       fetchData()
@@ -61,9 +61,15 @@ function ListSubmittedAssessments() {
 
   return (
     <Grid container spacing={6}>
-      <TableSubmittedAssessments data={submittedAssessments} />
+      {submittedAssessments.map((item: any, index: number) => {
+        return (
+          <Grid key={index} item xs={12} md={6} lg={4}>
+            <CardSubmittedAssessment {...item} userId={auth.user?.id} />
+          </Grid>
+        )
+      })}
     </Grid>
   )
 }
 
-export default ListSubmittedAssessments
+export default ListUserAssessmentSubmissions

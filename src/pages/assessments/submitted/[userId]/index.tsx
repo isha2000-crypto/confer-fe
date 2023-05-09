@@ -1,8 +1,8 @@
-import ListSubmittedAssessments from '@components/organisms/SubmittedAssessments/ListSubmittedAssessments'
+import ListUserAssessmentSubmissions from '@components/organisms/SubmittedAssessments/ListUserAssessmentSubmissions'
 import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 
 const SubmittedAssessments = () => {
-  return <ListSubmittedAssessments />
+  return <ListUserAssessmentSubmissions />
 }
 SubmittedAssessments.acl = {
   action: ACTIONS.READ,

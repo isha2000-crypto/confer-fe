@@ -113,7 +113,7 @@ function ContainerVideoRecorder({ assessment }: props) {
 
     if (result.data) {
       setSubmitted(true)
-      router.push(`/assessments/submitted/${result.data.createSubmittedAssessment._id}`)
+      router.push(`/assessments/submitted/${auth.user?.id}/${result.data.createSubmittedAssessment._id}/view`)
     }
   }
 
