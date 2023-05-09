@@ -93,7 +93,7 @@ const TableTenantsList = ({ tenants }: any) => {
   const [value, setValue] = useState('')
   const [filteredData, setFilteredData] = useState<TenantsType[]>([])
 
-  const handleEditRole = (id: string) => {
+  const handleEditTenant = (id: string) => {
     console.log('Edit Role', id)
   }
   const escapeRegExp = (value: string) => {
@@ -126,10 +126,10 @@ const TableTenantsList = ({ tenants }: any) => {
       headerName: 'Actions',
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton onClick={() => handleEditRole(row._id)}>
+          <IconButton onClick={() => handleEditTenant(row._id)}>
             <Icon icon='mdi:pencil-outline' />
           </IconButton>
-          <IconButton onClick={() => handleEditRole(row._id)}>
+          <IconButton onClick={() => handleEditTenant(row._id)}>
             <Icon icon='mdi:bin-outline' color='red' />
           </IconButton>
         </Box>
@@ -154,7 +154,7 @@ const TableTenantsList = ({ tenants }: any) => {
               onPageSizeChange={newPageSize => setPageSize(newPageSize)}
               sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
               columnVisibilityModel={{
-                actions: ability?.can(ACTIONS.UPDATE, SUBJECTS.ROLES) && true
+                actions: ability?.can(ACTIONS.UPDATE, SUBJECTS.TENANTS) && true
               }}
             />
           </Card>

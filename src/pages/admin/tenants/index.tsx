@@ -42,7 +42,7 @@ const TenantsComponent = () => {
 
 TenantsComponent.acl = {
   action: ACTIONS.READ,
-  subject: SUBJECTS.ROLES
+  subject: SUBJECTS.TENANTS
 }
 
 export default TenantsComponent
