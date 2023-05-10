@@ -1,6 +1,3 @@
-// ** Next Import
-import Link from 'next/link'
-
 // ** MUI Components
 import Button from '@mui/material/Button'
 import { styled } from '@mui/material/styles'
@@ -32,6 +29,10 @@ const Img = styled('img')(({ theme }) => ({
   }
 }))
 const PermissionDeniedFallback = () => {
+  const resetPermissions = () => {
+    console.log('rest')
+  }
+
   return (
     <Box className='content-center' sx={{ height: '90vh' }}>
       <Box sx={{ p: 5, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
@@ -44,7 +45,7 @@ const PermissionDeniedFallback = () => {
           </Typography>
         </BoxWrapper>
         <Img alt='error-illustration' src='/images/pages/500.png' />
-        <Button href='/' component={Link} variant='contained' sx={{ px: 5.5 }}>
+        <Button onClick={resetPermissions} variant='contained' sx={{ px: 5.5 }}>
           Back to Home
         </Button>
       </Box>
