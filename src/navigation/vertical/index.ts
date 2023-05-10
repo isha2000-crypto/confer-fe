@@ -14,6 +14,7 @@ const navigation = (): VerticalNavItemsType => {
       action: ACTIONS.READ,
       subject: SUBJECTS.PUBLIC
     },
+
     {
       title: 'Assessments',
       icon: 'mdi:calendar-check-outline',
@@ -53,6 +54,12 @@ const navigation = (): VerticalNavItemsType => {
           action: ACTIONS.READ,
           title: 'Roles',
           path: `${URLS.ADMIN}/roles`
+        },
+        {
+          subject: SUBJECTS.ROLES,
+          action: ACTIONS.READ,
+          title: 'Admin Settings',
+          path: `${URLS.ADMIN}/settings`
         }
       ]
     }
