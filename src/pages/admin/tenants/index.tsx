@@ -13,13 +13,22 @@ import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 import { useSelector } from 'react-redux'
 import { AppDispatch, RootState } from 'src/store'
 import TableTenantsList from '@components/molecules/TableTenantsList'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { fetchTenants } from 'src/store/tenants/tenantsActions'
+import { Box, Button } from '@mui/material'
+import DialogTenantCreate from '@components/molecules/Dialog/DialogTenant/DialogTenantCreate'
 
 const TenantsComponent = () => {
+  const [open, setOpen] = useState<boolean>(false)
   const dispatch = useDispatch<AppDispatch>()
   const tenantsStore = useSelector((store: RootState) => store.tenants)
+  const handleClickOpen = () => {
+    setOpen(true)
+  }
+  const handleClose = () => {
+    setOpen(false)
+  }
   useEffect(() => {
     dispatch(fetchTenants())
   }, [dispatch])
@@ -29,11 +38,24 @@ const TenantsComponent = () => {
 
   return (
     <Grid container spacing={6}>
+      {open && <DialogTenantCreate open={open} handleClose={handleClose} dialogTitle='Create Tenant' />}
       <PageHeader
         title={<Typography variant='h5'>Tenants List</Typography>}
         subtitle={<Typography variant='body2'>You can view all the available Tenants here</Typography>}
       />
       <Grid item xs={12} sx={{ mb: 5 }}>
+        <Box sx={{ textAlign: 'right' }}>
+          <Button
+            variant='contained'
+            sx={{ mb: 2.5, whiteSpace: 'nowrap' }}
+            onClick={() => {
+              handleClickOpen()
+            }}
+          >
+            Add Tenant
+          </Button>
+          {/* <Typography variant='body2'>Add tenant, if it doesn't exist.</Typography> */}
+        </Box>
         <TableTenantsList tenants={tenantsStore.tenants} />
       </Grid>
     </Grid>

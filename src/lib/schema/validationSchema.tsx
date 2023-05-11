@@ -14,3 +14,7 @@ export const validationSchema = Yup.object().shape({
     )
     .min(1, 'At least one question is required')
 })
+export const TenantValidationSchema = Yup.object().shape({
+  title: Yup.string().required('Title is required'),
+  domains: Yup.array().min(1, 'At least one question is required')
+})
