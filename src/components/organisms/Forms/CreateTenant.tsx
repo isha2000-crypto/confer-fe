@@ -36,7 +36,8 @@ const CreateTenant = ({ handleCancel }: { handleCancel: any }) => {
       domains: domains
     },
     onSubmit: values => {
-      
+      console.log(values)
+
       //API INTEGRATION
     },
     validationSchema: TenantValidationSchema

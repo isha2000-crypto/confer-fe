@@ -54,7 +54,6 @@ const TenantsComponent = () => {
           >
             Add Tenant
           </Button>
-          {/* <Typography variant='body2'>Add tenant, if it doesn't exist.</Typography> */}
         </Box>
         <TableTenantsList tenants={tenantsStore.tenants} />
       </Grid>
