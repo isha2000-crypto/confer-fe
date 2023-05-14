@@ -18,7 +18,7 @@ const SubmittedAssessmentDetail = () => {
   React.useEffect(() => {
     const fetchData = async () => {
       const result = await getAssessment({ variables: { submittedAssessmentId: submittedAssessmentId } })
-      setSubmittedAssessment(result.data.submittedAssessment)
+      setSubmittedAssessment(result.data?.submittedAssessment)
     }
 
     fetchData()

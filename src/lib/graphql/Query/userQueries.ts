@@ -40,3 +40,16 @@ export const VALIDATE_USERS = gql`
     }
   }
 `
+export const FETCH_USER_BY_ID = gql`
+  query User($userId: ObjectId!) {
+    user(id: $userId) {
+      _id
+      email
+      name
+      picture
+      role {
+        title
+      }
+    }
+  }
+`
