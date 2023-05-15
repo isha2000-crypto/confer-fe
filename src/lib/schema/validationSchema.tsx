@@ -16,5 +16,7 @@ export const validationSchema = Yup.object().shape({
 })
 export const TenantValidationSchema = Yup.object().shape({
   title: Yup.string().required('Title is required'),
-  domains: Yup.array().min(1, 'At least one question is required')
+  domains: Yup.array()
+    .of(Yup.string().matches(/.*.(com|uk|org|co|pk)/g, 'Please Enter valid domains'))
+    .min(1, 'At least one tenant is required')
 })

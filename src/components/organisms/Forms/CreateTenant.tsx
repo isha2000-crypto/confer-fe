@@ -15,14 +15,13 @@ const CreateTenant = ({ handleCancel }: { handleCancel: any }) => {
   const handleAddDomain = (event: any) => {
     event.preventDefault()
     const newDomains = domain.split(' ').filter(domain => domain !== '')
-    const regExPattern = /.*\.(com|uk|org|co|pk)/g
-    const validDomains = newDomains.filter(domain => regExPattern.test(domain))
-    setDomains([...domains, ...validDomains])
-    formik.values.domains = [...formik.values.domains, ...validDomains]
+    setDomains([...domains, ...newDomains])
+    formik.values.domains = [...formik.values.domains, ...newDomains]
     setDomain('')
   }
   const handleRemoveDomain = (domain: string) => {
     setDomains(domains.filter(e => e !== domain))
+    formik.values.domains = formik.values.domains.filter(e => e !== domain)
   }
   const handleKeyPress = (event: any) => {
     if (event.key === 'Enter') {
@@ -62,12 +61,12 @@ const CreateTenant = ({ handleCancel }: { handleCancel: any }) => {
           <TextField
             fullWidth
             label='Domains'
-            placeholder='Enter domains separated by a single space'
+            placeholder='Enter domain and Press Enter'
             value={domain}
             onChange={handleDomainChange}
             onKeyPress={handleKeyPress}
             error={formik.touched.domains && Boolean(formik.errors.domains)}
-            helperText={formik.touched.domains && formik.errors.domains}
+            helperText={(formik.touched.domains && formik.errors.domains) || 'example: abc.com, abc.net, abc.co ....'}
           />
         </Grid>
         <Grid item xs={6}>
