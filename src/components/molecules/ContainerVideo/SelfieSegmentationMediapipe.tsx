@@ -15,6 +15,7 @@ interface Props {
 function SelfieSegmentationMediapipe({ inputVideoRef, canvasRef, className, filterType, imageUrl }: Props) {
   const [selfieSegmentation, setSelfieSegmentation] = useState<SelfieSegmentation | null>(null)
   const ctx: any = useRef(null)
+  const cameraRef: any = useRef(null)
 
   const init = () => {
     const selfieSegmentationObject = new SelfieSegmentation({
@@ -44,6 +45,7 @@ function SelfieSegmentationMediapipe({ inputVideoRef, canvasRef, className, filt
       width: 1280,
       height: 720
     })
+    cameraRef.current = camera
     camera.start()
     setSelfieSegmentation(selfieSegmentationObject)
   }
@@ -57,17 +59,11 @@ function SelfieSegmentationMediapipe({ inputVideoRef, canvasRef, className, filt
     ctx.current.globalCompositeOperation = 'source-out'
 
     if (filterType === VideoFilter.BLUR) {
-      // console.log('Blur Filter is running')
       ctx.current.filter = 'blur(10px)'
       ctx.current.drawImage(results.image, 0, 0, canvasRef.current.width, canvasRef.current.height)
     } else if (filterType === VideoFilter.IMAGE) {
-      // console.log('Image Filter is running')
       const imgReact = document.getElementById('mediapipe-image')
-
-      // console.log('Line after ImgReact')
       ctx.current.drawImage(imgReact, 0, 0, canvasRef.current.width, canvasRef.current.height)
-
-      // console.log('Line After DrawImage')
     } else {
       ctx.current.drawImage(results.image, 0, 0, canvasRef.current.width, canvasRef.current.height)
     }
@@ -79,7 +75,6 @@ function SelfieSegmentationMediapipe({ inputVideoRef, canvasRef, className, filt
       ctx.current.filter = 'blur(0px)'
     }
     ctx.current.drawImage(results.image, 0, 0, canvasRef.current.width, canvasRef.current.height)
-
     ctx.current.restore()
   }
 
@@ -91,6 +86,11 @@ function SelfieSegmentationMediapipe({ inputVideoRef, canvasRef, className, filt
         selfieSegmentation.close()
         setSelfieSegmentation(null)
       }
+    }
+
+    return () => {
+      selfieSegmentation?.close()
+      cameraRef.current?.stop()
     }
   }, [inputVideoRef])
 

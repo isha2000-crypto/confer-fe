@@ -20,6 +20,7 @@ export enum SUBJECTS {
   PUBLIC = 'public',
   ASSESSMENT = 'assessments',
   ASSESSMENT_SUBMISSION = 'assessment_submission',
+  ASSESSMENT_SUBMISSION_MANAGEMENT = 'assessment_submission_management',
   USERS = 'users',
   USER_INVITATION = 'user_invitation',
   TENANTS = 'tenants',
@@ -34,4 +35,8 @@ export enum VideoFilter {
   NONE = 'none',
   BLUR = 'blur',
   IMAGE = 'image'
+}
+export enum FORM_ACTIONS {
+  ADD = 'Add',
+  EDIT = 'Edit'
 }

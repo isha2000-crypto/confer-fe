@@ -3,7 +3,8 @@ import { Assessment, Task } from '@custom-types/assessmentsType'
 import { Grid } from '@mui/material'
 import React from 'react'
 import { useState } from 'react'
-import PermissionDeniedFallback from './PermissionDeniedFallback'
+
+// import PermissionDeniedFallback from './PermissionDeniedFallback'
 import { useAuth } from 'src/hooks/useAuth'
 import DialogSubmissionComplete from '@components/molecules/Dialog/DialogSubmissionComplete'
 import { useMutation } from '@apollo/client'
@@ -16,6 +17,8 @@ import { UserDataType } from '@custom-types/contextTypes'
 import ContainerQuestion from '@components/molecules/ContainerQuestions'
 import ContainerVideo from '@components/molecules/ContainerVideo'
 import { TaskStatus } from '@custom-types/enum'
+
+// import DialogMediaOnboarding from '@components/molecules/Dialog/DialogMediaOnboarding'
 
 interface props {
   assessment: Assessment
@@ -113,7 +116,7 @@ function ContainerVideoRecorder({ assessment }: props) {
 
     if (result.data) {
       setSubmitted(true)
-      router.push(`/assessments/submitted/${result.data.createSubmittedAssessment._id}`)
+      router.push(`/assessments/submitted/${auth.user?.id}/${result.data.createSubmittedAssessment._id}/view`)
     }
   }
 
@@ -144,13 +147,13 @@ function ContainerVideoRecorder({ assessment }: props) {
   }, [recordings])
 
   if (allowed === false) {
-    return <PermissionDeniedFallback />
+    return null
   }
 
   return (
     <>
       <Grid container sx={{ height: '94vh', flexWrap: 'nowrap' }} padding={3} className={classnames.animater_wrapper}>
-        <Grid item spacing={2} padding={'0 2rem'} xs={fullScreen ? 12 : 9} style={GridTransition}>
+        <Grid item padding={'0 2rem'} xs={fullScreen ? 12 : 9} style={GridTransition}>
           <ContainerVideo
             currentTask={currentTask}
             handleUserMediaError={handleUserMediaError}

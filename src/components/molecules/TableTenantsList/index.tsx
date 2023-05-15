@@ -9,34 +9,17 @@ import { DataGrid } from '@mui/x-data-grid'
 import Typography from '@mui/material/Typography'
 
 // ** Custom Components Imports
-import CustomChip from 'src/@core/components/mui/chip'
-
-// ** Types Imports
-import { ThemeColor } from 'src/@core/layouts/types'
-
-// ** Custom Components Imports
-import { UsersType } from '@custom-types/user-type'
 import { IconButton } from '@mui/material'
 import Icon from 'src/@core/components/icon'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { ACTIONS, SUBJECTS } from '@custom-types/enum'
-import RenderCustomAvatar from '../Table/RenderCustomAvatar'
-
-import DialogUserEdit from '../Dialog/DialogUserEdit/DialogUserEdit'
-import { useAuth } from 'src/hooks/useAuth'
-
-interface UserStatusType {
-  [key: string]: ThemeColor
-}
+import { TenantsType } from '@custom-types/tenants-type'
+import { formatDate } from 'src/@core/utils/format'
+import TableHeader from '../TableUsersList/TableHeader'
+import CustomChip from 'src/@core/components/mui/chip'
 
 interface CellType {
-  row: UsersType
-}
-
-const userStatusObj: UserStatusType = {
-  active: 'success',
-  pending: 'warning',
-  inactive: 'secondary'
+  row: TenantsType
 }
 
 const tableColumns = [
@@ -44,13 +27,12 @@ const tableColumns = [
     flex: 0.2,
     minWidth: 230,
     field: 'name',
-    headerName: 'User',
+    headerName: 'Name',
     renderCell: ({ row }: CellType) => {
       const { name } = row
 
       return (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <RenderCustomAvatar row={row} />
           <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
             <Typography
               noWrap
@@ -72,64 +54,66 @@ const tableColumns = [
   {
     flex: 0.2,
     minWidth: 250,
-    field: 'email',
-    headerName: 'Email',
+    field: 'domain',
+    headerName: 'Domain',
     renderCell: ({ row }: CellType) => {
-      return (
-        <Typography variant='body2' noWrap>
-          {row.email}
-        </Typography>
-      )
-    }
-  },
-  {
-    flex: 0.15,
-    field: 'role',
-    minWidth: 150,
-    headerName: 'Role',
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 3 } }}>
-          <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.role.title}
-          </Typography>
-        </Box>
-      )
+      return row.domains.map((domain, index) => {
+        return (
+          <CustomChip
+            skin='light'
+            size='small'
+            label={domain}
+            color='primary'
+            sx={{ textTransform: 'capitalize' }}
+            key={index}
+          />
+        )
+      })
     }
   },
   {
     flex: 0.1,
     minWidth: 110,
-    field: 'email_verified',
-    headerName: 'Status',
+    field: 'created_at',
+    headerName: 'CreatedAt',
     renderCell: ({ row }: CellType) => {
       return (
-        <CustomChip
-          skin='light'
-          size='small'
-          label={row.email_verified ? 'active' : 'pending'}
-          color={userStatusObj[row.email_verified ? 'active' : 'pending']}
-          sx={{ textTransform: 'capitalize' }}
-        />
+        <Typography variant='body2' noWrap>
+          {formatDate(row.createdAt)}
+        </Typography>
       )
     }
   }
 ]
 
-const TableUsersList = ({ users }: any) => {
+const TableTenantsList = ({ tenants }: any) => {
   // ** State
   const ability = useContext(AbilityContext)
   const [pageSize, setPageSize] = useState<number>(10)
-  const [selectedUser, setSelectedUser] = useState<UsersType>()
-  const [open, setOpen] = useState<boolean>(false)
-  const { user } = useAuth()
-  const handleEditRole = (user: UsersType) => {
-    setSelectedUser({ ...user })
-    setOpen(true)
+  const [value, setValue] = useState('')
+  const [filteredData, setFilteredData] = useState<TenantsType[]>([])
+
+  const handleEditTenant = (id: string) => {
+    console.log('Edit Role', id)
+  }
+  const escapeRegExp = (value: string) => {
+    return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
   }
 
-  const handleClose = () => {
-    setOpen(false)
+  const handleSearch = (searchValue: string) => {
+    setValue(searchValue)
+    const searchRegex = new RegExp(escapeRegExp(searchValue), 'i')
+    const filteredRows = tenants.filter((row: any) => {
+      return Object.keys(row).some(field => {
+        // @ts-ignore
+        return searchRegex.test(row[field].toString())
+      })
+    })
+    if (searchValue.length) {
+      setFilteredData(filteredRows)
+    } else {
+      setFilteredData([])
+    }
   }
   const columns = [
     ...tableColumns,
@@ -142,11 +126,11 @@ const TableUsersList = ({ users }: any) => {
       headerName: 'Actions',
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton
-            onClick={() => handleEditRole(row)}
-            disabled={user?.role.title === 'Super Admin' && user.name === row.name}
-          >
+          <IconButton onClick={() => handleEditTenant(row._id)}>
             <Icon icon='mdi:pencil-outline' />
+          </IconButton>
+          <IconButton onClick={() => handleEditTenant(row._id)}>
+            <Icon icon='mdi:bin-outline' color='red' />
           </IconButton>
         </Box>
       )
@@ -155,13 +139,13 @@ const TableUsersList = ({ users }: any) => {
 
   return (
     <>
-      {open && <DialogUserEdit handleClose={handleClose} open={open} user={selectedUser as UsersType} />}
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <Card>
+            <TableHeader value={value} handleSearch={handleSearch} />
             <DataGrid
               autoHeight
-              rows={users}
+              rows={filteredData.length ? filteredData : tenants}
               getRowId={row => row._id}
               columns={columns}
               pageSize={pageSize}
@@ -170,7 +154,7 @@ const TableUsersList = ({ users }: any) => {
               onPageSizeChange={newPageSize => setPageSize(newPageSize)}
               sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
               columnVisibilityModel={{
-                actions: ability?.can(ACTIONS.UPDATE, SUBJECTS.ROLES) && true
+                actions: ability?.can(ACTIONS.UPDATE, SUBJECTS.TENANTS) && true
               }}
             />
           </Card>
@@ -180,4 +164,4 @@ const TableUsersList = ({ users }: any) => {
   )
 }
 
-export default TableUsersList
+export default TableTenantsList

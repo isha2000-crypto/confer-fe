@@ -9,12 +9,16 @@ import { FETCH_ASSESSMENT_BY_ID } from 'src/lib/graphql/Query'
 import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 
 const ContainerVideoRecorder = dynamic(() => import('@components/organisms/ContainerVideoRecorder'), { ssr: false })
+const DialogMediaOnboarding = dynamic(() => import('@components/molecules/Dialog/DialogMediaOnboarding'), {
+  ssr: false
+})
 
 const Recorder = () => {
   const router = useRouter()
   const [assessment, setAssessment] = React.useState<any>()
   const { assessmentId } = router.query
   const [getAssessment, { loading, error }] = useLazyQuery(FETCH_ASSESSMENT_BY_ID)
+  const [mediaPermission, setMediaPermission] = React.useState<any>(false)
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -28,7 +32,12 @@ const Recorder = () => {
 
   if (error) return <div>Error Occured</div>
 
-  return <>{assessment && <ContainerVideoRecorder assessment={assessment} />}</>
+  return (
+    <>
+      {assessment && mediaPermission ? <ContainerVideoRecorder assessment={assessment} /> : null}
+      <DialogMediaOnboarding setMediaPermissions={setMediaPermission} />
+    </>
+  )
 }
 
 Recorder.acl = {
