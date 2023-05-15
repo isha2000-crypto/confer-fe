@@ -140,3 +140,11 @@ export const CREATE_ASSESSMENT_MUTATION = gql`
     }
   }
 `
+export const UPDATE_ASSESSMENT_DURATION = gql`
+  mutation Mutation($updateOrganizationId: ObjectId!, $updateOrganizationInput: UpdateOrganizationInput!) {
+    updateOrganization(id: $updateOrganizationId, updateOrganizationInput: $updateOrganizationInput) {
+      _id
+      assessment_duration
+    }
+  }
+`
