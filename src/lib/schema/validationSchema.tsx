@@ -19,5 +19,5 @@ export const TenantValidationSchema = Yup.object().shape({
   domains: Yup.array()
     .of(Yup.string().matches(/.*.(com|uk|org|co|pk)/g, 'Please Enter valid domains'))
     .min(1, 'At least one tenant is required'),
-  assessment_duration: Yup.number().required('Duration is required').positive()
+  assessment_duration: Yup.number().required('Duration is required').positive().min(1).max(15)
 })
