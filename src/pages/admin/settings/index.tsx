@@ -5,39 +5,46 @@ import { useMutation, useQuery } from '@apollo/client'
 import { UPDATE_ASSESSMENT_DURATION } from 'src/lib/graphql/Mutation'
 import { useAuth } from 'src/hooks/useAuth'
 import { LOAD_CURRENT_TENANT } from 'src/lib/graphql/Query'
+import FallbackSpinner from 'src/@core/components/spinner'
+import { useRouter } from 'next/router'
+import toast from 'react-hot-toast'
 
 function AdminSettings() {
   const [updateAssessmentDuration] = useMutation(UPDATE_ASSESSMENT_DURATION)
-
   const auth = useAuth()
+  const router = useRouter()
   const { error, loading, data } = useQuery(LOAD_CURRENT_TENANT)
-  console.log('assessment_duration', data?.currentTenant?.assessment_duration)
-  const [maxDuration, setMaxDuration] = useState()
-
-  // console.log('durtion', maxDuration)
+  const [maxDuration, setMaxDuration] = useState('')
 
   const handleMaxDurationChange = (event: any) => {
     setMaxDuration(event.target.value)
   }
 
-  // useEffect(() => {
-  //   setMaxDuration(data?.currentTenant?.assessment_duration)
-  //   console.log('mAXdURUEIRUEI', maxDuration)
-  // }, [])
+  useEffect(() => {
+    if (data) {
+      setMaxDuration(data?.currentTenant?.assessment_duration)
+    }
+  }, [data])
 
   const handleSubmit = (event: any) => {
     event.preventDefault()
-    console.log('Hello i am saved duration')
-    console.log('userhere', auth.user?.tenantId)
-    console.log('user name', auth.user?.name)
-    console.log('assessment_duration', data?.currentTenant?.assessment_duration)
 
     updateAssessmentDuration({
       variables: {
-        updateOrganizationId: String(auth.user?.tenantId),
+        updateOrganizationId: auth.user?.tenantId,
         updateOrganizationInput: { assessment_duration: parseInt(maxDuration) }
       }
+    }).then(() => {
+      toast.success('Duration added successfully!')
     })
+  }
+
+  if (loading) {
+    return <FallbackSpinner />
+  }
+
+  if (error) {
+    router.push('/500')
   }
 
   return (
