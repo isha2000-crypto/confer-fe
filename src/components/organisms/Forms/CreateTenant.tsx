@@ -23,7 +23,7 @@ const CreateTenant = ({ handleCancel }: { handleCancel: any }) => {
   }
   const handleAddDomain = (event: any) => {
     event.preventDefault()
-    const newDomains = domain.split(' ').filter(domain => domain !== '')
+    const newDomains = domain.split(' ').filter(domain => domain !== ' ')
     setDomains([...domains, ...newDomains])
     formik.values.domains = [...formik.values.domains, ...newDomains]
     setDomain('')
