@@ -139,18 +139,18 @@ const UserViewLeft = () => {
               </DialogContentText>
               <Grid container spacing={6}>
                 <Grid item xs={12} sm={6}>
-                  <TextField fullWidth label='Full Name' defaultValue='hello' />
+                  <TextField fullWidth label='Full Name' defaultValue={auth?.user?.name} />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
-                    label='Username'
-                    defaultValue='there'
-                    InputProps={{ startAdornment: <InputAdornment position='start'>@</InputAdornment> }}
+                    label='role'
+                    defaultValue={auth?.user?.role.title}
+                    // InputProps={{ startAdornment: <InputAdornment position='start'>@</InputAdornment> }}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField fullWidth type='email' label='Billing Email' defaultValue='email' />
+                  <TextField fullWidth type='email' label='Billing Email' defaultValue={auth?.user?.email} />
                 </Grid>
               </Grid>
             </DialogContent>

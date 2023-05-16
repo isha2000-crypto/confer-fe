@@ -16,13 +16,7 @@ const Navigation = (): VerticalNavItemsType => {
       action: ACTIONS.READ,
       subject: SUBJECTS.PUBLIC
     },
-    {
-      title: 'Profile',
-      path: `${URLS.PROFILE}`,
-      icon: 'mdi:home-outline',
-      action: ACTIONS.READ,
-      subject: SUBJECTS.PUBLIC
-    },
+
     {
       title: 'Assessments',
       icon: 'mdi:calendar-check-outline',
@@ -81,6 +75,24 @@ const Navigation = (): VerticalNavItemsType => {
           action: ACTIONS.READ,
           title: 'Tenants',
           path: `${URLS.ADMIN}/tenants`
+        }
+      ]
+    },
+    {
+      title: 'Profile',
+      icon: 'mdi:account-circle',
+      children: [
+        {
+          subject: SUBJECTS.PUBLIC,
+          action: ACTIONS.READ,
+          title: 'My Profile',
+          path: `${URLS.PROFILE}/view`
+        },
+        {
+          subject: SUBJECTS.PUBLIC,
+          action: ACTIONS.READ,
+          title: 'Edit',
+          path: `${URLS.PROFILE}/edit`
         }
       ]
     }
