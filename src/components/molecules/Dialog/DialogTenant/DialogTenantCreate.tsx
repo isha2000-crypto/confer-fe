@@ -13,7 +13,7 @@ function DialogTenantCreate({ handleClose, open, dialogTitle }: Props) {
     <Dialog fullWidth maxWidth='md' scroll='body' onClose={handleClose} open={open}>
       <DialogTitle sx={{ textAlign: 'center' }}>
         <Typography variant='h5' component='span'>
-          {`${dialogTitle} Role`}
+          {`${dialogTitle}`}
         </Typography>
       </DialogTitle>
       <DialogContent sx={{ p: { xs: 6, sm: 12 } }}>

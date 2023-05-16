@@ -5,9 +5,18 @@ import CancelIcon from '@mui/icons-material/Cancel'
 import ActionButtons from '@components/molecules/Actions/ActionButtons'
 import { TenantValidationSchema } from 'src/lib/schema/validationSchema'
 
+import { useMutation } from '@apollo/client'
+import { CREATE_TENANT_MUTATION } from 'src/lib/graphql/Mutation/tenantMutation'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from 'src/store'
+import { fetchTenants } from 'src/store/tenants/tenantsActions'
+
 const CreateTenant = ({ handleCancel }: { handleCancel: any }) => {
   const [domain, setDomain] = useState<string>('')
   const [domains, setDomains] = useState<string[]>([])
+
+  const [createTenantMutation] = useMutation(CREATE_TENANT_MUTATION)
+  const dispatch = useDispatch<AppDispatch>()
 
   const handleDomainChange = (event: any) => {
     setDomain(event.target.value)
@@ -28,17 +37,42 @@ const CreateTenant = ({ handleCancel }: { handleCancel: any }) => {
       handleAddDomain(event)
     }
   }
+  const handleFormSubmission = (values: any) => {
+    console.log(values)
 
+    createTenantMutation({
+      variables: {
+        createTenantInput: values
+      }
+    })
+      .then(result => {
+        console.log(result.data)
+        setTimeout(() => {
+          resetForm()
+          handleCancel()
+          dispatch(fetchTenants())
+        }, 2000)
+      })
+      .catch(error => {
+        console.error(error)
+      })
+  }
+
+  const resetForm = () => {
+    setDomain('')
+    setDomains([])
+    formik.values.domains = []
+    formik.values.name = ''
+    formik.values.assessment_duration = 0
+  }
   const formik = useFormik({
     initialValues: {
-      title: '',
-      domains: domains
+      name: '',
+      domains: domains,
+      assessment_duration: 0
     },
-    onSubmit: values => {
-      console.log(values)
+    onSubmit: values => handleFormSubmission({ ...values }),
 
-      //API INTEGRATION
-    },
     validationSchema: TenantValidationSchema
   })
 
@@ -48,18 +82,34 @@ const CreateTenant = ({ handleCancel }: { handleCancel: any }) => {
         <Grid item xs={6}>
           <TextField
             fullWidth
-            name='title'
-            label='Title'
-            placeholder='Enter Title'
-            value={formik.values.title}
+            name='name'
+            label='Name'
+            placeholder='Enter Name'
+            value={formik.values.name}
             onChange={formik.handleChange}
-            error={formik.touched.title && Boolean(formik.errors.title)}
-            helperText={formik.touched.title && formik.errors.title}
+            error={formik.touched.name && Boolean(formik.errors.name)}
+            helperText={formik.touched.name && formik.errors.name}
           />
         </Grid>
         <Grid item xs={6}>
           <TextField
             fullWidth
+            type='number'
+            name='assessment_duration'
+            label='Max Assessment Duration'
+            placeholder='Enter max duration for assessment'
+            value={formik.values.assessment_duration}
+            onChange={e => {
+              formik.handleChange(e)
+            }}
+            error={formik.touched.assessment_duration && Boolean(formik.errors.assessment_duration)}
+            helperText={formik.touched.assessment_duration && formik.errors.assessment_duration}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            fullWidth
+            name='domains'
             label='Domains'
             placeholder='Enter domain and Press Enter'
             value={domain}
