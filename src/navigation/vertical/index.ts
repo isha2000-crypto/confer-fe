@@ -17,6 +17,13 @@ const Navigation = (): VerticalNavItemsType => {
       subject: SUBJECTS.PUBLIC
     },
     {
+      title: 'Profile',
+      path: `${URLS.PROFILE}`,
+      icon: 'mdi:home-outline',
+      action: ACTIONS.READ,
+      subject: SUBJECTS.PUBLIC
+    },
+    {
       title: 'Assessments',
       icon: 'mdi:calendar-check-outline',
       children: [

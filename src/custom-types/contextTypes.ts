@@ -29,6 +29,7 @@ export type UserDataType = {
   username: string
   password: string
   picture?: string | null
+  tenantId: string
 }
 
 export type AuthValuesType = {

@@ -8,7 +8,8 @@ export const INVITE = 'invite'
 export const URLS = {
   ASSESSMENT_URL: '/assessments',
   ADMIN: '/admin',
-  HOME: '/home'
+  HOME: '/home',
+  PROFILE: '/profile'
 }
 
 export const SUBJECT_TITLES: any = {

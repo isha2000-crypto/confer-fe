@@ -1,8 +1,0 @@
-import Avatar from '@mui/material/Avatar'
-import Box from '@mui/material/Box'
-import Grid from '@mui/material/Grid'
-import Container from '@mui/material/Container'
-import Paper from '@mui/material/Paper'
-import Typography from '@mui/material/Typography'
-import { FETCH_USER_BY_ID } from 'src/lib/graphql/Query'
-import { useRouter } from 'next/router'
