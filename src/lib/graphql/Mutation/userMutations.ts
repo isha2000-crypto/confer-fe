@@ -17,6 +17,7 @@ export const LOGIN_USER_MUTATION = gql`
         _id
         name
         email
+        tenantId
         role {
           _id
           title
@@ -45,6 +46,7 @@ export const LOGIN_GOOGLE_MUTATION = gql`
         name
         email
         roleId
+        tenantId
         role {
           _id
           title
