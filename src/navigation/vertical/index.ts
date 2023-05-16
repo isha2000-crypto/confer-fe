@@ -79,7 +79,7 @@ const Navigation = (): VerticalNavItemsType => {
         {
           subject: SUBJECTS.ROLES,
           action: ACTIONS.READ,
-          title: 'Admin Settings',
+          title: 'Settings',
           path: `${URLS.ADMIN}/settings`
         }
       ]
