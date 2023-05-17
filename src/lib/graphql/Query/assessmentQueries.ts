@@ -197,3 +197,12 @@ export const LIST_SUBMITTED_ASSESSMENTS = gql`
     }
   }
 `
+export const FETCH_ASSESSMENT_BY_USER_ID = gql`
+  query SubmittedAssessmentsUser($submittedAssessmentsUserId: ObjectId!) {
+    submittedAssessmentsUser(id: $submittedAssessmentsUserId) {
+      assessment {
+        title
+      }
+    }
+  }
+`

@@ -14,27 +14,30 @@ import CardContent from '@mui/material/CardContent'
 import Icon from 'src/@core/components/icon'
 import CustomChip from 'src/@core/components/mui/chip'
 import CustomAvatar from 'src/@core/components/mui/avatar'
-import { ThemeColor } from 'src/@core/layouts/types'
+
+import { FETCH_ASSESSMENT_BY_USER_ID } from 'src/lib/graphql/Query'
 
 const SubmittedAssessmentDetail = () => {
   const router = useRouter()
   const { userId } = router.query
   const [userData, setUserData] = React.useState<any>(null)
-  const [getUser, { loading, error }] = useLazyQuery(FETCH_USER_BY_ID)
+  const [getAssessments, { loading: assessmentLoading, error: assessmentError, data: assessmentData }] =
+    useLazyQuery(FETCH_ASSESSMENT_BY_USER_ID)
+
+  const [getUser, { loading: userLoading, error: userError }] = useLazyQuery(FETCH_USER_BY_ID, {
+    onCompleted: data => {
+      setUserData(data)
+      getAssessments({ variables: { submittedAssessmentsUserId: userId } })
+    }
+  })
 
   React.useEffect(() => {
-    const fetchData = async () => {
-      const result = await getUser({ variables: { userId: userId } })
-      setUserData(result.data)
-    }
-
-    fetchData()
+    getUser({ variables: { userId: userId } })
   }, [getUser, userId])
 
-  if (loading) return <Spinner />
+  if (userLoading || assessmentLoading) return <Spinner />
 
-  if (error) return <div>Error</div>
-  console.log('user data lalala', userData?.user?.assessments?.length)
+  if (userError || assessmentError) return <div>Error</div>
 
   return (
     <Grid container spacing={6}>
@@ -84,9 +87,9 @@ const SubmittedAssessmentDetail = () => {
                 </CustomAvatar>
                 <div>
                   <Typography variant='h6' sx={{ lineHeight: 1.3 }}>
-                    568
+                    {assessmentData?.submittedAssessmentsUser?.length}
                   </Typography>
-                  <Typography variant='body2'>Project Done</Typography>
+                  <Typography variant='body2'>Submitted Assessments</Typography>
                 </div>
               </Box>
             </Box>
