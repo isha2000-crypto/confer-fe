@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 
 // ** MUI Imports
 import { useRouter } from 'next/router'
@@ -14,10 +14,13 @@ import CardContent from '@mui/material/CardContent'
 import Icon from 'src/@core/components/icon'
 import CustomChip from 'src/@core/components/mui/chip'
 import CustomAvatar from 'src/@core/components/mui/avatar'
+import { ACTIONS, SUBJECTS } from '@custom-types/enum'
+import { AbilityContext } from 'src/layouts/components/acl/Can'
 
 import { FETCH_ASSESSMENT_BY_USER_ID } from 'src/lib/graphql/Query'
 
 const SubmittedAssessmentDetail = () => {
+  const ability = useContext(AbilityContext)
   const router = useRouter()
   const { userId } = router.query
   const [userData, setUserData] = React.useState<any>(null)
@@ -38,6 +41,7 @@ const SubmittedAssessmentDetail = () => {
   if (userLoading || assessmentLoading) return <Spinner />
 
   if (userError || assessmentError) return <div>Error</div>
+  console.log('permission', userData?.user?.role?.permissions)
 
   return (
     <Grid container spacing={6}>
@@ -70,17 +74,19 @@ const SubmittedAssessmentDetail = () => {
           </CardContent>
           <CardContent sx={{ my: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Box sx={{ mr: 8, display: 'flex', alignItems: 'center' }}>
-                <CustomAvatar skin='light' variant='rounded' sx={{ mr: 3 }}>
-                  <Icon icon='mdi:check' />
-                </CustomAvatar>
-                <div>
-                  <Typography variant='h6' sx={{ lineHeight: 1.3 }}>
-                    {userData?.user?.assessments?.length}
-                  </Typography>
-                  <Typography variant='body2'>Assessments Created</Typography>
-                </div>
-              </Box>
+              {ability?.can(ACTIONS.CREATE, SUBJECTS.ASSESSMENT) && (
+                <Box sx={{ mr: 8, display: 'flex', alignItems: 'center' }}>
+                  <CustomAvatar skin='light' variant='rounded' sx={{ mr: 3 }}>
+                    <Icon icon='mdi:check' />
+                  </CustomAvatar>
+                  <div>
+                    <Typography variant='h6' sx={{ lineHeight: 1.3 }}>
+                      {userData?.user?.assessments?.length}
+                    </Typography>
+                    <Typography variant='body2'>Assessments Created</Typography>
+                  </div>
+                </Box>
+              )}
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <CustomAvatar skin='light' variant='rounded' sx={{ mr: 3 }}>
                   <Icon icon='mdi:briefcase-variant-outline' />
@@ -115,6 +121,10 @@ const SubmittedAssessmentDetail = () => {
       </Grid>
     </Grid>
   )
+}
+SubmittedAssessmentDetail.acl = {
+  action: ACTIONS.READ,
+  subject: SUBJECTS.USERS
 }
 
 export default SubmittedAssessmentDetail
