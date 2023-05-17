@@ -50,6 +50,9 @@ export const FETCH_USER_BY_ID = gql`
       role {
         title
       }
+      assessments {
+        title
+      }
     }
   }
 `

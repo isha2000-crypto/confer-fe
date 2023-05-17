@@ -1,63 +1,33 @@
-import { useState } from 'react'
-
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
+
 import Divider from '@mui/material/Divider'
-import TextField from '@mui/material/TextField'
+
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
-import CardActions from '@mui/material/CardActions'
-import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
-import InputAdornment from '@mui/material/InputAdornment'
-import DialogContentText from '@mui/material/DialogContentText'
+
 import Icon from 'src/@core/components/icon'
 import CustomChip from 'src/@core/components/mui/chip'
 import CustomAvatar from 'src/@core/components/mui/avatar'
 import { useAuth } from 'src/hooks/useAuth'
-import { ThemeColor } from 'src/@core/layouts/types'
-
-const data = {
-  id: 1,
-  role: 'admin',
-  status: 'active',
-
-  avatarColor: 'primary',
-
-  avatar: '/images/avatars/4.png'
-}
 
 const UserViewLeft = () => {
-  const [openEdit, setOpenEdit] = useState<boolean>(false)
   const auth = useAuth()
-  console.log('user here', auth.user?.name)
-  const handleEditClickOpen = () => setOpenEdit(true)
-  const handleEditClose = () => setOpenEdit(false)
 
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
           <CardContent sx={{ pt: 15, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-            {data.avatar.length ? (
-              <CustomAvatar
-                src={data.avatar}
-                variant='rounded'
-                alt={auth?.user?.name}
-                sx={{ width: 120, height: 120, fontWeight: 600, mb: 4, fontSize: '3rem' }}
-              />
-            ) : (
-              <CustomAvatar
-                skin='light'
-                variant='rounded'
-                color={data.avatarColor as ThemeColor}
-                sx={{ width: 120, height: 120, fontWeight: 600, mb: 4, fontSize: '3rem' }}
-              ></CustomAvatar>
-            )}
+            <CustomAvatar
+              src={auth?.user?.picture}
+              variant='rounded'
+              alt={auth?.user?.name}
+              sx={{ width: 120, height: 120, fontWeight: 600, mb: 4, fontSize: '3rem' }}
+            />
+
             <Typography variant='h6' sx={{ mb: 2 }}>
               {auth?.user?.name}
             </Typography>
@@ -118,43 +88,6 @@ const UserViewLeft = () => {
               <Typography variant='body2' sx={{ textTransform: 'capitalize' }}></Typography>
             </Box>
           </CardContent>
-          <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Button variant='contained' sx={{ mr: 2 }} onClick={handleEditClickOpen}>
-              Edit
-            </Button>
-          </CardActions>
-          <Dialog
-            open={openEdit}
-            onClose={handleEditClose}
-            aria-labelledby='user-view-edit'
-            sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 650, p: [2, 10] } }}
-            aria-describedby='user-view-edit-description'
-          >
-            <DialogTitle id='user-view-edit' sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}>
-              Edit User Information
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText variant='body2' id='user-view-edit-description' sx={{ textAlign: 'center', mb: 7 }}>
-                Updating user details will receive a privacy audit.
-              </DialogContentText>
-              <Grid container spacing={6}>
-                <Grid item xs={12} sm={6}>
-                  <TextField fullWidth label='Full Name' defaultValue={auth?.user?.name} />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label='role'
-                    defaultValue={auth?.user?.role.title}
-                    // InputProps={{ startAdornment: <InputAdornment position='start'>@</InputAdornment> }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField fullWidth type='email' label='Billing Email' defaultValue={auth?.user?.email} />
-                </Grid>
-              </Grid>
-            </DialogContent>
-          </Dialog>
         </Card>
       </Grid>
     </Grid>
