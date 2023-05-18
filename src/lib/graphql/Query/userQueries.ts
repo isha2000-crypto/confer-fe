@@ -8,6 +8,7 @@ export const LOAD_USERS = gql`
       email_verified
       name
       picture
+      tenantId
       role {
         title
       }
@@ -22,6 +23,7 @@ export const VALIDATE_USERS = gql`
       name
       email
       roleId
+      tenantId
       role {
         _id
         title
