@@ -17,6 +17,7 @@ export const LOGIN_USER_MUTATION = gql`
         _id
         name
         email
+        tenantId
         role {
           _id
           title
@@ -45,6 +46,7 @@ export const LOGIN_GOOGLE_MUTATION = gql`
         name
         email
         roleId
+        tenantId
         role {
           _id
           title
@@ -78,6 +80,14 @@ export const UPDATE_USER = gql`
     updateUser(updateUserInput: $updateUserInput, id: $updateUserId) {
       _id
       roleId
+    }
+  }
+`
+export const UPDATE_ASSESSMENT_DURATION = gql`
+  mutation Mutation($updateOrganizationId: ObjectId!, $updateOrganizationInput: UpdateOrganizationInput!) {
+    updateOrganization(id: $updateOrganizationId, updateOrganizationInput: $updateOrganizationInput) {
+      _id
+      assessment_duration
     }
   }
 `

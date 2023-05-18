@@ -1,30 +1,50 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { SUBJECTS, ACTIONS } from '@custom-types/enum'
 import { TextField, Typography, Card, CardContent, CardHeader, Button } from '@mui/material'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { UPDATE_ASSESSMENT_DURATION } from 'src/lib/graphql/Mutation'
 import { useAuth } from 'src/hooks/useAuth'
+import { LOAD_CURRENT_TENANT } from 'src/lib/graphql/Query'
+import FallbackSpinner from 'src/@core/components/spinner'
+import { useRouter } from 'next/router'
+import toast from 'react-hot-toast'
 
 function AdminSettings() {
-  const [maxDuration, setMaxDuration] = useState('')
   const [updateAssessmentDuration] = useMutation(UPDATE_ASSESSMENT_DURATION)
   const auth = useAuth()
+  const router = useRouter()
+  const { error, loading, data } = useQuery(LOAD_CURRENT_TENANT)
+  const [maxDuration, setMaxDuration] = useState('')
 
   const handleMaxDurationChange = (event: any) => {
     setMaxDuration(event.target.value)
   }
 
+  useEffect(() => {
+    if (data) {
+      setMaxDuration(data?.currentTenant?.assessment_duration)
+    }
+  }, [data])
+
   const handleSubmit = (event: any) => {
     event.preventDefault()
-    console.log('Hello i am saved duration')
-    console.log('userhere', auth.user?.tenantId)
-    console.log('user name', auth.user?.name)
+
     updateAssessmentDuration({
       variables: {
-        updateOrganizationId: String(auth.user?.tenantId),
+        updateOrganizationId: auth.user?.tenantId,
         updateOrganizationInput: { assessment_duration: parseInt(maxDuration) }
       }
+    }).then(() => {
+      toast.success('Duration added successfully!')
     })
+  }
+
+  if (loading) {
+    return <FallbackSpinner />
+  }
+
+  if (error) {
+    router.push('/500')
   }
 
   return (
@@ -36,8 +56,7 @@ function AdminSettings() {
             fullWidth
             label='Max Duration'
             type='number'
-            placeholder='Time to complete (in seconds)'
-            required
+            placeholder='Max Duration'
             onWheel={event => event.target.blur()}
             InputProps={{
               endAdornment: (
