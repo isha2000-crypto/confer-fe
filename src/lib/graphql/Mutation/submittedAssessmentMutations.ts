@@ -40,8 +40,11 @@ export const INIT_SUBMITTED_ASSESSMENT = gql`
   }
 `
 export const UPDATE_ASSESSMENT_SUBMISSION = gql`
-  mutation UpdateAssessmentSubmission($updateAssessmentSubmissionInput: UpdateAssessmentSubmissionInput!) {
-    updateAssessmentSubmission(updateAssessmentSubmissionInput: $updateAssessmentSubmissionInput) {
+  mutation UpdateAssessmentSubmission(
+    $id: ObjectId!
+    $updateAssessmentSubmissionInput: UpdateAssessmentSubmissionInput!
+  ) {
+    updateAssessmentSubmission(id: $id, updateAssessmentSubmissionInput: $updateAssessmentSubmissionInput) {
       _id
       userId
       user {

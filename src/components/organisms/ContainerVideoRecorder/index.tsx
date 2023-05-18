@@ -56,7 +56,7 @@ function ContainerVideoRecorder({ initiatedSubmission }: props) {
     }))
   }
 
-  const handlePointClick = (index: number) => {
+  const incrementCurrentTask = (index: number) => {
     const taskId = initiatedSubmission?.assessment.tasks[index]._id
     if (recordings[taskId].status === TaskStatus.OPEN) {
       setCurrentTask(initiatedSubmission?.assessment.tasks[index])
@@ -86,20 +86,42 @@ function ContainerVideoRecorder({ initiatedSubmission }: props) {
       handleRecording(currentTask._id, TaskStatus.UPLOADING, null)
       const taskIndex = initiatedSubmission?.assessment.tasks.findIndex((task: any) => task._id === currentTask._id)
       if (taskIndex >= 0 && initiatedSubmission?.assessment.tasks[taskIndex + 1]) {
-        handlePointClick(taskIndex + 1)
+        incrementCurrentTask(taskIndex + 1)
       } else {
         openSubmitPopup()
       }
       const url = await uploadFile(blob, auth?.user as UserDataType, initiatedSubmission?.assessment, currentTask._id)
       handleRecording(currentTask._id, TaskStatus.SUBMITTED, url)
+      submitTaskResponse(currentTask._id, url)
     } catch (error) {}
+  }
+
+  const submitTaskResponse = async (taskId: string, videoUrl: string) => {
+    const inputData = {
+      taskResponses: [
+        {
+          taskId: taskId,
+          videoUrl: videoUrl
+        }
+      ]
+    }
+
+    const result = await updateSubmission({
+      variables: {
+        id: initiatedSubmission._id,
+        updateAssessmentSubmissionInput: inputData
+      }
+    })
+
+    if (result.errors) {
+      alert('Problem with Internet')
+    }
   }
 
   const submitAssessment = async () => {
     const responseArray = Object.values(recordings)
 
     const inputData = {
-      id: initiatedSubmission._id,
       taskResponses: responseArray.map((res: any) => {
         return {
           taskId: res._id,
@@ -110,20 +132,31 @@ function ContainerVideoRecorder({ initiatedSubmission }: props) {
 
     const result = await updateSubmission({
       variables: {
+        id: initiatedSubmission._id,
         updateAssessmentSubmissionInput: inputData
       }
     })
 
     if (result.data) {
       setSubmitted(true)
-      router.push(`/assessments/submitted/${auth.user?.id}/${result.data.createSubmittedAssessment._id}/view`)
+      router.push(`/assessments/submitted/${auth.user?.id}/${result.data.updateAssessmentSubmission._id}/view`)
     }
   }
 
   React.useEffect(() => {
-    if (!recordings.length) {
-      initiatedSubmission?.assessment.tasks.forEach((task: any) => {
-        handleRecording(task._id, TaskStatus.OPEN, null)
+    if (!Object.keys(recordings).length) {
+      initiatedSubmission?.assessment.tasks.forEach((task: any, taskIndex: number) => {
+        const submissionIndex = initiatedSubmission.taskResponses.findIndex((item: any) => item.taskId === task._id)
+        if (submissionIndex >= 0) {
+          handleRecording(task._id, TaskStatus.SUBMITTED, initiatedSubmission.taskResponses[submissionIndex].videoUrl)
+          if (initiatedSubmission?.assessment.tasks[taskIndex + 1]) {
+            setCurrentTask(initiatedSubmission?.assessment.tasks[taskIndex + 1])
+          } else {
+            setAllUploaded(true)
+          }
+        } else {
+          handleRecording(task._id, TaskStatus.OPEN, null)
+        }
       })
     }
   }, [initiatedSubmission])
