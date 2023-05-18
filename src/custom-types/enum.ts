@@ -25,7 +25,7 @@ export enum SUBJECTS {
   USER_INVITATION = 'user_invitation',
   TENANTS = 'tenants',
   ROLES = 'roles',
-  ADMIN_SETTINGS = 'ADMIN_SETTINGS'
+  ADMIN_SETTINGS = 'admin_settings'
 }
 export enum Question_Types {
   TEXTUAL = 'TEXTUAL'
