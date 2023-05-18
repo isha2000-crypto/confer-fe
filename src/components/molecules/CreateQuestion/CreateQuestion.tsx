@@ -28,6 +28,7 @@ const CreateQuestion = (props: QuestionProps) => {
     let intValue: string | number = value
     if (name === 'duration') {
       intValue = parseInt(value)
+
       if (intValue < 0) {
         intValue = 0
       }
@@ -39,7 +40,7 @@ const CreateQuestion = (props: QuestionProps) => {
     props.removeQuestion(props.count)
   }
 
-  const val = Number(props.duration)
+  const val = Number(props.duration) / 60
 
   return (
     <>
@@ -99,14 +100,14 @@ const CreateQuestion = (props: QuestionProps) => {
             InputProps={{
               endAdornment: (
                 <Typography variant='body2' sx={{ fontWeight: 600 }}>
-                  seconds
+                  minutes
                 </Typography>
               )
             }}
             name='duration'
             value={val}
             onChange={handleQuestionDataChange}
-            helperText='Minimum value should be 60 seconds'
+            helperText='Minimum value should be 1 minute'
             sx={{ marginTop: '15px' }}
           />
         </Grid>

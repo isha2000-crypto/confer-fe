@@ -17,5 +17,7 @@ export const SUBJECT_TITLES: any = {
   [SUBJECTS.ROLES]: 'Manage Roles',
   [SUBJECTS.TENANTS]: 'Manage Tenants',
   [SUBJECTS.USERS]: 'Manage Users',
-  [SUBJECTS.USER_INVITATION]: 'Users Invitation'
+  [SUBJECTS.USER_INVITATION]: 'Users Invitation',
+  [SUBJECTS.ASSESSMENT_SUBMISSION_MANAGEMENT]: 'Assessment Submission Management',
+  [SUBJECTS.ADMIN_SETTINGS]: 'Admin Settings'
 }

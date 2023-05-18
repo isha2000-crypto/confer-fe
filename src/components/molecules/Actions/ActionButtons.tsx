@@ -3,7 +3,7 @@ import React from 'react'
 
 interface Props {
   loading: boolean
-  submit: () => void
+  submit?: () => void
   handleCancel: () => void
   submitText: string
 }

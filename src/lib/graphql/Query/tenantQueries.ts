@@ -11,3 +11,11 @@ export const LOAD_TENANTS = gql`
     }
   }
 `
+export const LOAD_CURRENT_TENANT = gql`
+  query Query {
+    currentTenant {
+      assessment_duration
+      _id
+    }
+  }
+`

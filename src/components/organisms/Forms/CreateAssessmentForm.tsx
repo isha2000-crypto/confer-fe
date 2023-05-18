@@ -22,6 +22,8 @@ import toast from 'react-hot-toast'
 import { TransitionGroup } from 'react-transition-group'
 import { Collapse } from '@mui/material'
 
+
+
 interface Question {
   id: number
   type: string
@@ -30,6 +32,8 @@ interface Question {
 }
 
 const CreateAssessmentForm = () => {
+
+
   const [questions, setQuestions] = useState<Question[]>([])
 
   const [submitAss, setSubmit] = useState(false)
@@ -55,7 +59,7 @@ const CreateAssessmentForm = () => {
       id: questions.length + 1,
       type: 'TEXTUAL',
       description: '',
-      duration: 60
+      duration: 1
     }
     setQuestions([...questions, newQuestion])
   }
@@ -68,6 +72,9 @@ const CreateAssessmentForm = () => {
 
   const handleQuestionUpdate = (index: number, name: string, value: string | number) => {
     const updateQuestions: any = [...questions]
+    if (name === 'duration') {
+      value = Number(value) * 60
+    }
     updateQuestions[index][name] = value
     setQuestions([...updateQuestions])
   }
@@ -84,7 +91,8 @@ const CreateAssessmentForm = () => {
     const modifiedQuestions = questions.map(question => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { id, ...rest } = question
-      if (question.type === '' || question.description === '' || question.duration < 60) {
+      console.log('duration', question.duration)
+      if (question.type === '' || question.description === '' || question.duration < 1) {
         alert('Please Make Sure Question Fields are Valid!!')
         isFormValid = false
       }

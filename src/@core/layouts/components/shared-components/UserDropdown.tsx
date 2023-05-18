@@ -26,6 +26,7 @@ import DialogInvite from '@components/molecules/Dialog/DialogForm'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 import InviteForm from '@components/organisms/Forms/InviteForm'
+import DialogTenantCreate from '@components/molecules/Dialog/DialogTenant/DialogTenantCreate'
 
 interface Props {
   settings: Settings
@@ -45,13 +46,19 @@ const UserDropdown = (props: Props) => {
   const { settings } = props
   const ability = useContext(AbilityContext)
   const [modalOpen, setModalOpen] = useState(false)
+  const [tenantModalOpen, setTenantModalOpen] = useState(false)
 
   const handleOpen = () => {
     setModalOpen(prev => !prev)
   }
-
+  const handleTenantOpen = () => {
+    setTenantModalOpen(prev => !prev)
+  }
   const handleClose = () => {
     setModalOpen(prev => !prev)
+  }
+  const handleTenantClose = () => {
+    setTenantModalOpen(prev => !prev)
   }
 
   // ** States
@@ -160,6 +167,15 @@ const UserDropdown = (props: Props) => {
         )}
 
         <Divider />
+        {ability?.can(ACTIONS.CREATE, SUBJECTS.TENANTS) && (
+          <MenuItem sx={{ p: 0 }} onClick={handleTenantOpen}>
+            <Box sx={styles}>
+              <Icon icon='mdi-account-plus' />
+              Create Tenant
+            </Box>
+          </MenuItem>
+        )}
+        <Divider />
 
         <MenuItem
           onClick={handleLogout}
@@ -173,6 +189,9 @@ const UserDropdown = (props: Props) => {
       <DialogInvite open={modalOpen} onClose={handleClose}>
         <InviteForm />
       </DialogInvite>
+      {tenantModalOpen && (
+        <DialogTenantCreate handleClose={handleTenantClose} open={tenantModalOpen} dialogTitle='Create Tenant' />
+      )}
     </Fragment>
   )
 }
