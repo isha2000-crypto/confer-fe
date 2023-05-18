@@ -57,7 +57,7 @@ function AdminSettings() {
             label='Max Duration'
             type='number'
             placeholder='Max Duration'
-            onWheel={event => event.target.blur()}
+            onWheel={(event: any) => event.target.blur()}
             InputProps={{
               endAdornment: (
                 <Typography variant='body2' sx={{ fontWeight: 600 }}>
