@@ -32,7 +32,6 @@ export const VALIDATE_USERS = gql`
           assessment_submission_management
           assessments
           roles
-          tenants
           user_invitation
           users
         }
