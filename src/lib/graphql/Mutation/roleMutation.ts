@@ -33,6 +33,7 @@ export const UPDATE_ROLE = gql`
         users
         user_invitation
         roles
+        admin_settings
       }
       createdBy
       creator {

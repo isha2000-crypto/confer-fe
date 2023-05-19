@@ -34,6 +34,7 @@ export const VALIDATE_USERS = gql`
           roles
           user_invitation
           users
+          admin_settings
         }
       }
       email_verified

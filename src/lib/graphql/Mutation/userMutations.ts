@@ -56,6 +56,7 @@ export const LOGIN_GOOGLE_MUTATION = gql`
             roles
             user_invitation
             users
+            admin_settings
           }
         }
         email_verified

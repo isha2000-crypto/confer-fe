@@ -13,6 +13,7 @@ export const LOAD_ROLES = gql`
         users
         user_invitation
         roles
+        admin_settings
       }
       createdBy
       creator {
