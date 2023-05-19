@@ -35,7 +35,7 @@ function AdminSettings() {
         updateOrganizationInput: { assessment_duration: parseInt(maxDuration) }
       }
     }).then(() => {
-      toast.success('Duration added successfully!')
+      toast.success('Duration updated successfully!')
     })
   }
 
@@ -71,7 +71,7 @@ function AdminSettings() {
           />
         </form>
         <Button variant='contained' type='submit' sx={{ float: 'right', marginLeft: '1000px' }} onClick={handleSubmit}>
-          Add{' '}
+          Update{' '}
         </Button>
       </CardContent>
     </Card>
