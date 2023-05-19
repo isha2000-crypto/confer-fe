@@ -1,5 +1,5 @@
 // ** React Imports
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -16,14 +16,19 @@ import { ThemeColor } from 'src/@core/layouts/types'
 
 // ** Custom Components Imports
 import { UsersType } from '@custom-types/user-type'
-import { IconButton } from '@mui/material'
-import Icon from 'src/@core/components/icon'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 import RenderCustomAvatar from '../Table/RenderCustomAvatar'
 
 import DialogUserEdit from '../Dialog/DialogUserEdit/DialogUserEdit'
+import RowOptions from './rowOptions'
+import { IconButton } from '@mui/material'
+import { Icon } from '@iconify/react'
 import { useAuth } from 'src/hooks/useAuth'
+import { AppDispatch } from 'src/store'
+import { useDispatch } from 'react-redux'
+import { fetchTenants } from 'src/store/tenants/tenantsActions'
+import TableFilter from './tableFilter'
 
 interface UserStatusType {
   [key: string]: ThemeColor
@@ -116,40 +121,59 @@ const tableColumns = [
   }
 ]
 
-const TableUsersList = ({ users }: any) => {
+const TableUsersList = ({ users, anchor, header }: { users: any; anchor: boolean; header: boolean }) => {
   // ** State
   const ability = useContext(AbilityContext)
+
+  const dispatch = useDispatch<AppDispatch>()
   const [pageSize, setPageSize] = useState<number>(10)
   const [selectedUser, setSelectedUser] = useState<UsersType>()
   const [open, setOpen] = useState<boolean>(false)
+  const [tenant, setTenant] = useState<string>('')
   const { user } = useAuth()
   const handleEditRole = (user: UsersType) => {
-    setSelectedUser({ ...user })
+    setSelectedUser(user)
     setOpen(true)
   }
-
+  const filteredUsers = useMemo(() => {
+    if (!tenant) return users
+    else
+      return users.filter((item: any) => {
+        return item.tenantId === tenant
+      })
+  }, [tenant, users])
+  const handleTenatChange = (event: any) => {
+    setTenant(event.target.value)
+  }
   const handleClose = () => {
     setOpen(false)
   }
+  useEffect(() => {
+    dispatch(fetchTenants())
+  }, [dispatch])
+
   const columns = [
     ...tableColumns,
 
     {
       flex: 0.15,
-      minWidth: 115,
+      minWidth: 80,
       sortable: false,
       field: 'actions',
       headerName: 'Actions',
-      renderCell: ({ row }: CellType) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton
-            onClick={() => handleEditRole(row)}
-            disabled={user?.role.title === 'Super Admin' && user.name === row.name}
-          >
-            <Icon icon='mdi:pencil-outline' />
-          </IconButton>
-        </Box>
-      )
+      renderCell: ({ row }: CellType) =>
+        !anchor ? (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton
+              onClick={() => handleEditRole(row)}
+              disabled={user?.role.title === 'Super Admin' && user.name === row.name}
+            >
+              <Icon icon='mdi:pencil-outline' />
+            </IconButton>
+          </Box>
+        ) : (
+          <RowOptions />
+        )
     }
   ]
 
@@ -159,9 +183,10 @@ const TableUsersList = ({ users }: any) => {
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <Card>
+            {header && <TableFilter tenant={tenant} handleTenatChange={handleTenatChange} />}
             <DataGrid
               autoHeight
-              rows={users}
+              rows={filteredUsers}
               getRowId={row => row._id}
               columns={columns}
               pageSize={pageSize}

@@ -19,10 +19,11 @@ import { fetchTenants } from 'src/store/tenants/tenantsActions'
 import { Box, Button } from '@mui/material'
 import DialogTenantCreate from '@components/molecules/Dialog/DialogTenant/DialogTenantCreate'
 
-const TenantsComponent = () => {
-  const [open, setOpen] = useState<boolean>(false)
+const TenantsList = () => {
   const dispatch = useDispatch<AppDispatch>()
   const tenantsStore = useSelector((store: RootState) => store.tenants)
+  const [open, setOpen] = useState<boolean>(false)
+
   const handleClickOpen = () => {
     setOpen(true)
   }
@@ -61,9 +62,9 @@ const TenantsComponent = () => {
   )
 }
 
-TenantsComponent.acl = {
+TenantsList.acl = {
   action: ACTIONS.READ,
   subject: SUBJECTS.TENANTS
 }
 
-export default TenantsComponent
+export default TenantsList
