@@ -16,8 +16,8 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
     toast.error('Server is not connected ')
   }
 })
-
-const httpLink = ApolloLink.from([errorLink, new HttpLink({ uri: 'http://localhost:4000/graphql' })])
+const uri = process.env.NEXT_PUBLIC_SERVER_URL
+const httpLink = ApolloLink.from([errorLink, new HttpLink({ uri: `${uri}/graphql` })])
 const authLink = new ApolloLink((operation, forward) => {
   // Retrieve the authorization token from local storage.
   const token = Cookies.get('access_token')
