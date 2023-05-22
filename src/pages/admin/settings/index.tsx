@@ -78,8 +78,8 @@ function AdminSettings() {
   )
 }
 AdminSettings.acl = {
-  action: ACTIONS.READ,
-  subject: SUBJECTS.ROLES
+  action: ACTIONS.UPDATE,
+  subject: SUBJECTS.ADMIN_SETTINGS
 }
 
 export default AdminSettings
