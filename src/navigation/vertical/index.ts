@@ -71,7 +71,7 @@ const Navigation = (): VerticalNavItemsType => {
           path: `${URLS.ADMIN}/roles`
         },
         {
-          subject: SUBJECTS.TENANTS,
+          subject: SUBJECTS.USER_INVITATION,
           action: ACTIONS.READ,
           title: 'Tenants',
           path: `${URLS.ADMIN}/tenants`
