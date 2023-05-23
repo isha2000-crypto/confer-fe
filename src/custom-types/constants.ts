@@ -14,10 +14,10 @@ export const URLS = {
 export const SUBJECT_TITLES: any = {
   [SUBJECTS.ASSESSMENT]: 'Assessments',
   [SUBJECTS.ASSESSMENT_SUBMISSION]: 'Submission of Assessments',
+  [SUBJECTS.ASSESSMENT_SUBMISSION_MANAGEMENT]: 'Assessment Submission Management',
   [SUBJECTS.ROLES]: 'Manage Roles',
   [SUBJECTS.USERS]: 'Manage Users',
   [SUBJECTS.USER_INVITATION]: 'Users Invitation',
-  [SUBJECTS.ASSESSMENT_SUBMISSION_MANAGEMENT]: 'Assessment Submission Management',
   [SUBJECTS.ADMIN_SETTINGS]: 'Admin Settings',
   [SUBJECTS.SYSTEM_ADMIN]: 'System Admin'
 }
