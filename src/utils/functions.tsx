@@ -13,6 +13,12 @@ export const getSubjectTitles = () => {
     value: value
   }))
 
+  delete rolesArr[
+    rolesArr.findIndex((obj: any) => {
+      return obj.value === SUBJECTS.SYSTEM_ADMIN
+    })
+  ]
+
   return rolesArr
 }
 

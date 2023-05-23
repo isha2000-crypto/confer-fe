@@ -21,6 +21,7 @@ export const LOGIN_USER_MUTATION = gql`
         role {
           _id
           title
+          tenantId
           permissions {
             assessment_submission
             assessment_submission_management
@@ -49,6 +50,7 @@ export const LOGIN_GOOGLE_MUTATION = gql`
         role {
           _id
           title
+          tenantId
           permissions {
             assessment_submission
             assessment_submission_management
