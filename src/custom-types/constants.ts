@@ -18,5 +18,6 @@ export const SUBJECT_TITLES: any = {
   [SUBJECTS.ROLES]: 'Manage Roles',
   [SUBJECTS.USERS]: 'Manage Users',
   [SUBJECTS.USER_INVITATION]: 'Users Invitation',
-  [SUBJECTS.ADMIN_SETTINGS]: 'Admin Settings'
+  [SUBJECTS.ADMIN_SETTINGS]: 'Admin Settings',
+  [SUBJECTS.SYSTEM_ADMIN]: 'System Admin'
 }

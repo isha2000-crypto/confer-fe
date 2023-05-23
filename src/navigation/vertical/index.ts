@@ -71,21 +71,21 @@ const Navigation = (): VerticalNavItemsType => {
           path: `${URLS.ADMIN}/roles`
         },
         {
-          subject: SUBJECTS.USER_INVITATION,
+          subject: SUBJECTS.SYSTEM_ADMIN,
           action: ACTIONS.READ,
           title: 'Tenants',
           children: [
             {
               action: ACTIONS.READ,
-              subject: SUBJECTS.TENANTS,
+              subject: SUBJECTS.SYSTEM_ADMIN,
               title: 'List',
-              path: `${URLS.ADMIN}/tenants/list`
+              path: `/tenants/list`
             },
             {
               action: ACTIONS.READ,
-              subject: SUBJECTS.TENANTS,
+              subject: SUBJECTS.SYSTEM_ADMIN,
               title: 'Users',
-              path: `${URLS.ADMIN}/tenants/users`
+              path: `/tenants/users`
             }
           ]
         },
@@ -96,6 +96,12 @@ const Navigation = (): VerticalNavItemsType => {
           path: `${URLS.ADMIN}/settings`
         }
       ]
+    },
+    {
+      subject: SUBJECTS.SYSTEM_ADMIN,
+      action: ACTIONS.READ,
+      title: 'Tenants',
+      path: `/tenants`
     }
   ]
 

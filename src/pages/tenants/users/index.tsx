@@ -1,5 +1,6 @@
 import ComponentSpinner from '@components/atoms/ComponentSpinner'
 import TableUsersList from '@components/molecules/TableUsersList'
+import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 import { Grid, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
@@ -30,10 +31,13 @@ const Users = () => {
         subtitle={<Typography variant='body2'>You can view all the available Users here</Typography>}
       />
       <Grid item xs={12} sx={{ mb: 5 }}>
-        <TableUsersList users={usersStore.users} anchor header/>
+        <TableUsersList users={usersStore.users} anchor header />
       </Grid>
     </Grid>
   )
 }
-
+Users.acl = {
+  action: ACTIONS.READ,
+  subject: SUBJECTS.SYSTEM_ADMIN
+}
 export default Users
