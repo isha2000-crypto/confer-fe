@@ -18,8 +18,8 @@ const EditAssessmentCreation = () => {
 
   React.useEffect(() => {
     const fetchData = async () => {
-      const result = await getAssessment({ variables: { createdAssessmentId: createdAssessmentId } })
-      setCreatedAssessment(result.data.submittedAssessment)
+      const { data } = await getAssessment({ variables: { assessmentId: createdAssessmentId } })
+      setCreatedAssessment(data?.assessment)
     }
 
     fetchData()
@@ -29,10 +29,7 @@ const EditAssessmentCreation = () => {
 
   if (error) return <div>Error</div>
 
-  return (
-    <>
-      <CreateAssessmentForm />
-    </>
-  )
+  return <>{createdAssessment && <CreateAssessmentForm assessment={createdAssessment} />}</>
 }
+
 export default EditAssessmentCreation
