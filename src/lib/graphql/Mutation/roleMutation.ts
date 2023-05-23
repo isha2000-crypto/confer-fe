@@ -32,8 +32,8 @@ export const UPDATE_ROLE = gql`
         assessment_submission_management
         users
         user_invitation
-        tenants
         roles
+        admin_settings
       }
       createdBy
       creator {

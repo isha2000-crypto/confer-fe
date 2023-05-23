@@ -26,7 +26,6 @@ export const LOGIN_USER_MUTATION = gql`
             assessment_submission_management
             assessments
             roles
-            tenants
             user_invitation
             users
           }
@@ -55,9 +54,9 @@ export const LOGIN_GOOGLE_MUTATION = gql`
             assessment_submission_management
             assessments
             roles
-            tenants
             user_invitation
             users
+            admin_settings
           }
         }
         email_verified
