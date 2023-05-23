@@ -29,19 +29,19 @@ interface Question {
   duration: number
 }
 
-const CreateAssessmentForm = (isEdit: any, assessmentId: any, initialAssessment: any) => {
+const CreateAssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
   const [questions, setQuestions] = useState<Question[]>([])
 
   const [submitAss, setSubmit] = useState(false)
-  const [assessment, setAssessment] = useState({
-    title: isEdit ? 'Assessment Title' : '',
-    description: isEdit ? 'Assessment Description' : '',
-    type: isEdit ? 'LEADERSHIP' : ''
-  })
-
+  console.log('intial assessment', initialAssessment)
   const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
   const [updateAssessmentMutation] = useMutation(UPDATE_ASSESSMENT_MUTATION)
-
+  const [assessment, setAssessment] = useState({
+    title: isEdit ? initialAssessment.title : '',
+    description: isEdit ? initialAssessment.description : '',
+    type: isEdit ? initialAssessment.type : ''
+  })
+  console.log('from create ass id', assessmentId)
   const containerStyle = {
     backgroundColor: 'background.default',
     borderRadius: '20px',
@@ -104,8 +104,9 @@ const CreateAssessmentForm = (isEdit: any, assessmentId: any, initialAssessment:
     if (isEdit) {
       updateAssessmentMutation({
         variables: {
+          updateAssessmentId: assessmentId,
           updateAssessmentInput: {
-            id: assessmentId, // Replace with the actual assessment ID
+            // Replace with the actual assessment ID
             ...assessment,
             tasks: modifiedQuestions
           }
@@ -271,7 +272,7 @@ const CreateAssessmentForm = (isEdit: any, assessmentId: any, initialAssessment:
                 variant='contained'
                 sx={{ width: '10%', marginTop: '10px', marginBottom: '10px', marginRight: '10px', float: 'right' }}
               >
-                {isEdit ? 'edit' : 'create'}
+                {isEdit ? 'Edit' : 'Create'}
               </Button>
               <div style={{ width: '21%', marginLeft: '37%' }}>
                 {submitAss &&

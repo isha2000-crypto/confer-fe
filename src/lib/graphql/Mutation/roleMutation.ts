@@ -26,6 +26,7 @@ export const UPDATE_ROLE = gql`
     updateRole(id: $updateRoleId, updateRoleInput: $updateRoleInput) {
       _id
       title
+      tenantId
       permissions {
         assessments
         assessment_submission

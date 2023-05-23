@@ -11,6 +11,7 @@ export const LOAD_USERS = gql`
       tenantId
       role {
         title
+        tenantId
       }
       roleId
     }
@@ -27,6 +28,7 @@ export const VALIDATE_USERS = gql`
       role {
         _id
         title
+        tenantId
         permissions {
           assessment_submission
           assessment_submission_management

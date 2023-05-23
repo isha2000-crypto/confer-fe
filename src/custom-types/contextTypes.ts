@@ -16,6 +16,7 @@ export type RegisterParams = {
 
 export type Role = {
   _id: string
+  tenantId?: string | null
   title: string
   permissions: any
 }

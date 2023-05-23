@@ -20,7 +20,6 @@ const EditAssessmentCreation = () => {
     const fetchData = async () => {
       const { data } = await getAssessment({ variables: { assessmentId: assessmentId } })
       setCreatedAssessment(data?.assessment)
-      console.log('data', data)
     }
 
     fetchData()
@@ -29,7 +28,7 @@ const EditAssessmentCreation = () => {
   if (loading) return <Spinner />
 
   if (error) return <div>Error</div>
-  console.log('Created Assessment', createdAssessment)
+  console.log('ass id ', assessmentId)
 
   return (
     <>

@@ -63,7 +63,7 @@ const TenantsComponent = () => {
 
 TenantsComponent.acl = {
   action: ACTIONS.READ,
-  subject: SUBJECTS.USER_INVITATION
+  subject: SUBJECTS.SYSTEM_ADMIN
 }
 
 export default TenantsComponent
