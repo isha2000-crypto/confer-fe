@@ -154,7 +154,7 @@ const TableTenantsList = ({ tenants }: any) => {
               onPageSizeChange={newPageSize => setPageSize(newPageSize)}
               sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
               columnVisibilityModel={{
-                actions: ability?.can(ACTIONS.UPDATE, SUBJECTS.TENANTS) && true
+                actions: ability?.can(ACTIONS.UPDATE, SUBJECTS.USER_INVITATION) && true
               }}
             />
           </Card>

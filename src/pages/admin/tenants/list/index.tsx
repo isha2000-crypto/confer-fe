@@ -64,7 +64,7 @@ const TenantsList = () => {
 
 TenantsList.acl = {
   action: ACTIONS.READ,
-  subject: SUBJECTS.TENANTS
+  subject: SUBJECTS.USER_INVITATION
 }
 
 export default TenantsList

@@ -23,7 +23,6 @@ export enum SUBJECTS {
   ASSESSMENT_SUBMISSION_MANAGEMENT = 'assessment_submission_management',
   USERS = 'users',
   USER_INVITATION = 'user_invitation',
-  TENANTS = 'tenants',
   ROLES = 'roles',
   ADMIN_SETTINGS = 'admin_settings'
 }
