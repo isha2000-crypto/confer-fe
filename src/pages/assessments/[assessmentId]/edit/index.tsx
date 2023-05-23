@@ -12,24 +12,32 @@ import CreateAssessmentForm from '../../../../components/organisms/Forms/CreateA
 
 const EditAssessmentCreation = () => {
   const router = useRouter()
-  const { createdAssessmentId } = router.query
+  const { assessmentId } = router.query
   const [createdAssessment, setCreatedAssessment] = React.useState<any>(null)
   const [getAssessment, { loading, error }] = useLazyQuery(FETCH_ASSESSMENT_BY_ID)
 
   React.useEffect(() => {
     const fetchData = async () => {
-      const { data } = await getAssessment({ variables: { assessmentId: createdAssessmentId } })
+      const { data } = await getAssessment({ variables: { assessmentId: assessmentId } })
       setCreatedAssessment(data?.assessment)
+      console.log('data', data)
     }
 
     fetchData()
-  }, [getAssessment, createdAssessmentId])
+  }, [getAssessment, assessmentId])
 
   if (loading) return <Spinner />
 
   if (error) return <div>Error</div>
+  console.log('Created Assessment', createdAssessment)
 
-  return <>{createdAssessment && <CreateAssessmentForm assessment={createdAssessment} />}</>
+  return (
+    <>
+      {createdAssessment && (
+        <CreateAssessmentForm isEdit assessmentId={assessmentId} initialAssessment={createdAssessment} />
+      )}
+    </>
+  )
 }
 
 export default EditAssessmentCreation

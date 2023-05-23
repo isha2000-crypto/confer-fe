@@ -17,7 +17,7 @@ import MenuItem from '@mui/material/MenuItem'
 import { Task_Types } from '.././../../custom-types/enum'
 
 import { useMutation } from '@apollo/client'
-import { CREATE_ASSESSMENT_MUTATION } from 'src/lib/graphql/Mutation'
+import { CREATE_ASSESSMENT_MUTATION, UPDATE_ASSESSMENT_MUTATION } from 'src/lib/graphql/Mutation'
 import toast from 'react-hot-toast'
 import { TransitionGroup } from 'react-transition-group'
 import { Collapse } from '@mui/material'
@@ -29,17 +29,18 @@ interface Question {
   duration: number
 }
 
-const CreateAssessmentForm = () => {
+const CreateAssessmentForm = (isEdit: any, assessmentId: any, initialAssessment: any) => {
   const [questions, setQuestions] = useState<Question[]>([])
 
   const [submitAss, setSubmit] = useState(false)
   const [assessment, setAssessment] = useState({
-    title: '',
-    description: '',
-    type: 'LEADERSHIP'
+    title: isEdit ? 'Assessment Title' : '',
+    description: isEdit ? 'Assessment Description' : '',
+    type: isEdit ? 'LEADERSHIP' : ''
   })
 
   const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
+  const [updateAssessmentMutation] = useMutation(UPDATE_ASSESSMENT_MUTATION)
 
   const containerStyle = {
     backgroundColor: 'background.default',
@@ -100,20 +101,37 @@ const CreateAssessmentForm = () => {
 
       return
     }
-
-    createAssessmentMutation({
-      variables: { createAssessmentInput: { ...assessment, tasks: modifiedQuestions } }
-    })
-      .then(result => {
-        console.log(result.data)
-        setSubmit(true)
-        setTimeout(() => {
-          resetForm()
-        }, 2000)
+    if (isEdit) {
+      updateAssessmentMutation({
+        variables: {
+          updateAssessmentInput: {
+            id: assessmentId, // Replace with the actual assessment ID
+            ...assessment,
+            tasks: modifiedQuestions
+          }
+        }
       })
-      .catch(error => {
-        console.error(error)
+        .then(result => {
+          console.log(result.data)
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    } else {
+      createAssessmentMutation({
+        variables: { createAssessmentInput: { ...assessment, tasks: modifiedQuestions } }
       })
+        .then(result => {
+          console.log(result.data)
+          setSubmit(true)
+          setTimeout(() => {
+            resetForm()
+          }, 2000)
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    }
   }
   const resetForm = () => {
     setAssessment({
@@ -152,10 +170,12 @@ const CreateAssessmentForm = () => {
                       label='Title'
                       name='title'
                       placeholder='Task'
-                      value={assessment.title}
+                      value={isEdit ? assessment.title : formik.values.title}
                       onChange={event => {
+                        if (!isEdit) {
+                          formik.handleChange(event)
+                        }
                         setAssessment({ ...assessment, title: event.target.value })
-                        formik.handleChange(event)
                       }}
                       error={formik.touched.title && Boolean(formik.errors.title)}
                       helperText={formik.touched.title && formik.errors.title}
@@ -170,10 +190,12 @@ const CreateAssessmentForm = () => {
                         label='Description'
                         name='description'
                         rows={4}
-                        value={assessment.description}
+                        value={isEdit ? assessment.description : formik.values.description}
                         onChange={event => {
+                          if (!isEdit) {
+                            formik.handleChange(event)
+                          }
                           setAssessment({ ...assessment, description: event.target.value })
-                          formik.handleChange(event)
                         }}
                         error={formik.touched.description && Boolean(formik.errors.description)}
                         helperText={formik.touched.description && formik.errors.description}
@@ -189,8 +211,13 @@ const CreateAssessmentForm = () => {
                           id='assessment-type-select'
                           label='assessment Type'
                           name='type'
-                          value={formik.values.type}
-                          onChange={formik.handleChange}
+                          value={isEdit ? assessment.type : formik.values.type}
+                          onChange={event => {
+                            if (!isEdit) {
+                              formik.handleChange(event)
+                            }
+                            setAssessment({ ...assessment, type: event.target.value })
+                          }}
                           error={formik.touched.type && Boolean(formik.errors.type)}
                           required
                         >
@@ -244,7 +271,7 @@ const CreateAssessmentForm = () => {
                 variant='contained'
                 sx={{ width: '10%', marginTop: '10px', marginBottom: '10px', marginRight: '10px', float: 'right' }}
               >
-                Create
+                {isEdit ? 'edit' : 'create'}
               </Button>
               <div style={{ width: '21%', marginLeft: '37%' }}>
                 {submitAss &&
