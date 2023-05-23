@@ -70,25 +70,7 @@ const Navigation = (): VerticalNavItemsType => {
           title: 'Roles',
           path: `${URLS.ADMIN}/roles`
         },
-        {
-          subject: SUBJECTS.SYSTEM_ADMIN,
-          action: ACTIONS.READ,
-          title: 'Tenants',
-          children: [
-            {
-              action: ACTIONS.READ,
-              subject: SUBJECTS.SYSTEM_ADMIN,
-              title: 'List',
-              path: `/tenants/list`
-            },
-            {
-              action: ACTIONS.READ,
-              subject: SUBJECTS.SYSTEM_ADMIN,
-              title: 'Users',
-              path: `/tenants/users`
-            }
-          ]
-        },
+
         {
           subject: SUBJECTS.ROLES,
           action: ACTIONS.READ,
@@ -101,7 +83,21 @@ const Navigation = (): VerticalNavItemsType => {
       subject: SUBJECTS.SYSTEM_ADMIN,
       action: ACTIONS.READ,
       title: 'Tenants',
-      path: `/tenants`
+      icon: 'mdi-office-building-outline',
+      children: [
+        {
+          action: ACTIONS.READ,
+          subject: SUBJECTS.SYSTEM_ADMIN,
+          title: 'List',
+          path: `/tenants/list`
+        },
+        {
+          action: ACTIONS.READ,
+          subject: SUBJECTS.SYSTEM_ADMIN,
+          title: 'Users',
+          path: `/tenants/users`
+        }
+      ]
     }
   ]
 
