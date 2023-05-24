@@ -28,9 +28,12 @@ interface Question {
   description: string
   duration: number
 }
-
-const CreateAssessmentForm = () => {
-  const [questions, setQuestions] = useState<Question[]>([])
+interface Props {
+  viewAssessment?: any
+  isReadOnly?: boolean
+}
+const CreateAssessmentForm = ({ viewAssessment, isReadOnly }: Props) => {
+  const [questions, setQuestions] = useState<Question[]>(viewAssessment?.tasks || [])
 
   const [submitAss, setSubmit] = useState(false)
   const [assessment, setAssessment] = useState({
@@ -152,7 +155,7 @@ const CreateAssessmentForm = () => {
                       label='Title'
                       name='title'
                       placeholder='Task'
-                      value={assessment.title}
+                      value={isReadOnly ? viewAssessment.title : assessment.title}
                       onChange={event => {
                         setAssessment({ ...assessment, title: event.target.value })
                         formik.handleChange(event)
@@ -170,7 +173,7 @@ const CreateAssessmentForm = () => {
                         label='Description'
                         name='description'
                         rows={4}
-                        value={assessment.description}
+                        value={isReadOnly ? viewAssessment.description : assessment.description}
                         onChange={event => {
                           setAssessment({ ...assessment, description: event.target.value })
                           formik.handleChange(event)
@@ -189,7 +192,7 @@ const CreateAssessmentForm = () => {
                           id='assessment-type-select'
                           label='assessment Type'
                           name='type'
-                          value={formik.values.type}
+                          value={isReadOnly ? viewAssessment.type : formik.values.type}
                           onChange={formik.handleChange}
                           error={formik.touched.type && Boolean(formik.errors.type)}
                           required
@@ -238,14 +241,20 @@ const CreateAssessmentForm = () => {
                 </Grid>
               </CardContent>
               <Divider sx={{ m: '0 !important' }} />
-              <Button
-                size='large'
-                type='submit'
-                variant='contained'
-                sx={{ width: '10%', marginTop: '10px', marginBottom: '10px', marginRight: '10px', float: 'right' }}
-              >
-                Create
-              </Button>
+              <div>
+                {!isReadOnly && (
+                  <Button
+                    size='large'
+                    type='submit'
+                    variant='contained'
+                    sx={{ width: '10%', marginTop: '10px', marginBottom: '10px', marginRight: '10px', float: 'right' }}
+                  >
+                    {' '}
+                    Create
+                  </Button>
+                )}
+              </div>
+
               <div style={{ width: '21%', marginLeft: '37%' }}>
                 {submitAss &&
                   toast.success('Assessment Created Successfully', {
