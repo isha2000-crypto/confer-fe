@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Formik } from 'formik'
 import { validationSchema } from '../../../lib/schema/validationSchema'
 
@@ -21,6 +21,7 @@ import { CREATE_ASSESSMENT_MUTATION, UPDATE_ASSESSMENT_MUTATION } from 'src/lib/
 import toast from 'react-hot-toast'
 import { TransitionGroup } from 'react-transition-group'
 import { Collapse } from '@mui/material'
+import { useRouter } from 'next/router'
 
 interface Question {
   id: number
@@ -28,8 +29,15 @@ interface Question {
   description: string
   duration: number
 }
+interface Props {
+  viewAssessment?: any
+  isReadOnly?: boolean
+  isEdit: any
+  assessmentId: any
+  initialAssessment: any
+}
 
-const AssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
+const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, viewAssessment }: Props) => {
   const [questions, setQuestions] = useState<Question[]>(initialAssessment?.tasks || [])
 
   const [submitAss, setSubmit] = useState(false)
@@ -49,9 +57,15 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
     padding: '20px',
     margin: '20px 0',
     marginLeft: '20px',
-    visibility: questions.length ? 'visible' : 'hidden'
+    visibility: questions?.length ? 'visible' : 'hidden'
   }
-
+  useEffect(() => {
+    if (isReadOnly) {
+      setQuestions(viewAssessment?.tasks || [])
+    } else if (isEdit) {
+      setQuestions(initialAssessment?.tasks || [])
+    }
+  }, [isReadOnly, isEdit, initialAssessment, viewAssessment])
   const addQuestion = () => {
     const newQuestion: Question = {
       id: questions.length + 1,
@@ -63,18 +77,26 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
   }
 
   const removeQuestion = (index: number) => {
-    const updatedQuestions = [...questions]
-    updatedQuestions.splice(index, 1)
-    setQuestions([...updatedQuestions])
+    if (isReadOnly) {
+      toast.error('You cannot remove the task !')
+    } else {
+      const updatedQuestions = [...questions]
+      updatedQuestions.splice(index, 1)
+      setQuestions([...updatedQuestions])
+    }
   }
 
   const handleQuestionUpdate = (index: number, name: string, value: string | number) => {
-    const updateQuestions: any = [...questions]
-    if (name === 'duration') {
-      value = Number(value) * 60
+    if (isReadOnly) {
+      toast('You cannot edit')
+    } else {
+      const updateQuestions: any = [...questions]
+      if (name === 'duration') {
+        value = Number(value) * 60
+      }
+      updateQuestions[index][name] = value
+      setQuestions([...updateQuestions])
     }
-    updateQuestions[index][name] = value
-    setQuestions([...updateQuestions])
   }
 
   const handleAssessmentSubmit = (event: any) => {
@@ -152,10 +174,28 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
     setQuestions([])
     setSubmit(false)
   }
+  const router = useRouter()
+  const EditAssessment = () => {
+    const assessmentId = viewAssessment?._id
+
+    router.push(`/assessments/${assessmentId}/edit`)
+  }
 
   return (
     <>
       <Card>
+        {isReadOnly && (
+          <Button
+            size='large'
+            type='submit'
+            variant='contained'
+            sx={{ width: '10%', marginTop: '10px', marginBottom: '0px', marginRight: '10px', float: 'right' }}
+            onClick={EditAssessment}
+          >
+            {' '}
+            Edit
+          </Button>
+        )}
         <Formik
           initialValues={{
             title: '',
@@ -168,7 +208,9 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
         >
           {formik => (
             <form onSubmit={handleAssessmentSubmit}>
-              <h3 style={{ paddingLeft: '25px', paddingTop: '10px' }}> Create Assessment</h3>
+              <h3 style={{ paddingLeft: '25px', paddingTop: '10px' }}>
+                {isReadOnly ? 'Show Assessment' : 'Create Assessment'}
+              </h3>
 
               <CardContent>
                 <Grid container spacing={5} columns={1}>
@@ -180,12 +222,22 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
                       label='Title'
                       name='title'
                       placeholder='Task'
-                      value={isEdit ? assessment.title : formik.values.title}
+                      value={
+                        isReadOnly
+                          ? viewAssessment.title
+                          : assessment.title || isEdit
+                          ? assessment.title
+                          : formik.values.title
+                      }
                       onChange={event => {
-                        if (!isEdit) {
+                        {
+                          !isReadOnly && setAssessment({ ...assessment, title: event.target.value })
                           formik.handleChange(event)
+                          if (!isEdit) {
+                            formik.handleChange(event)
+                          }
+                          setAssessment({ ...assessment, title: event.target.value })
                         }
-                        setAssessment({ ...assessment, title: event.target.value })
                       }}
                       error={formik.touched.title && Boolean(formik.errors.title)}
                       helperText={formik.touched.title && formik.errors.title}
@@ -200,7 +252,13 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
                         label='Description'
                         name='description'
                         rows={4}
-                        value={isEdit ? assessment.description : formik.values.description}
+                        value={
+                          isReadOnly
+                            ? viewAssessment.description
+                            : assessment.description || isEdit
+                            ? assessment.description
+                            : formik.values.description
+                        }
                         onChange={event => {
                           if (!isEdit) {
                             formik.handleChange(event)
@@ -221,7 +279,13 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
                           id='assessment-type-select'
                           label='assessment Type'
                           name='type'
-                          value={isEdit ? assessment.type : formik.values.type}
+                          value={
+                            isReadOnly
+                              ? viewAssessment.type
+                              : formik.values.type || isEdit
+                              ? assessment.type
+                              : formik.values.type
+                          }
                           onChange={event => {
                             if (!isEdit) {
                               formik.handleChange(event)
@@ -240,7 +304,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
 
                   <Grid container sx={containerStyle} spacing={5} justifyContent={'center'}>
                     <TransitionGroup>
-                      {questions.map((q, index) => (
+                      {questions?.map((q, index) => (
                         <Collapse key={index}>
                           <CreateQuestion
                             count={index}
@@ -254,35 +318,43 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
                   </Grid>
 
                   <Divider sx={{ mb: '0 !important' }} />
-                  <Grid item container justifyContent='center'>
-                    <Button
-                      onClick={addQuestion}
-                      className='add-question-button'
-                      sx={{
-                        width: '100%',
-                        fontSize: '1.5rem',
-                        padding: '1rem',
-                        borderRadius: '0.5rem',
-                        transition: 'all 0.3s ease',
-                        border: '2px dashed',
-                        borderColor: 'text.primary',
-                        color: 'text.primary'
-                      }}
-                    >
-                      Add Question
-                    </Button>
-                  </Grid>
+
+                  {!isReadOnly && (
+                    <Grid item container justifyContent='center'>
+                      <Button
+                        onClick={addQuestion}
+                        className='add-question-button'
+                        sx={{
+                          width: '100%',
+                          fontSize: '1.5rem',
+                          padding: '1rem',
+                          borderRadius: '0.5rem',
+                          transition: 'all 0.3s ease',
+                          border: '2px dashed',
+                          borderColor: 'text.primary',
+                          color: 'text.primary'
+                        }}
+                      >
+                        Add Question
+                      </Button>
+                    </Grid>
+                  )}
                 </Grid>
               </CardContent>
               <Divider sx={{ m: '0 !important' }} />
-              <Button
-                size='large'
-                type='submit'
-                variant='contained'
-                sx={{ width: '10%', marginTop: '10px', marginBottom: '10px', marginRight: '10px', float: 'right' }}
-              >
-                {isEdit ? 'Edit' : 'Create'}
-              </Button>
+              <div>
+                {!isReadOnly && (
+                  <Button
+                    size='large'
+                    type='submit'
+                    variant='contained'
+                    sx={{ width: '10%', marginTop: '10px', marginBottom: '10px', marginRight: '10px', float: 'right' }}
+                  >
+                    {isEdit ? 'Edit' : 'Create'}
+                  </Button>
+                )}
+              </div>
+
               <div style={{ width: '21%', marginLeft: '37%' }}>
                 {submitAss &&
                   toast.success('Assessment Created Successfully', {

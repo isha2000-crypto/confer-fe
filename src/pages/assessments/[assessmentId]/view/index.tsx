@@ -29,7 +29,19 @@ const ViewAssessment = () => {
   if (error) return <div>Error</div>
   console.log('specified assessment', viewAssessment?._id)
 
-  return <>{viewAssessment && <CreateAssessmentForm viewAssessment={viewAssessment} isReadOnly={true} />}</>
+  return (
+    <>
+      {viewAssessment && (
+        <CreateAssessmentForm
+          viewAssessment={viewAssessment}
+          isReadOnly={true}
+          isEdit={false} // Add the missing prop
+          assessmentId={assessmentId} // Add the missing prop
+          initialAssessment={null} // or pass the appropriate value
+        />
+      )}
+    </>
+  )
 }
 
 export default ViewAssessment
