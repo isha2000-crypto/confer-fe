@@ -132,6 +132,7 @@ export const FETCH_ASSESSMENT_BY_ID = gql`
     }
   }
 `
+
 export const LOAD_AVAILABLE_ASSESSMENTS = gql`
   query AvailableAssessments {
     availableAssessments {
@@ -191,6 +192,15 @@ export const LIST_SUBMITTED_ASSESSMENTS = gql`
         picture
       }
       createdAt
+      assessment {
+        title
+      }
+    }
+  }
+`
+export const FETCH_ASSESSMENT_BY_USER_ID = gql`
+  query SubmittedAssessmentsUser($submittedAssessmentsUserId: ObjectId!) {
+    submittedAssessmentsUser(id: $submittedAssessmentsUserId) {
       assessment {
         title
       }

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Formik } from 'formik'
 import { validationSchema } from '../../../lib/schema/validationSchema'
 
@@ -14,10 +14,10 @@ import InputLabel from '@mui/material/InputLabel'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 
-import { Task_Types } from '.././../../custom-types/enum'
+import { Task_Types } from '../../../custom-types/enum'
 
 import { useMutation } from '@apollo/client'
-import { CREATE_ASSESSMENT_MUTATION } from 'src/lib/graphql/Mutation'
+import { CREATE_ASSESSMENT_MUTATION, UPDATE_ASSESSMENT_MUTATION } from 'src/lib/graphql/Mutation'
 import toast from 'react-hot-toast'
 import { TransitionGroup } from 'react-transition-group'
 import { Collapse } from '@mui/material'
@@ -32,28 +32,40 @@ interface Question {
 interface Props {
   viewAssessment?: any
   isReadOnly?: boolean
+  isEdit: any
+  assessmentId: any
+  initialAssessment: any
 }
-const CreateAssessmentForm = ({ viewAssessment, isReadOnly }: Props) => {
-  const [questions, setQuestions] = useState<Question[]>(viewAssessment?.tasks || [])
-  const router = useRouter()
+
+const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, viewAssessment }: Props) => {
+  const [questions, setQuestions] = useState<Question[]>(initialAssessment?.tasks || [])
+
   const [submitAss, setSubmit] = useState(false)
-  const [assessment, setAssessment] = useState({
-    title: '',
-    description: '',
-    type: 'LEADERSHIP'
-  })
+  const [editAss, setEdit] = useState(false)
 
   const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
-
+  const [updateAssessmentMutation] = useMutation(UPDATE_ASSESSMENT_MUTATION)
+  const [assessment, setAssessment] = useState({
+    title: isEdit ? initialAssessment.title : '',
+    description: isEdit ? initialAssessment.description : '',
+    type: isEdit ? initialAssessment.type : ''
+  })
+  console.log('from create ass id', assessmentId)
   const containerStyle = {
     backgroundColor: 'background.default',
     borderRadius: '20px',
     padding: '20px',
     margin: '20px 0',
     marginLeft: '20px',
-    visibility: questions.length ? 'visible' : 'hidden'
+    visibility: questions?.length ? 'visible' : 'hidden'
   }
-
+  useEffect(() => {
+    if (isReadOnly) {
+      setQuestions(viewAssessment?.tasks || [])
+    } else if (isEdit) {
+      setQuestions(initialAssessment?.tasks || [])
+    }
+  }, [isReadOnly, isEdit, initialAssessment, viewAssessment])
   const addQuestion = () => {
     const newQuestion: Question = {
       id: questions.length + 1,
@@ -107,25 +119,51 @@ const CreateAssessmentForm = ({ viewAssessment, isReadOnly }: Props) => {
 
       return rest
     })
+
     if (!isFormValid) {
       console.log('Form is Not valid')
 
       return
     }
-
-    createAssessmentMutation({
-      variables: { createAssessmentInput: { ...assessment, tasks: modifiedQuestions } }
-    })
-      .then(result => {
-        console.log(result.data)
-        setSubmit(true)
-        setTimeout(() => {
-          resetForm()
-        }, 2000)
+    if (isEdit) {
+      updateAssessmentMutation({
+        variables: {
+          updateAssessmentId: assessmentId,
+          updateAssessmentInput: {
+            ...assessment,
+            tasks: modifiedQuestions.map(question => ({
+              type: question.type,
+              description: question.description,
+              duration: question.duration
+            }))
+          }
+        }
       })
-      .catch(error => {
-        console.error(error)
+        .then(result => {
+          console.log(result.data)
+          setEdit(true)
+          setTimeout(() => {
+            resetForm()
+          }, 2000)
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    } else {
+      createAssessmentMutation({
+        variables: { createAssessmentInput: { ...assessment, tasks: modifiedQuestions } }
       })
+        .then(result => {
+          console.log(result.data)
+          setSubmit(true)
+          setTimeout(() => {
+            resetForm()
+          }, 2000)
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    }
   }
   const resetForm = () => {
     setAssessment({
@@ -136,6 +174,7 @@ const CreateAssessmentForm = ({ viewAssessment, isReadOnly }: Props) => {
     setQuestions([])
     setSubmit(false)
   }
+  const router = useRouter()
   const EditAssessment = () => {
     const assessmentId = viewAssessment?._id
 
@@ -183,11 +222,21 @@ const CreateAssessmentForm = ({ viewAssessment, isReadOnly }: Props) => {
                       label='Title'
                       name='title'
                       placeholder='Task'
-                      value={isReadOnly ? viewAssessment.title : assessment.title}
+                      value={
+                        isReadOnly
+                          ? viewAssessment.title
+                          : assessment.title || isEdit
+                          ? assessment.title
+                          : formik.values.title
+                      }
                       onChange={event => {
                         {
                           !isReadOnly && setAssessment({ ...assessment, title: event.target.value })
                           formik.handleChange(event)
+                          if (!isEdit) {
+                            formik.handleChange(event)
+                          }
+                          setAssessment({ ...assessment, title: event.target.value })
                         }
                       }}
                       error={formik.touched.title && Boolean(formik.errors.title)}
@@ -203,10 +252,18 @@ const CreateAssessmentForm = ({ viewAssessment, isReadOnly }: Props) => {
                         label='Description'
                         name='description'
                         rows={4}
-                        value={isReadOnly ? viewAssessment.description : assessment.description}
+                        value={
+                          isReadOnly
+                            ? viewAssessment.description
+                            : assessment.description || isEdit
+                            ? assessment.description
+                            : formik.values.description
+                        }
                         onChange={event => {
+                          if (!isEdit) {
+                            formik.handleChange(event)
+                          }
                           setAssessment({ ...assessment, description: event.target.value })
-                          formik.handleChange(event)
                         }}
                         error={formik.touched.description && Boolean(formik.errors.description)}
                         helperText={formik.touched.description && formik.errors.description}
@@ -222,8 +279,19 @@ const CreateAssessmentForm = ({ viewAssessment, isReadOnly }: Props) => {
                           id='assessment-type-select'
                           label='assessment Type'
                           name='type'
-                          value={isReadOnly ? viewAssessment.type : formik.values.type}
-                          onChange={formik.handleChange}
+                          value={
+                            isReadOnly
+                              ? viewAssessment.type
+                              : formik.values.type || isEdit
+                              ? assessment.type
+                              : formik.values.type
+                          }
+                          onChange={event => {
+                            if (!isEdit) {
+                              formik.handleChange(event)
+                            }
+                            setAssessment({ ...assessment, type: event.target.value })
+                          }}
                           error={formik.touched.type && Boolean(formik.errors.type)}
                           required
                         >
@@ -236,7 +304,7 @@ const CreateAssessmentForm = ({ viewAssessment, isReadOnly }: Props) => {
 
                   <Grid container sx={containerStyle} spacing={5} justifyContent={'center'}>
                     <TransitionGroup>
-                      {questions.map((q, index) => (
+                      {questions?.map((q, index) => (
                         <Collapse key={index}>
                           <CreateQuestion
                             count={index}
@@ -282,8 +350,7 @@ const CreateAssessmentForm = ({ viewAssessment, isReadOnly }: Props) => {
                     variant='contained'
                     sx={{ width: '10%', marginTop: '10px', marginBottom: '10px', marginRight: '10px', float: 'right' }}
                   >
-                    {' '}
-                    Create
+                    {isEdit ? 'Edit' : 'Create'}
                   </Button>
                 )}
               </div>
@@ -294,6 +361,12 @@ const CreateAssessmentForm = ({ viewAssessment, isReadOnly }: Props) => {
                     duration: 2000
                   })}
               </div>
+              <div style={{ width: '21%', marginLeft: '37%' }}>
+                {editAss &&
+                  toast.success('Assessment updated Successfully', {
+                    duration: 2000
+                  })}
+              </div>
             </form>
           )}
         </Formik>
@@ -301,4 +374,4 @@ const CreateAssessmentForm = ({ viewAssessment, isReadOnly }: Props) => {
     </>
   )
 }
-export default CreateAssessmentForm
+export default AssessmentForm

@@ -1,5 +1,5 @@
 // ** React Imports
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useContext, useMemo, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -24,10 +24,7 @@ import DialogUserEdit from '../Dialog/DialogUserEdit/DialogUserEdit'
 import RowOptions from './rowOptions'
 import { IconButton } from '@mui/material'
 import { Icon } from '@iconify/react'
-import { useAuth } from 'src/hooks/useAuth'
-import { AppDispatch } from 'src/store'
-import { useDispatch } from 'react-redux'
-import { fetchTenants } from 'src/store/tenants/tenantsActions'
+
 import TableFilter from './tableFilter'
 
 interface UserStatusType {
@@ -125,12 +122,11 @@ const TableUsersList = ({ users, anchor, header }: { users: any; anchor: boolean
   // ** State
   const ability = useContext(AbilityContext)
 
-  const dispatch = useDispatch<AppDispatch>()
   const [pageSize, setPageSize] = useState<number>(10)
   const [selectedUser, setSelectedUser] = useState<UsersType>()
   const [open, setOpen] = useState<boolean>(false)
   const [tenant, setTenant] = useState<string>('')
-  const { user } = useAuth()
+
   const handleEditRole = (user: UsersType) => {
     setSelectedUser(user)
     setOpen(true)
@@ -142,15 +138,12 @@ const TableUsersList = ({ users, anchor, header }: { users: any; anchor: boolean
         return item.tenantId === tenant
       })
   }, [tenant, users])
-  const handleTenatChange = (event: any) => {
+  const handleTenantChange = (event: any) => {
     setTenant(event.target.value)
   }
   const handleClose = () => {
     setOpen(false)
   }
-  useEffect(() => {
-    dispatch(fetchTenants())
-  }, [dispatch])
 
   const columns = [
     ...tableColumns,
@@ -164,10 +157,7 @@ const TableUsersList = ({ users, anchor, header }: { users: any; anchor: boolean
       renderCell: ({ row }: CellType) =>
         !anchor ? (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton
-              onClick={() => handleEditRole(row)}
-              disabled={user?.role.title === 'Super Admin' && user.name === row.name}
-            >
+            <IconButton onClick={() => handleEditRole(row)} disabled={row.role.title === 'Super Admin'}>
               <Icon icon='mdi:pencil-outline' />
             </IconButton>
           </Box>
@@ -183,7 +173,7 @@ const TableUsersList = ({ users, anchor, header }: { users: any; anchor: boolean
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <Card>
-            {header && <TableFilter tenant={tenant} handleTenatChange={handleTenatChange} />}
+            {header && <TableFilter tenant={tenant} handleTenantChange={handleTenantChange} />}
             <DataGrid
               autoHeight
               rows={filteredUsers}

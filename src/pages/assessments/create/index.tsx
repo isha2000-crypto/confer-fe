@@ -1,5 +1,5 @@
 import { ACTIONS, SUBJECTS } from '@custom-types/enum'
-import AssessmentForm from '../../../components/organisms/Forms/CreateAssessmentForm'
+import AssessmentForm from '../../../components/organisms/Forms/AssessmentForm'
 
 const FormLayoutsSeparator = () => {
   return <AssessmentForm />
