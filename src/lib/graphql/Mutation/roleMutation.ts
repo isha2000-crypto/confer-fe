@@ -16,6 +16,7 @@ export const ADD_NEW_ROLE = gql`
         roles
         user_invitation
         users
+        admin_settings
       }
     }
   }
