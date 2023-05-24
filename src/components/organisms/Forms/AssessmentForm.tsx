@@ -21,6 +21,7 @@ import { CREATE_ASSESSMENT_MUTATION, UPDATE_ASSESSMENT_MUTATION } from 'src/lib/
 import toast from 'react-hot-toast'
 import { TransitionGroup } from 'react-transition-group'
 import { Collapse } from '@mui/material'
+import { useAuth } from 'src/hooks/useAuth'
 
 interface Question {
   id: number
@@ -31,7 +32,9 @@ interface Question {
 
 const AssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
   const [questions, setQuestions] = useState<Question[]>(initialAssessment?.tasks || [])
-
+  const auth = useAuth()
+  const userData = auth?.user?.tenantId
+  console.log('userdata', userData)
   const [submitAss, setSubmit] = useState(false)
   const [editAss, setEdit] = useState(false)
 
@@ -60,6 +63,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
       duration: 1
     }
     setQuestions([...questions, newQuestion])
+    console.log('current user here', auth?.user?.tenantId)
   }
 
   const removeQuestion = (index: number) => {
