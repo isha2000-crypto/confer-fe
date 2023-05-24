@@ -14,7 +14,6 @@ export const ADD_NEW_ROLE = gql`
         assessment_submission_management
         assessments
         roles
-        tenants
         user_invitation
         users
       }

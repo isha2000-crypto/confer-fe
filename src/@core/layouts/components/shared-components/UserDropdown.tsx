@@ -166,8 +166,8 @@ const UserDropdown = (props: Props) => {
           </MenuItem>
         )}
 
-        <Divider />
-        {ability?.can(ACTIONS.CREATE, SUBJECTS.USER_INVITATION) && (
+        {/* <Divider /> */}
+        {ability?.can(ACTIONS.CREATE, SUBJECTS.SYSTEM_ADMIN) && (
           <MenuItem sx={{ p: 0 }} onClick={handleTenantOpen}>
             <Box sx={styles}>
               <Icon icon='mdi-account-plus' />

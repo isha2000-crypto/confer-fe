@@ -3,7 +3,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 
-const TableFilter = ({ tenant, handleTenatChange }: { tenant: string; handleTenatChange: any }) => {
+const TableFilter = ({ tenant, handleTenantChange }: { tenant: string; handleTenantChange: any }) => {
   const tenantStore = useSelector((store: RootState) => store.tenants)
 
   return (
@@ -14,7 +14,7 @@ const TableFilter = ({ tenant, handleTenatChange }: { tenant: string; handleTena
           <Select
             label='Tenant'
             value={tenant}
-            onChange={handleTenatChange}
+            onChange={handleTenantChange}
             id='demo-simple-select-outlined'
             labelId='demo-simple-select-outlined-label'
           >
