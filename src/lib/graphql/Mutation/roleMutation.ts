@@ -17,6 +17,7 @@ export const ADD_NEW_ROLE = gql`
         user_invitation
         users
         admin_settings
+        assessment_management
       }
     }
   }
@@ -35,6 +36,7 @@ export const UPDATE_ROLE = gql`
         user_invitation
         roles
         admin_settings
+        assessment_management
       }
       createdBy
       creator {

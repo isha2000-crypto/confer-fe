@@ -19,6 +19,7 @@ export enum ACTIONS {
 export enum SUBJECTS {
   PUBLIC = 'public',
   ASSESSMENT = 'assessments',
+  ASSESSMENT_MANAGEMENT = 'assessment_management',
   ASSESSMENT_SUBMISSION = 'assessment_submission',
   ASSESSMENT_SUBMISSION_MANAGEMENT = 'assessment_submission_management',
   USERS = 'users',

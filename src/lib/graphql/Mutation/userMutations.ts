@@ -29,6 +29,8 @@ export const LOGIN_USER_MUTATION = gql`
             roles
             user_invitation
             users
+            assessment_management
+            admin_settings
           }
         }
         email_verified
@@ -59,6 +61,7 @@ export const LOGIN_GOOGLE_MUTATION = gql`
             user_invitation
             users
             admin_settings
+            assessment_management
           }
         }
         email_verified

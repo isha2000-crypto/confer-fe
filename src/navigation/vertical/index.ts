@@ -23,6 +23,18 @@ const Navigation = (): VerticalNavItemsType => {
       children: [
         {
           action: ACTIONS.READ,
+          subject: SUBJECTS.ASSESSMENT_MANAGEMENT,
+          title: 'List',
+          path: `${URLS.ASSESSMENT_URL}/list`
+        },
+        {
+          action: ACTIONS.CREATE,
+          subject: SUBJECTS.ASSESSMENT,
+          title: 'Created',
+          path: `${URLS.ASSESSMENT_URL}/created`
+        },
+        {
+          action: ACTIONS.READ,
           subject: SUBJECTS.ASSESSMENT,
           title: 'Available',
           path: `${URLS.ASSESSMENT_URL}/available`
