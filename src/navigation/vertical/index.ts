@@ -80,6 +80,24 @@ const Navigation = (): VerticalNavItemsType => {
       ]
     },
     {
+      title: 'Profile',
+      icon: 'mdi:account-circle',
+      children: [
+        {
+          subject: SUBJECTS.PUBLIC,
+          action: ACTIONS.READ,
+          title: 'My Profile',
+          path: `${URLS.PROFILE}/view`
+        },
+        {
+          subject: SUBJECTS.PUBLIC,
+          action: ACTIONS.READ,
+          title: 'Edit',
+          path: `${URLS.PROFILE}/edit`
+        }
+      ]
+    },
+    {
       subject: SUBJECTS.SYSTEM_ADMIN,
       action: ACTIONS.READ,
       title: 'Tenants',
