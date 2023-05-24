@@ -33,6 +33,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
   const [questions, setQuestions] = useState<Question[]>(initialAssessment?.tasks || [])
 
   const [submitAss, setSubmit] = useState(false)
+  const [editAss, setEdit] = useState(false)
 
   const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
   const [updateAssessmentMutation] = useMutation(UPDATE_ASSESSMENT_MUTATION)
@@ -118,6 +119,10 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
       })
         .then(result => {
           console.log(result.data)
+          setEdit(true)
+          setTimeout(() => {
+            resetForm()
+          }, 2000)
         })
         .catch(error => {
           console.error(error)
@@ -281,6 +286,12 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
               <div style={{ width: '21%', marginLeft: '37%' }}>
                 {submitAss &&
                   toast.success('Assessment Created Successfully', {
+                    duration: 2000
+                  })}
+              </div>
+              <div style={{ width: '21%', marginLeft: '37%' }}>
+                {editAss &&
+                  toast.success('Assessment updated Successfully', {
                     duration: 2000
                   })}
               </div>
