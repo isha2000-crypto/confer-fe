@@ -16,3 +16,17 @@ export const CREATE_ASSESSMENT_MUTATION = gql`
     }
   }
 `
+export const UPDATE_ASSESSMENT_MUTATION = gql`
+  mutation UpdateAssessment($updateAssessmentId: ObjectId!, $updateAssessmentInput: UpdateAssessmentInput!) {
+    updateAssessment(id: $updateAssessmentId, updateAssessmentInput: $updateAssessmentInput) {
+      description
+      tasks {
+        description
+        duration
+        type
+      }
+      title
+      type
+    }
+  }
+`
