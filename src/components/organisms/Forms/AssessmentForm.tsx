@@ -14,7 +14,7 @@ import InputLabel from '@mui/material/InputLabel'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 
-import { Task_Types } from '.././../../custom-types/enum'
+import { Task_Types } from '../../../custom-types/enum'
 
 import { useMutation } from '@apollo/client'
 import { CREATE_ASSESSMENT_MUTATION, UPDATE_ASSESSMENT_MUTATION } from 'src/lib/graphql/Mutation'
@@ -29,11 +29,11 @@ interface Question {
   duration: number
 }
 
-const CreateAssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
+const AssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
   const [questions, setQuestions] = useState<Question[]>(initialAssessment?.tasks || [])
 
   const [submitAss, setSubmit] = useState(false)
-  console.log('intial assessment', initialAssessment)
+
   const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
   const [updateAssessmentMutation] = useMutation(UPDATE_ASSESSMENT_MUTATION)
   const [assessment, setAssessment] = useState({
@@ -80,7 +80,7 @@ const CreateAssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) 
     event.preventDefault()
     let isFormValid = true
     if (questions.length === 0 || assessment.title === '' || assessment.description === '' || assessment.type === '') {
-      alert('Please fill in all fields')
+      toast('Minimum one question is required!')
 
       return
     }
@@ -291,4 +291,4 @@ const CreateAssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) 
     </>
   )
 }
-export default CreateAssessmentForm
+export default AssessmentForm

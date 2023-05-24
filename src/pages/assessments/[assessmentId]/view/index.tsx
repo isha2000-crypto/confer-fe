@@ -9,16 +9,16 @@ import Spinner from 'src/@core/components/spinner'
 
 import CreateAssessmentForm from '../../../../components/organisms/Forms/AssessmentForm'
 
-const EditAssessmentCreation = () => {
+const ViewAssessment = () => {
   const router = useRouter()
   const { assessmentId } = router.query
-  const [createdAssessment, setCreatedAssessment] = React.useState<any>(null)
+  const [viewAssessment, setViewAssessment] = React.useState<any>(null)
   const [getAssessment, { loading, error }] = useLazyQuery(FETCH_ASSESSMENT_BY_ID)
 
   React.useEffect(() => {
     const fetchData = async () => {
       const { data } = await getAssessment({ variables: { assessmentId: assessmentId } })
-      setCreatedAssessment(data?.assessment)
+      setViewAssessment(data?.assessment)
     }
 
     fetchData()
@@ -27,14 +27,9 @@ const EditAssessmentCreation = () => {
   if (loading) return <Spinner />
 
   if (error) return <div>Error</div>
+  console.log('specified assessment', viewAssessment?._id)
 
-  return (
-    <>
-      {createdAssessment && (
-        <CreateAssessmentForm isEdit assessmentId={assessmentId} initialAssessment={createdAssessment} />
-      )}
-    </>
-  )
+  return <>{viewAssessment && <CreateAssessmentForm viewAssessment={viewAssessment} isReadOnly={true} />}</>
 }
 
-export default EditAssessmentCreation
+export default ViewAssessment
