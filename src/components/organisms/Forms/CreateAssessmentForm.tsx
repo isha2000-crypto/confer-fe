@@ -21,6 +21,7 @@ import { CREATE_ASSESSMENT_MUTATION } from 'src/lib/graphql/Mutation'
 import toast from 'react-hot-toast'
 import { TransitionGroup } from 'react-transition-group'
 import { Collapse } from '@mui/material'
+import { useRouter } from 'next/router'
 
 interface Question {
   id: number
@@ -34,7 +35,7 @@ interface Props {
 }
 const CreateAssessmentForm = ({ viewAssessment, isReadOnly }: Props) => {
   const [questions, setQuestions] = useState<Question[]>(viewAssessment?.tasks || [])
-
+  const router = useRouter()
   const [submitAss, setSubmit] = useState(false)
   const [assessment, setAssessment] = useState({
     title: '',
@@ -64,25 +65,33 @@ const CreateAssessmentForm = ({ viewAssessment, isReadOnly }: Props) => {
   }
 
   const removeQuestion = (index: number) => {
-    const updatedQuestions = [...questions]
-    updatedQuestions.splice(index, 1)
-    setQuestions([...updatedQuestions])
+    if (isReadOnly) {
+      toast.error('You cannot remove the task !')
+    } else {
+      const updatedQuestions = [...questions]
+      updatedQuestions.splice(index, 1)
+      setQuestions([...updatedQuestions])
+    }
   }
 
   const handleQuestionUpdate = (index: number, name: string, value: string | number) => {
-    const updateQuestions: any = [...questions]
-    if (name === 'duration') {
-      value = Number(value) * 60
+    if (isReadOnly) {
+      toast('You cannot edit')
+    } else {
+      const updateQuestions: any = [...questions]
+      if (name === 'duration') {
+        value = Number(value) * 60
+      }
+      updateQuestions[index][name] = value
+      setQuestions([...updateQuestions])
     }
-    updateQuestions[index][name] = value
-    setQuestions([...updateQuestions])
   }
 
   const handleAssessmentSubmit = (event: any) => {
     event.preventDefault()
     let isFormValid = true
     if (questions.length === 0 || assessment.title === '' || assessment.description === '' || assessment.type === '') {
-      alert('Please fill in all fields')
+      toast('Minimum one question is required!')
 
       return
     }
@@ -127,10 +136,27 @@ const CreateAssessmentForm = ({ viewAssessment, isReadOnly }: Props) => {
     setQuestions([])
     setSubmit(false)
   }
+  const EditAssessment = () => {
+    const assessmentId = viewAssessment?._id
+
+    router.push(`/assessments/${assessmentId}/edit`)
+  }
 
   return (
     <>
       <Card>
+        {isReadOnly && (
+          <Button
+            size='large'
+            type='submit'
+            variant='contained'
+            sx={{ width: '10%', marginTop: '10px', marginBottom: '0px', marginRight: '10px', float: 'right' }}
+            onClick={EditAssessment}
+          >
+            {' '}
+            Edit
+          </Button>
+        )}
         <Formik
           initialValues={{
             title: '',
@@ -143,7 +169,9 @@ const CreateAssessmentForm = ({ viewAssessment, isReadOnly }: Props) => {
         >
           {formik => (
             <form onSubmit={handleAssessmentSubmit}>
-              <h3 style={{ paddingLeft: '25px', paddingTop: '10px' }}> Create Assessment</h3>
+              <h3 style={{ paddingLeft: '25px', paddingTop: '10px' }}>
+                {isReadOnly ? 'Show Assessment' : 'Create Assessment'}
+              </h3>
 
               <CardContent>
                 <Grid container spacing={5} columns={1}>
@@ -157,8 +185,10 @@ const CreateAssessmentForm = ({ viewAssessment, isReadOnly }: Props) => {
                       placeholder='Task'
                       value={isReadOnly ? viewAssessment.title : assessment.title}
                       onChange={event => {
-                        setAssessment({ ...assessment, title: event.target.value })
-                        formik.handleChange(event)
+                        {
+                          !isReadOnly && setAssessment({ ...assessment, title: event.target.value })
+                          formik.handleChange(event)
+                        }
                       }}
                       error={formik.touched.title && Boolean(formik.errors.title)}
                       helperText={formik.touched.title && formik.errors.title}
@@ -220,24 +250,27 @@ const CreateAssessmentForm = ({ viewAssessment, isReadOnly }: Props) => {
                   </Grid>
 
                   <Divider sx={{ mb: '0 !important' }} />
-                  <Grid item container justifyContent='center'>
-                    <Button
-                      onClick={addQuestion}
-                      className='add-question-button'
-                      sx={{
-                        width: '100%',
-                        fontSize: '1.5rem',
-                        padding: '1rem',
-                        borderRadius: '0.5rem',
-                        transition: 'all 0.3s ease',
-                        border: '2px dashed',
-                        borderColor: 'text.primary',
-                        color: 'text.primary'
-                      }}
-                    >
-                      Add Question
-                    </Button>
-                  </Grid>
+
+                  {!isReadOnly && (
+                    <Grid item container justifyContent='center'>
+                      <Button
+                        onClick={addQuestion}
+                        className='add-question-button'
+                        sx={{
+                          width: '100%',
+                          fontSize: '1.5rem',
+                          padding: '1rem',
+                          borderRadius: '0.5rem',
+                          transition: 'all 0.3s ease',
+                          border: '2px dashed',
+                          borderColor: 'text.primary',
+                          color: 'text.primary'
+                        }}
+                      >
+                        Add Question
+                      </Button>
+                    </Grid>
+                  )}
                 </Grid>
               </CardContent>
               <Divider sx={{ m: '0 !important' }} />

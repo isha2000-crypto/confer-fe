@@ -27,7 +27,7 @@ const ViewAssessment = () => {
   if (loading) return <Spinner />
 
   if (error) return <div>Error</div>
-  console.log('specified assessment', viewAssessment)
+  console.log('specified assessment', viewAssessment?._id)
 
   return <>{viewAssessment && <CreateAssessmentForm viewAssessment={viewAssessment} isReadOnly={true} />}</>
 }
