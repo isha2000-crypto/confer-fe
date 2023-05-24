@@ -12,6 +12,10 @@
     "build:icons": "tsc -b src/iconify-bundle && node src/iconify-bundle/bundle-icons-react.js",
     "test": "jest"
   },
+  "engines": {
+    "npm": "please-use-yarn",
+    "yarn": ">= 1.19.1"
+  },
   "dependencies": {
     "@apollo/client": "3.7.3",
     "@casl/ability": "6.3.2",
