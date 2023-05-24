@@ -27,7 +27,7 @@ const CreateQuestion = (props: QuestionProps) => {
     const { name, value } = event.target
     let intValue: string | number = value
     if (name === 'duration') {
-      intValue = parseInt(value)
+      intValue = parseInt(value) / 60
 
       if (intValue < 0) {
         intValue = 0
@@ -40,7 +40,7 @@ const CreateQuestion = (props: QuestionProps) => {
     props.removeQuestion(props.count)
   }
 
-  const val = Number(props.duration) / 60
+  const val = Number(props.duration)
 
   return (
     <>

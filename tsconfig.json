@@ -44,7 +44,7 @@
     "declaration.d.ts",
     "src/custom-types/**/*.d.ts",
     "next-env.d.ts",
-    "src/pages/**/*",
+    "src/pages/**/*.ts",
     "src/**/*", //if it happened in inside src
   ],
   "exclude": [

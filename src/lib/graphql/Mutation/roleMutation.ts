@@ -26,14 +26,15 @@ export const UPDATE_ROLE = gql`
     updateRole(id: $updateRoleId, updateRoleInput: $updateRoleInput) {
       _id
       title
+      tenantId
       permissions {
         assessments
         assessment_submission
         assessment_submission_management
         users
         user_invitation
-        tenants
         roles
+        admin_settings
       }
       createdBy
       creator {

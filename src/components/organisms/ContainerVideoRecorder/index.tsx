@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Assessment, Task } from '@custom-types/assessmentsType'
+import { Task } from '@custom-types/assessmentsType'
 import { Grid } from '@mui/material'
 import React from 'react'
 import { useState } from 'react'
@@ -8,7 +8,7 @@ import { useState } from 'react'
 import { useAuth } from 'src/hooks/useAuth'
 import DialogSubmissionComplete from '@components/molecules/Dialog/DialogSubmissionComplete'
 import { useMutation } from '@apollo/client'
-import { CREATE_ASSESSMENT_SUBMISSION } from 'src/lib/graphql/Mutation'
+import { UPDATE_ASSESSMENT_SUBMISSION } from 'src/lib/graphql/Mutation'
 import { useRouter } from 'next/router'
 import classnames from './ContainerVideoRecorder.module.scss'
 import { useTheme } from '@mui/material'
@@ -21,10 +21,10 @@ import { TaskStatus } from '@custom-types/enum'
 // import DialogMediaOnboarding from '@components/molecules/Dialog/DialogMediaOnboarding'
 
 interface props {
-  assessment: Assessment
+  initiatedSubmission: any
 }
 
-function ContainerVideoRecorder({ assessment }: props) {
+function ContainerVideoRecorder({ initiatedSubmission }: props) {
   const theme = useTheme()
   const GridTransition = {
     transition: theme.transitions.create('all', {
@@ -33,11 +33,11 @@ function ContainerVideoRecorder({ assessment }: props) {
     })
   }
 
-  const [createAssessment] = useMutation(CREATE_ASSESSMENT_SUBMISSION)
+  const [updateSubmission] = useMutation(UPDATE_ASSESSMENT_SUBMISSION)
   const [fullScreen, setFullScreen] = React.useState(false)
   const [loading, setLoading] = React.useState(true)
   const [allowed, setAllowed] = React.useState(true)
-  const [currentTask, setCurrentTask] = React.useState<Task>(assessment?.tasks[0])
+  const [currentTask, setCurrentTask] = React.useState<Task>(initiatedSubmission?.assessment?.tasks[0])
   const [allSubmitPopup, setAllSubmittedPopup] = useState<boolean>(false)
   const [recordings, setRecordings] = useState<any>({})
   const [allUploaded, setAllUploaded] = useState<boolean>(false)
@@ -56,10 +56,10 @@ function ContainerVideoRecorder({ assessment }: props) {
     }))
   }
 
-  const handlePointClick = (index: number) => {
-    const taskId = assessment.tasks[index]._id
+  const incrementCurrentTask = (index: number) => {
+    const taskId = initiatedSubmission?.assessment.tasks[index]._id
     if (recordings[taskId].status === TaskStatus.OPEN) {
-      setCurrentTask(assessment.tasks[index])
+      setCurrentTask(initiatedSubmission?.assessment.tasks[index])
     }
   }
 
@@ -84,22 +84,44 @@ function ContainerVideoRecorder({ assessment }: props) {
   const handleTaskUpload = async (blob: Blob) => {
     try {
       handleRecording(currentTask._id, TaskStatus.UPLOADING, null)
-      const taskIndex = assessment.tasks.findIndex(task => task._id === currentTask._id)
-      if (taskIndex >= 0 && assessment.tasks[taskIndex + 1]) {
-        handlePointClick(taskIndex + 1)
+      const taskIndex = initiatedSubmission?.assessment.tasks.findIndex((task: any) => task._id === currentTask._id)
+      if (taskIndex >= 0 && initiatedSubmission?.assessment.tasks[taskIndex + 1]) {
+        incrementCurrentTask(taskIndex + 1)
       } else {
         openSubmitPopup()
       }
-      const url = await uploadFile(blob, auth?.user as UserDataType, assessment, currentTask._id)
+      const url = await uploadFile(blob, auth?.user as UserDataType, initiatedSubmission?.assessment, currentTask._id)
       handleRecording(currentTask._id, TaskStatus.SUBMITTED, url)
+      submitTaskResponse(currentTask._id, url)
     } catch (error) {}
+  }
+
+  const submitTaskResponse = async (taskId: string, videoUrl: string) => {
+    const inputData = {
+      taskResponses: [
+        {
+          taskId: taskId,
+          videoUrl: videoUrl
+        }
+      ]
+    }
+
+    const result = await updateSubmission({
+      variables: {
+        id: initiatedSubmission._id,
+        updateAssessmentSubmissionInput: inputData
+      }
+    })
+
+    if (result.errors) {
+      alert('Problem with Internet')
+    }
   }
 
   const submitAssessment = async () => {
     const responseArray = Object.values(recordings)
 
     const inputData = {
-      assessmentId: assessment._id,
       taskResponses: responseArray.map((res: any) => {
         return {
           taskId: res._id,
@@ -108,25 +130,36 @@ function ContainerVideoRecorder({ assessment }: props) {
       })
     }
 
-    const result = await createAssessment({
+    const result = await updateSubmission({
       variables: {
-        createSubmittedAssessmentInput: inputData
+        id: initiatedSubmission._id,
+        updateAssessmentSubmissionInput: inputData
       }
     })
 
     if (result.data) {
       setSubmitted(true)
-      router.push(`/assessments/submitted/${auth.user?.id}/${result.data.createSubmittedAssessment._id}/view`)
+      router.push(`/assessments/submitted/${auth.user?.id}/${result.data.updateAssessmentSubmission._id}/view`)
     }
   }
 
   React.useEffect(() => {
-    if (!recordings.length) {
-      assessment.tasks.forEach(task => {
-        handleRecording(task._id, TaskStatus.OPEN, null)
+    if (!Object.keys(recordings).length) {
+      initiatedSubmission?.assessment.tasks.forEach((task: any, taskIndex: number) => {
+        const submissionIndex = initiatedSubmission.taskResponses.findIndex((item: any) => item.taskId === task._id)
+        if (submissionIndex >= 0) {
+          handleRecording(task._id, TaskStatus.SUBMITTED, initiatedSubmission.taskResponses[submissionIndex].videoUrl)
+          if (initiatedSubmission?.assessment.tasks[taskIndex + 1]) {
+            setCurrentTask(initiatedSubmission?.assessment.tasks[taskIndex + 1])
+          } else {
+            setAllUploaded(true)
+          }
+        } else {
+          handleRecording(task._id, TaskStatus.OPEN, null)
+        }
       })
     }
-  }, [assessment])
+  }, [initiatedSubmission])
 
   React.useEffect(() => {
     if (Object.keys(recordings).length) {
@@ -165,7 +198,7 @@ function ContainerVideoRecorder({ assessment }: props) {
 
         {!loading && !fullScreen && (
           <Grid item xs={3} style={GridTransition}>
-            <ContainerQuestion assessment={assessment} currentTask={currentTask} />
+            <ContainerQuestion assessment={initiatedSubmission?.assessment} currentTask={currentTask} />
           </Grid>
         )}
       </Grid>
