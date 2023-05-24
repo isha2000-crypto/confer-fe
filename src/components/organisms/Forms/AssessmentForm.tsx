@@ -14,10 +14,10 @@ import InputLabel from '@mui/material/InputLabel'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 
-import { Task_Types } from '.././../../custom-types/enum'
+import { Task_Types } from '../../../custom-types/enum'
 
 import { useMutation } from '@apollo/client'
-import { CREATE_ASSESSMENT_MUTATION } from 'src/lib/graphql/Mutation'
+import { CREATE_ASSESSMENT_MUTATION, UPDATE_ASSESSMENT_MUTATION } from 'src/lib/graphql/Mutation'
 import toast from 'react-hot-toast'
 import { TransitionGroup } from 'react-transition-group'
 import { Collapse } from '@mui/material'
@@ -29,18 +29,20 @@ interface Question {
   duration: number
 }
 
-const CreateAssessmentForm = () => {
-  const [questions, setQuestions] = useState<Question[]>([])
+const AssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
+  const [questions, setQuestions] = useState<Question[]>(initialAssessment?.tasks || [])
 
   const [submitAss, setSubmit] = useState(false)
-  const [assessment, setAssessment] = useState({
-    title: '',
-    description: '',
-    type: 'LEADERSHIP'
-  })
+  const [editAss, setEdit] = useState(false)
 
   const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
-
+  const [updateAssessmentMutation] = useMutation(UPDATE_ASSESSMENT_MUTATION)
+  const [assessment, setAssessment] = useState({
+    title: isEdit ? initialAssessment.title : '',
+    description: isEdit ? initialAssessment.description : '',
+    type: isEdit ? initialAssessment.type : ''
+  })
+  console.log('from create ass id', assessmentId)
   const containerStyle = {
     backgroundColor: 'background.default',
     borderRadius: '20px',
@@ -79,7 +81,7 @@ const CreateAssessmentForm = () => {
     event.preventDefault()
     let isFormValid = true
     if (questions.length === 0 || assessment.title === '' || assessment.description === '' || assessment.type === '') {
-      alert('Please fill in all fields')
+      toast('Minimum one question is required!')
 
       return
     }
@@ -95,25 +97,51 @@ const CreateAssessmentForm = () => {
 
       return rest
     })
+
     if (!isFormValid) {
       console.log('Form is Not valid')
 
       return
     }
-
-    createAssessmentMutation({
-      variables: { createAssessmentInput: { ...assessment, tasks: modifiedQuestions } }
-    })
-      .then(result => {
-        console.log(result.data)
-        setSubmit(true)
-        setTimeout(() => {
-          resetForm()
-        }, 2000)
+    if (isEdit) {
+      updateAssessmentMutation({
+        variables: {
+          updateAssessmentId: assessmentId,
+          updateAssessmentInput: {
+            ...assessment,
+            tasks: modifiedQuestions.map(question => ({
+              type: question.type,
+              description: question.description,
+              duration: question.duration
+            }))
+          }
+        }
       })
-      .catch(error => {
-        console.error(error)
+        .then(result => {
+          console.log(result.data)
+          setEdit(true)
+          setTimeout(() => {
+            resetForm()
+          }, 2000)
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    } else {
+      createAssessmentMutation({
+        variables: { createAssessmentInput: { ...assessment, tasks: modifiedQuestions } }
       })
+        .then(result => {
+          console.log(result.data)
+          setSubmit(true)
+          setTimeout(() => {
+            resetForm()
+          }, 2000)
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    }
   }
   const resetForm = () => {
     setAssessment({
@@ -152,10 +180,12 @@ const CreateAssessmentForm = () => {
                       label='Title'
                       name='title'
                       placeholder='Task'
-                      value={assessment.title}
+                      value={isEdit ? assessment.title : formik.values.title}
                       onChange={event => {
+                        if (!isEdit) {
+                          formik.handleChange(event)
+                        }
                         setAssessment({ ...assessment, title: event.target.value })
-                        formik.handleChange(event)
                       }}
                       error={formik.touched.title && Boolean(formik.errors.title)}
                       helperText={formik.touched.title && formik.errors.title}
@@ -170,10 +200,12 @@ const CreateAssessmentForm = () => {
                         label='Description'
                         name='description'
                         rows={4}
-                        value={assessment.description}
+                        value={isEdit ? assessment.description : formik.values.description}
                         onChange={event => {
+                          if (!isEdit) {
+                            formik.handleChange(event)
+                          }
                           setAssessment({ ...assessment, description: event.target.value })
-                          formik.handleChange(event)
                         }}
                         error={formik.touched.description && Boolean(formik.errors.description)}
                         helperText={formik.touched.description && formik.errors.description}
@@ -189,8 +221,13 @@ const CreateAssessmentForm = () => {
                           id='assessment-type-select'
                           label='assessment Type'
                           name='type'
-                          value={formik.values.type}
-                          onChange={formik.handleChange}
+                          value={isEdit ? assessment.type : formik.values.type}
+                          onChange={event => {
+                            if (!isEdit) {
+                              formik.handleChange(event)
+                            }
+                            setAssessment({ ...assessment, type: event.target.value })
+                          }}
                           error={formik.touched.type && Boolean(formik.errors.type)}
                           required
                         >
@@ -244,11 +281,17 @@ const CreateAssessmentForm = () => {
                 variant='contained'
                 sx={{ width: '10%', marginTop: '10px', marginBottom: '10px', marginRight: '10px', float: 'right' }}
               >
-                Create
+                {isEdit ? 'Edit' : 'Create'}
               </Button>
               <div style={{ width: '21%', marginLeft: '37%' }}>
                 {submitAss &&
                   toast.success('Assessment Created Successfully', {
+                    duration: 2000
+                  })}
+              </div>
+              <div style={{ width: '21%', marginLeft: '37%' }}>
+                {editAss &&
+                  toast.success('Assessment updated Successfully', {
                     duration: 2000
                   })}
               </div>
@@ -259,4 +302,4 @@ const CreateAssessmentForm = () => {
     </>
   )
 }
-export default CreateAssessmentForm
+export default AssessmentForm

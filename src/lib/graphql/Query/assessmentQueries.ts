@@ -132,6 +132,7 @@ export const FETCH_ASSESSMENT_BY_ID = gql`
     }
   }
 `
+
 export const LOAD_AVAILABLE_ASSESSMENTS = gql`
   query AvailableAssessments {
     availableAssessments {
