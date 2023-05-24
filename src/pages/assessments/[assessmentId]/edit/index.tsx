@@ -6,10 +6,8 @@ import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/client'
 import { FETCH_ASSESSMENT_BY_ID } from 'src/lib/graphql/Query'
 import Spinner from 'src/@core/components/spinner'
-import { Card } from '@mui/material'
-import { ACTIONS, SUBJECTS } from '@custom-types/enum'
+
 import CreateAssessmentForm from '../../../../components/organisms/Forms/CreateAssessmentForm'
-import { createDecipheriv } from 'crypto'
 
 const EditAssessmentCreation = () => {
   const router = useRouter()
