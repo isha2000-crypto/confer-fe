@@ -9,6 +9,7 @@ import Spinner from 'src/@core/components/spinner'
 import { Card } from '@mui/material'
 import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 import CreateAssessmentForm from '../../../../components/organisms/Forms/CreateAssessmentForm'
+import { createDecipheriv } from 'crypto'
 
 const EditAssessmentCreation = () => {
   const router = useRouter()
@@ -29,6 +30,7 @@ const EditAssessmentCreation = () => {
 
   if (error) return <div>Error</div>
   console.log('ass id ', assessmentId)
+  console.log('created assessment hu hu', createdAssessment?.tasks)
 
   return (
     <>

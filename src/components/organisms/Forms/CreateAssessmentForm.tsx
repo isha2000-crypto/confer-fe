@@ -30,7 +30,7 @@ interface Question {
 }
 
 const CreateAssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) => {
-  const [questions, setQuestions] = useState<Question[]>([])
+  const [questions, setQuestions] = useState<Question[]>(initialAssessment?.tasks || [])
 
   const [submitAss, setSubmit] = useState(false)
   console.log('intial assessment', initialAssessment)
@@ -96,6 +96,7 @@ const CreateAssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) 
 
       return rest
     })
+
     if (!isFormValid) {
       console.log('Form is Not valid')
 
@@ -106,9 +107,12 @@ const CreateAssessmentForm = ({ isEdit, assessmentId, initialAssessment }: any) 
         variables: {
           updateAssessmentId: assessmentId,
           updateAssessmentInput: {
-            // Replace with the actual assessment ID
             ...assessment,
-            tasks: modifiedQuestions
+            tasks: modifiedQuestions.map(question => ({
+              type: question.type,
+              description: question.description,
+              duration: question.duration
+            }))
           }
         }
       })
