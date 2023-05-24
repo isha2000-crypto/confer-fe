@@ -18,6 +18,7 @@ interface QuestionProps {
   description: string
   duration: number
   count: number
+  isReadOnly?: boolean
   handleQuestionUpdate: (index: number, name: string, value: string | number) => void
   removeQuestion: (id: number) => void
 }
@@ -68,6 +69,7 @@ const CreateQuestion = (props: QuestionProps) => {
               name='type'
               value={props.type}
               onChange={handleQuestionDataChange}
+              disabled={props.isReadOnly}
               required
             >
               <MenuItem value='TEXTUAL'>{Question_Types.TEXTUAL}</MenuItem>
@@ -86,6 +88,7 @@ const CreateQuestion = (props: QuestionProps) => {
             value={props.description}
             onChange={handleQuestionDataChange}
             required
+            disabled={props.isReadOnly}
             sx={{ marginTop: '15px' }}
           />
         </Grid>
@@ -97,6 +100,7 @@ const CreateQuestion = (props: QuestionProps) => {
             placeholder='Time to complete (in seconds)'
             required
             onWheel={e => e.preventDefault()}
+            disabled={props.isReadOnly}
             InputProps={{
               endAdornment: (
                 <Typography variant='body2' sx={{ fontWeight: 600 }}>
@@ -111,9 +115,11 @@ const CreateQuestion = (props: QuestionProps) => {
             sx={{ marginTop: '15px' }}
           />
         </Grid>
-        <div style={{ paddingLeft: '90%' }}>
-          <Icon icon='mdi-cup-off' onClick={handleRemove} className={styles.red_icon} />
-        </div>
+        {!props.isReadOnly && (
+          <div style={{ paddingLeft: '90%' }}>
+            <Icon icon='mdi-cup-off' onClick={handleRemove} className={styles.red_icon} />
+          </div>
+        )}
       </Grid>
     </>
   )
