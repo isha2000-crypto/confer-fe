@@ -29,14 +29,20 @@ function AdminSettings() {
   const handleSubmit = (event: any) => {
     event.preventDefault()
 
-    updateAssessmentDuration({
-      variables: {
-        updateOrganizationId: auth.user?.tenantId,
-        updateOrganizationInput: { assessment_duration: parseInt(maxDuration) }
-      }
-    }).then(() => {
-      toast.success('Duration added successfully!')
-    })
+    const duration = parseInt(maxDuration)
+
+    if (duration >= 0) {
+      updateAssessmentDuration({
+        variables: {
+          updateOrganizationId: auth.user?.tenantId,
+          updateOrganizationInput: { assessment_duration: duration }
+        }
+      }).then(() => {
+        toast.success('Duration added successfully!')
+      })
+    } else {
+      toast.error('Invalid duration!')
+    }
   }
 
   if (loading) {
@@ -68,6 +74,7 @@ function AdminSettings() {
             name='max duration'
             onChange={handleMaxDurationChange}
             value={maxDuration}
+            inputProps={{ min: '0' }}
           />
         </form>
         <Button variant='contained' type='submit' sx={{ float: 'right', marginLeft: '1000px' }} onClick={handleSubmit}>
