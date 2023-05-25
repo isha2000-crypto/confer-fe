@@ -7,7 +7,7 @@ import { useLazyQuery } from '@apollo/client'
 import { FETCH_ASSESSMENT_BY_ID } from 'src/lib/graphql/Query'
 import Spinner from 'src/@core/components/spinner'
 
-import CreateAssessmentForm from '../../../../components/organisms/Forms/AssessmentForm'
+import AssessmentForm from '../../../../components/organisms/Forms/AssessmentForm'
 
 const ViewAssessment = () => {
   const router = useRouter()
@@ -32,7 +32,7 @@ const ViewAssessment = () => {
   return (
     <>
       {viewAssessment && (
-        <CreateAssessmentForm
+        <AssessmentForm
           viewAssessment={viewAssessment}
           isReadOnly={true}
           isEdit={false} // Add the missing prop

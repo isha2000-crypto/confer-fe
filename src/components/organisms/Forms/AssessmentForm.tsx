@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { Formik } from 'formik'
 import { validationSchema } from '../../../lib/schema/validationSchema'
 
@@ -15,7 +15,7 @@ import InputLabel from '@mui/material/InputLabel'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 
-import { Task_Types } from '../../../custom-types/enum'
+import { ACTIONS, SUBJECTS, Task_Types } from '../../../custom-types/enum'
 
 import { useMutation } from '@apollo/client'
 import { CREATE_ASSESSMENT_MUTATION, UPDATE_ASSESSMENT_MUTATION } from 'src/lib/graphql/Mutation'
@@ -23,6 +23,7 @@ import toast from 'react-hot-toast'
 import { TransitionGroup } from 'react-transition-group'
 import { Collapse } from '@mui/material'
 import { useRouter } from 'next/router'
+import { AbilityContext } from 'src/layouts/components/acl/Can'
 
 interface Question {
   id: number
@@ -33,17 +34,14 @@ interface Question {
 interface Props {
   viewAssessment?: any
   isReadOnly?: boolean
-  isEdit: any
-  assessmentId: any
-  initialAssessment: any
+  isEdit?: any
+  assessmentId?: any
+  initialAssessment?: any
 }
 
 const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, viewAssessment }: Props) => {
+  const ability = useContext(AbilityContext)
   const [questions, setQuestions] = useState<Question[]>(initialAssessment?.tasks || [])
-
-  const [submitAss, setSubmit] = useState(false)
-  const [editAss, setEdit] = useState(false)
-
   const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
   const [updateAssessmentMutation] = useMutation(UPDATE_ASSESSMENT_MUTATION)
 
@@ -113,7 +111,6 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, v
     const modifiedQuestions = questions.map(question => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { id, ...rest } = question
-      console.log('duration', question.duration)
       if (question.type === '' || question.description === '' || question.duration < 1) {
         alert('Please Make Sure Question Fields are Valid!!')
         isFormValid = false
@@ -143,10 +140,9 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, v
       })
         .then(result => {
           console.log(result.data)
-          setEdit(true)
-          setTimeout(() => {
-            resetForm()
-          }, 2000)
+          toast.success('Assessment updated Successfully', {
+            duration: 2000
+          })
         })
         .catch(error => {
           console.error(error)
@@ -157,10 +153,12 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, v
       })
         .then(result => {
           console.log(result.data)
-          setSubmit(true)
           setTimeout(() => {
             resetForm()
           }, 2000)
+          toast.success('Assessment Created Successfully', {
+            duration: 2000
+          })
         })
         .catch(error => {
           console.error(error)
@@ -174,7 +172,6 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, v
       type: ''
     })
     setQuestions([])
-    setSubmit(false)
   }
   const router = useRouter()
   const EditAssessment = () => {
@@ -186,7 +183,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, v
   return (
     <>
       <Card>
-        {isReadOnly && (
+        {isReadOnly && ability.can(ACTIONS.UPDATE, SUBJECTS.ASSESSMENT) && (
           <Button
             size='large'
             type='submit'
@@ -211,7 +208,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, v
           {formik => (
             <form onSubmit={handleAssessmentSubmit}>
               <h3 style={{ paddingLeft: '25px', paddingTop: '10px' }}>
-                {isReadOnly ? 'Show Assessment' : 'Create Assessment'}
+                {isReadOnly ? 'Assessment Details' : isEdit ? 'Edit Assessment' : 'Create Assessment'}
               </h3>
 
               <CardContent>
@@ -224,6 +221,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, v
                       label='Title'
                       name='title'
                       placeholder='Task'
+                      disabled={isReadOnly}
                       value={
                         isReadOnly
                           ? viewAssessment.title
@@ -253,6 +251,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, v
                         required
                         label='Description'
                         name='description'
+                        disabled={isReadOnly}
                         rows={4}
                         value={
                           isReadOnly
@@ -281,6 +280,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, v
                           id='assessment-type-select'
                           label='assessment Type'
                           name='type'
+                          disabled={isReadOnly}
                           value={
                             isReadOnly
                               ? viewAssessment.type
@@ -313,6 +313,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, v
                             {...q}
                             removeQuestion={removeQuestion}
                             handleQuestionUpdate={handleQuestionUpdate}
+                            isReadOnly={isReadOnly}
                           />
                         </Collapse>
                       ))}
@@ -355,19 +356,6 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, v
                     {isEdit ? 'Edit' : 'Create'}
                   </Button>
                 )}
-              </div>
-
-              <div style={{ width: '21%', marginLeft: '37%' }}>
-                {submitAss &&
-                  toast.success('Assessment Created Successfully', {
-                    duration: 2000
-                  })}
-              </div>
-              <div style={{ width: '21%', marginLeft: '37%' }}>
-                {editAss &&
-                  toast.success('Assessment updated Successfully', {
-                    duration: 2000
-                  })}
               </div>
             </form>
           )}

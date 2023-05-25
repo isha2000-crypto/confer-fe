@@ -8,6 +8,7 @@ export const LOAD_ROLES = gql`
       tenantId
       permissions {
         assessments
+        assessment_management
         assessment_submission
         assessment_submission_management
         users

@@ -7,7 +7,7 @@ import { useLazyQuery } from '@apollo/client'
 import { FETCH_ASSESSMENT_BY_ID } from 'src/lib/graphql/Query'
 import Spinner from 'src/@core/components/spinner'
 
-import CreateAssessmentForm from '../../../../components/organisms/Forms/AssessmentForm'
+import AssessmentForm from '../../../../components/organisms/Forms/AssessmentForm'
 
 const EditAssessmentCreation = () => {
   const router = useRouter()
@@ -30,9 +30,7 @@ const EditAssessmentCreation = () => {
 
   return (
     <>
-      {createdAssessment && (
-        <CreateAssessmentForm isEdit assessmentId={assessmentId} initialAssessment={createdAssessment} />
-      )}
+      {createdAssessment && <AssessmentForm isEdit assessmentId={assessmentId} initialAssessment={createdAssessment} />}
     </>
   )
 }

@@ -7,102 +7,25 @@ export const LOAD_ASSESSMENT_TYPE = gql`
     }
   }
 `
-export const SUBMITTED_ASSESSMENT_BY_ID = gql`
-  query SubmittedAssessment($submittedAssessmentId: ObjectId!) {
-    submittedAssessment(id: $submittedAssessmentId) {
-      _id
-      userId
-      user {
-        name
-      }
-      assessmentId
-      assessment {
-        title
-        description
-        type
-        author {
-          name
-        }
-        tasks {
-          _id
-          type
-          description
-          duration
-        }
-      }
-      createdAt
-      updatedAt
-      taskResponses {
-        _id
-        taskId
-        videoUrl
-      }
-    }
-  }
-`
-export const SUBMITTED_ASSESSMENTS_USER = gql`
-  query SubmittedAssessmentsUser($submittedAssessmentsUserId: ObjectId!) {
-    submittedAssessmentsUser(id: $submittedAssessmentsUserId) {
-      _id
-      userId
-      user {
-        name
-      }
-      assessmentId
-      assessment {
-        title
-        description
-        type
-        author {
-          name
-        }
-        tasks {
-          _id
-          type
-          description
-          duration
-        }
-      }
-      createdAt
-      updatedAt
-      taskResponses {
-        _id
-        taskId
-        videoUrl
-      }
-    }
-  }
-`
 
-export const FETCH_SUBMITTED_ASSESSMENTS = gql`
-  query SubmittedAssessmentsUser {
-    fetchSubmittedAssessments {
+export const FETCH_ALL_ASSESSMENTS = gql`
+  query Assessments {
+    assessments {
       _id
-      userId
-      user {
-        name
-      }
-      assessmentId
-      assessment {
-        title
-        description
-        type
-        author {
-          name
-        }
-        tasks {
-          _id
-          type
-          description
-          duration
-        }
-      }
+      title
+      description
+      type
       createdAt
-      updatedAt
-      taskResponses {
+      author {
+        name
+        email
+        picture
+      }
+      tasks {
         _id
-        taskId
-        videoUrl
+        type
+        description
+        duration
       }
     }
   }
@@ -176,33 +99,23 @@ export const LOAD_ASSESSMENT = gql`
     }
   }
 `
-export const LIST_SUBMITTED_ASSESSMENTS = gql`
-  query SubmittedAssessments {
-    submittedAssessments {
+export const FETCH_CREATED = gql`
+  query CreatedAssessments {
+    createdAssessments {
       _id
-      tenantId
-      tenant {
+      title
+      description
+      type
+      author {
         name
-      }
-      userId
-      user {
-        name
-        _id
         email
         picture
       }
-      createdAt
-      assessment {
-        title
-      }
-    }
-  }
-`
-export const FETCH_ASSESSMENT_BY_USER_ID = gql`
-  query SubmittedAssessmentsUser($submittedAssessmentsUserId: ObjectId!) {
-    submittedAssessmentsUser(id: $submittedAssessmentsUserId) {
-      assessment {
-        title
+      tasks {
+        _id
+        type
+        description
+        duration
       }
     }
   }
