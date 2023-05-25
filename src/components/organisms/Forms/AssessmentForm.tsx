@@ -9,6 +9,7 @@ import Divider from '@mui/material/Divider'
 import TextField from '@mui/material/TextField'
 import CardContent from '@mui/material/CardContent'
 import CreateQuestion from '../../molecules/CreateQuestion/CreateQuestion'
+
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import Select from '@mui/material/Select'
@@ -45,12 +46,13 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, v
 
   const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
   const [updateAssessmentMutation] = useMutation(UPDATE_ASSESSMENT_MUTATION)
+
   const [assessment, setAssessment] = useState({
     title: isEdit ? initialAssessment.title : '',
     description: isEdit ? initialAssessment.description : '',
     type: isEdit ? initialAssessment.type : ''
   })
-  console.log('from create ass id', assessmentId)
+
   const containerStyle = {
     backgroundColor: 'background.default',
     borderRadius: '20px',
