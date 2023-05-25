@@ -12,9 +12,33 @@ import Icon from 'src/@core/components/icon'
 import CustomChip from 'src/@core/components/mui/chip'
 import CustomAvatar from 'src/@core/components/mui/avatar'
 import { useAuth } from 'src/hooks/useAuth'
+import { useLazyQuery } from '@apollo/client'
+import { FETCH_ASSESSMENT_BY_USER_ID, FETCH_USER_BY_ID } from 'src/lib/graphql/Query'
+import { useEffect, useState } from 'react'
+import Spinner from 'src/@core/components/spinner'
 
 const UserViewLeft = () => {
   const auth = useAuth()
+  console.log('user assessment', auth?.user?.id)
+  const userId = auth?.user?.id
+  const [userData, setUserData] = useState<any>(null)
+  const [getAssessments, { loading: assessmentLoading, error: assessmentError, data: assessmentData }] =
+    useLazyQuery(FETCH_ASSESSMENT_BY_USER_ID)
+
+  const [getUser, { loading: userLoading, error: userError }] = useLazyQuery(FETCH_USER_BY_ID, {
+    onCompleted: data => {
+      setUserData(data)
+      getAssessments({ variables: { submittedAssessmentsUserId: userId } })
+    }
+  })
+
+  useEffect(() => {
+    getUser({ variables: { userId: userId } })
+  }, [getUser, userId])
+
+  if (userLoading || assessmentLoading) return <Spinner />
+
+  if (userError || assessmentError) return <div>Error</div>
 
   return (
     <Grid container spacing={6}>
@@ -22,7 +46,7 @@ const UserViewLeft = () => {
         <Card>
           <CardContent sx={{ pt: 15, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
             <CustomAvatar
-              src={auth?.user?.picture}
+              src={auth?.user?.picture || []}
               variant='rounded'
               alt={auth?.user?.name}
               sx={{ width: 120, height: 120, fontWeight: 600, mb: 4, fontSize: '3rem' }}
@@ -53,9 +77,9 @@ const UserViewLeft = () => {
                 </CustomAvatar>
                 <div>
                   <Typography variant='h6' sx={{ lineHeight: 1.3 }}>
-                    1.23k
+                    {userData?.user?.assessments?.length}
                   </Typography>
-                  <Typography variant='body2'>Task Done</Typography>
+                  <Typography variant='body2'>Created Assessments</Typography>
                 </div>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -64,9 +88,9 @@ const UserViewLeft = () => {
                 </CustomAvatar>
                 <div>
                   <Typography variant='h6' sx={{ lineHeight: 1.3 }}>
-                    568
+                    {assessmentData?.submittedAssessmentsUser?.length}
                   </Typography>
-                  <Typography variant='body2'>Project Done</Typography>
+                  <Typography variant='body2'>Submitted Assessments</Typography>
                 </div>
               </Box>
             </Box>
