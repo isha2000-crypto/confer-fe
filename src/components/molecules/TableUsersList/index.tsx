@@ -51,7 +51,7 @@ const tableColumns = [
     flex: 0.2,
     minWidth: 230,
     field: 'name',
-    headerName: 'User',
+    headerName: 'Name',
     renderCell: ({ row }: CellType) => {
       const { name } = row
 
@@ -92,6 +92,13 @@ const tableColumns = [
   {
     flex: 0.15,
     field: 'role',
+    valueGetter: (params: any) => {
+      if (!params.value) {
+        return params.value
+      }
+
+      return params.value.title
+    },
     minWidth: 150,
     headerName: 'Role',
     renderCell: ({ row }: CellType) => {
@@ -187,7 +194,6 @@ const TableUsersList = ({ users, anchor, header }: { users: any; anchor: boolean
     const filteredRows = filteredUsers.filter((row: any) => {
       return Object.keys(row).some(field => {
         // @ts-ignore
-        console.log('Row field', row, field)
 
         return searchRegex.test(row[field]?.toString())
       })
