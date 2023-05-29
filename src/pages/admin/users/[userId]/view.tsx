@@ -27,7 +27,15 @@ const UserDetailsView = () => {
 
   if (userError) return <div>Error</div>
 
-  return <UserDetails user={userData} />
+  return (
+    userData && (
+      <UserDetails
+        user={userData}
+        assessmentsCount={userData.assessments.length}
+        submissionCount={userData.submittedAssessments.length}
+      />
+    )
+  )
 }
 UserDetailsView.acl = {
   action: ACTIONS.READ,

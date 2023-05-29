@@ -117,8 +117,8 @@ const Navigation = (): VerticalNavItemsType => {
         {
           subject: SUBJECTS.USERS,
           action: ACTIONS.UPDATE,
-          title: 'Edit',
-          path: `${URLS.PROFILE}/edit`
+          title: 'Security',
+          path: `${URLS.PROFILE}/security`
         }
       ]
     },

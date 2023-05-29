@@ -1,5 +1,5 @@
 // ** React Imports
-import { useContext, useMemo, useState } from 'react'
+import { ChangeEvent, useContext, useMemo, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -29,6 +29,8 @@ import TableFilter from './tableFilter'
 import { useRouter } from 'next/router'
 import { SyntheticEvent } from 'react-draft-wysiwyg'
 import { URLS } from '@custom-types/constants'
+import QuickSearchToolbar from '../Data-Grid/QuickSearchToolbar'
+import { escapeRegExp } from 'src/utils/functions'
 
 interface UserStatusType {
   [key: string]: ThemeColor
@@ -176,6 +178,27 @@ const TableUsersList = ({ users, anchor, header }: { users: any; anchor: boolean
     }
   ]
 
+  const [searchText, setSearchText] = useState<string>('')
+  const [filteredData, setFilteredData] = useState<any>([])
+
+  const handleSearch = (searchValue: string) => {
+    setSearchText(searchValue)
+    const searchRegex = new RegExp(escapeRegExp(searchValue), 'i')
+    const filteredRows = filteredUsers.filter((row: any) => {
+      return Object.keys(row).some(field => {
+        // @ts-ignore
+        console.log('Row field', row, field)
+
+        return searchRegex.test(row[field]?.toString())
+      })
+    })
+    if (searchValue.length) {
+      setFilteredData(filteredRows)
+    } else {
+      setFilteredData([])
+    }
+  }
+
   return (
     <>
       {open && <DialogUserEdit handleClose={handleClose} open={open} user={selectedUser as UsersType} />}
@@ -186,7 +209,8 @@ const TableUsersList = ({ users, anchor, header }: { users: any; anchor: boolean
             <DataGrid
               autoHeight
               onRowClick={handleRowClick}
-              rows={filteredUsers}
+              components={{ Toolbar: QuickSearchToolbar }}
+              rows={filteredData.length ? filteredData : filteredUsers}
               getRowId={row => row._id}
               columns={columns}
               pageSize={pageSize}
@@ -196,6 +220,16 @@ const TableUsersList = ({ users, anchor, header }: { users: any; anchor: boolean
               sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
               columnVisibilityModel={{
                 actions: ability?.can(ACTIONS.UPDATE, SUBJECTS.ROLES) && true
+              }}
+              componentsProps={{
+                baseButton: {
+                  variant: 'outlined'
+                },
+                toolbar: {
+                  value: searchText,
+                  clearSearch: () => handleSearch(''),
+                  onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
+                }
               }}
             />
           </Card>

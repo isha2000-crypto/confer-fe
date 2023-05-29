@@ -27,6 +27,7 @@ import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 import InviteForm from '@components/organisms/Forms/InviteForm'
 import DialogTenantCreate from '@components/molecules/Dialog/DialogTenant/DialogTenantCreate'
+import { URLS } from '@custom-types/constants'
 
 interface Props {
   settings: Settings
@@ -47,6 +48,7 @@ const UserDropdown = (props: Props) => {
   const ability = useContext(AbilityContext)
   const [modalOpen, setModalOpen] = useState(false)
   const [tenantModalOpen, setTenantModalOpen] = useState(false)
+  const router = useRouter()
 
   const handleOpen = () => {
     setModalOpen(prev => !prev)
@@ -61,11 +63,14 @@ const UserDropdown = (props: Props) => {
     setTenantModalOpen(prev => !prev)
   }
 
+  const handleProfileOpen = () => {
+    router.push(`${URLS.PROFILE}/view`)
+  }
+
   // ** States
   const [anchorEl, setAnchorEl] = useState<Element | null>(null)
 
   // ** Hooks
-  const router = useRouter()
   const { logout, user } = useAuth()
 
   // ** Vars
@@ -170,11 +175,17 @@ const UserDropdown = (props: Props) => {
         {ability?.can(ACTIONS.CREATE, SUBJECTS.SYSTEM_ADMIN) && (
           <MenuItem sx={{ p: 0 }} onClick={handleTenantOpen}>
             <Box sx={styles}>
-              <Icon icon='mdi-account-plus' />
+              <Icon icon='mdi-office-building-plus' />
               Create Tenant
             </Box>
           </MenuItem>
         )}
+        <MenuItem sx={{ p: 0 }} onClick={handleProfileOpen}>
+          <Box sx={styles}>
+            <Icon icon='mdi-account' />
+            Profile
+          </Box>
+        </MenuItem>
         <Divider />
 
         <MenuItem

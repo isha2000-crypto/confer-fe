@@ -55,12 +55,12 @@ export const FETCH_USER_BY_ID = gql`
       picture
       role {
         title
-        permissions {
-          roles
-        }
       }
       assessments {
         title
+      }
+      submittedAssessments {
+        userId
       }
     }
   }

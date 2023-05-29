@@ -1,5 +1,5 @@
 // ** React Imports
-import { useContext, useState } from 'react'
+import { ChangeEvent, useContext, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -15,7 +15,6 @@ import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 import { TenantsType } from '@custom-types/tenants-type'
 import { formatDate } from 'src/@core/utils/format'
-import TableHeader from '../TableUsersList/TableHeader'
 import CustomChip from 'src/@core/components/mui/chip'
 import { ThemeColor } from 'src/@core/layouts/types'
 import { useMutation } from '@apollo/client'
@@ -23,6 +22,7 @@ import { UPDATE_TENANT_STATUS } from 'src/lib/graphql/Mutation/tenantMutation'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'src/store'
 import { fetchTenants } from 'src/store/tenants/tenantsActions'
+import QuickSearchToolbar from '../Data-Grid/QuickSearchToolbar'
 
 interface CellType {
   row: TenantsType
@@ -121,8 +121,6 @@ const TableTenantsList = ({ tenants }: any) => {
   // ** State
   const ability = useContext(AbilityContext)
   const [pageSize, setPageSize] = useState<number>(10)
-  const [value, setValue] = useState('')
-  const [filteredData, setFilteredData] = useState<TenantsType[]>([])
   const [UpdateTenantStatus] = useMutation(UPDATE_TENANT_STATUS)
 
   const dispatch = useDispatch<AppDispatch>()
@@ -149,9 +147,11 @@ const TableTenantsList = ({ tenants }: any) => {
         console.log(reason)
       })
   }
+  const [searchText, setSearchText] = useState<string>('')
+  const [filteredData, setFilteredData] = useState<any>([])
 
   const handleSearch = (searchValue: string) => {
-    setValue(searchValue)
+    setSearchText(searchValue)
     const searchRegex = new RegExp(escapeRegExp(searchValue), 'i')
     const filteredRows = tenants.filter((row: any) => {
       return Object.keys(row).some(field => {
@@ -203,19 +203,29 @@ const TableTenantsList = ({ tenants }: any) => {
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <Card>
-            <TableHeader value={value} handleSearch={handleSearch} />
             <DataGrid
               autoHeight
               rows={filteredData.length ? filteredData : tenants}
               getRowId={row => row._id}
               columns={columns}
               pageSize={pageSize}
+              components={{ Toolbar: QuickSearchToolbar }}
               disableSelectionOnClick
               rowsPerPageOptions={[10, 25, 50]}
               onPageSizeChange={newPageSize => setPageSize(newPageSize)}
               sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
               columnVisibilityModel={{
                 actions: ability?.can(ACTIONS.UPDATE, SUBJECTS.USER_INVITATION) && true
+              }}
+              componentsProps={{
+                baseButton: {
+                  variant: 'outlined'
+                },
+                toolbar: {
+                  value: searchText,
+                  clearSearch: () => handleSearch(''),
+                  onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
+                }
               }}
             />
           </Card>

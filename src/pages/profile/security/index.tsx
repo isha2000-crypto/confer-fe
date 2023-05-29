@@ -7,7 +7,6 @@ import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 
 import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
 import CardHeader from '@mui/material/CardHeader'
 import InputLabel from '@mui/material/InputLabel'
 import IconButton from '@mui/material/IconButton'
@@ -17,7 +16,6 @@ import FormControl from '@mui/material/FormControl'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
 import FormHelperText from '@mui/material/FormHelperText'
-import { useAuth } from 'src/hooks/useAuth'
 import Icon from 'src/@core/components/icon'
 
 interface State {
@@ -25,8 +23,7 @@ interface State {
   showPassword: boolean
 }
 
-const Profile = () => {
-  const auth = useAuth()
+const ProfileSecurity = () => {
   const [values, setValues] = useState<State>({
     password: '',
     showPassword: false
@@ -57,23 +54,10 @@ const Profile = () => {
 
   return (
     <Card>
-      <CardHeader title='Edit Profile' />
+      <CardHeader title='Change Password' />
       <CardContent>
         <form onSubmit={e => e.preventDefault()}>
           <Grid container spacing={5}>
-            <Grid item xs={12}>
-              <TextField fullWidth label='Name' defaultValue={auth?.user?.name} />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                type='email'
-                label='Email'
-                defaultValue={auth?.user?.email}
-                placeholder='carterleonard@gmail.com'
-                helperText='You can use letters, numbers & periods'
-              />
-            </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
                 <InputLabel htmlFor='form-layouts-basic-password'>Password</InputLabel>
@@ -141,7 +125,7 @@ const Profile = () => {
                 }}
               >
                 <Button type='submit' variant='contained' size='large'>
-                  Edit
+                  Change Password
                 </Button>
               </Box>
             </Grid>
@@ -152,4 +136,4 @@ const Profile = () => {
   )
 }
 
-export default Profile
+export default ProfileSecurity

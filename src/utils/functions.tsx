@@ -38,3 +38,7 @@ export const getPermissionsObject = (permissionsArr: any) => {
 
   return permissionsObject
 }
+
+export const escapeRegExp = (value: string) => {
+  return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+}
