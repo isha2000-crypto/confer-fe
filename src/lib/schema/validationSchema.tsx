@@ -10,9 +10,9 @@ export const assessmentValidationSchema = Yup.object().shape({
         type: Yup.string().required('Question type is required'),
         description: Yup.string().required('Question description is required'),
         duration: Yup.number()
+          .typeError('Amount must be a number')
           .required('Question duration is required')
           .max(600, 'Your value cannot exceed 10 minutes')
-          .min(0)
       })
     )
     .min(1, 'At least one question is required')

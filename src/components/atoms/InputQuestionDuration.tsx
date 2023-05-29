@@ -1,9 +1,10 @@
 import React from 'react'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import { minutesToSeconds } from 'date-fns'
+import { minutesToSeconds, secondsToMinutes } from 'src/utils/unitConversion'
+import { FormControl } from '@mui/material'
 
-interface QuestionDurationInputProps {
+interface InputQuestionDurationProps {
   value: number
   onChange: (value: number) => void
   disabled: any
@@ -13,24 +14,23 @@ interface QuestionDurationInputProps {
   helperText: string
 }
 
-const QuestionDurationInput = (props: QuestionDurationInputProps) => {
+const InputQuestionDuration = (props: InputQuestionDurationProps) => {
   const { value, onChange, error = null, helperText } = props
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = parseInt(event.target.value)
-    const seconds = minutesToSeconds(newValue)
-    onChange(seconds)
+    onChange(minutesToSeconds(newValue))
   }
 
   return (
-    <div>
+    <FormControl>
       <TextField
         label='Duration'
-        type='number'
         placeholder='Time to complete (in seconds)'
-        value={value / 60}
+        value={secondsToMinutes(value)}
         disabled={props.isReadOnly}
         onChange={handleInputChange}
+        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
         InputProps={{
           endAdornment: (
             <Typography variant='body2' sx={{ fontWeight: 600 }}>
@@ -41,8 +41,8 @@ const QuestionDurationInput = (props: QuestionDurationInputProps) => {
         error={!!error}
         helperText={error ?? helperText}
       />
-    </div>
+    </FormControl>
   )
 }
 
-export default QuestionDurationInput
+export default InputQuestionDuration

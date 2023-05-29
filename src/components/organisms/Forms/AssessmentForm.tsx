@@ -21,8 +21,7 @@ import { ACTIONS, SUBJECTS, Task_Types } from '../../../custom-types/enum'
 import { useMutation } from '@apollo/client'
 import { CREATE_ASSESSMENT_MUTATION, UPDATE_ASSESSMENT_MUTATION } from 'src/lib/graphql/Mutation'
 import toast from 'react-hot-toast'
-import { TransitionGroup } from 'react-transition-group'
-import { Collapse } from '@mui/material'
+
 import { useRouter } from 'next/router'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { minutesToSeconds } from 'src/utils/unitConversion'
@@ -42,10 +41,11 @@ interface Props {
 
 const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }: Props) => {
   const ability = useContext(AbilityContext)
-  const [questions, setQuestions] = useState<Question[]>(initialAssessment?.tasks || [])
+  const [initialQuestions, setInitialQuestions] = useState<Question[]>(initialAssessment?.tasks || [])
   const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
   const [updateAssessmentMutation] = useMutation(UPDATE_ASSESSMENT_MUTATION)
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [assessment, setAssessment] = useState({
     title: isEdit || isReadOnly ? initialAssessment.title : '',
     description: isEdit || isReadOnly ? initialAssessment.description : '',
@@ -53,23 +53,22 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
   })
   const formikContext = useFormikContext()
 
-
   useEffect(() => {
     if (isReadOnly) {
-      setQuestions(initialAssessment?.tasks || [])
+      setInitialQuestions(initialAssessment?.tasks || [])
     } else if (isEdit) {
-      setQuestions(initialAssessment?.tasks || [])
+      setInitialQuestions(initialAssessment?.tasks || [])
     }
   }, [isReadOnly, isEdit, initialAssessment])
 
   useEffect(() => {
-    if (!isReadOnly && !isEdit && questions.length === 0) {
+    if (!isReadOnly && !isEdit && initialQuestions.length === 0) {
       const arrayHelpers = formikContext?.getFieldHelpers('questions')
       addQuestion(arrayHelpers)
     }
-  }, [isReadOnly, isEdit, questions.length])
+  }, [isReadOnly, isEdit, initialQuestions.length])
 
-  const addQuestion = arrayHelpers => {
+  const addQuestion = (arrayHelpers: any) => {
     const newQuestion: Question = {
       id: arrayHelpers?.form?.values?.questions?.length + 1,
       type: 'TEXTUAL',
@@ -79,7 +78,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
     arrayHelpers?.push(newQuestion)
   }
 
-  const removeQuestion = (arrayHelpers, index) => {
+  const removeQuestion = (arrayHelpers: any, index: any) => {
     if (isReadOnly) {
       toast.error('You cannot remove the task!')
     } else {
@@ -87,8 +86,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
     }
   }
 
-  const handleQuestionUpdate = (formik, index, name, value) => {
-
+  const handleQuestionUpdate = (formik: any, index: any, name: any, value: any) => {
     if (isReadOnly) {
       toast('You cannot edit')
     } else {
@@ -100,15 +98,15 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
         value = seconds
       }
 
-      updateQuestions[index][name] = value || 0
+      updateQuestions[index][name] = value
       formik.setFieldValue('questions', updateQuestions)
     }
   }
 
-  const handleAssessmentSubmit = (values: any, { resetForm }) => {
-
+  const handleAssessmentSubmit = (values: any, { resetForm }: any) => {
     let isFormValid = true
-    const modifiedQuestions = values.questions.map(question => {
+    const { questions, ...rest } = values
+    const modifiedQuestions = questions.map((question: any) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { id, ...rest } = question
       if (question.type === '' || question.description === '' || question.duration < 1) {
@@ -124,14 +122,13 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
 
       return
     }
-    const { questions, ...rest } = values
     if (isEdit) {
       updateAssessmentMutation({
         variables: {
           updateAssessmentId: assessmentId,
           updateAssessmentInput: {
             ...rest,
-            tasks: modifiedQuestions.map(question => ({
+            tasks: modifiedQuestions.map((question: any) => ({
               type: question?.type,
               description: question?.description,
               duration: question?.duration
@@ -193,9 +190,9 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
             title: assessment.title,
             description: assessment.description,
             type: assessment.type,
-            questions: questions.map(question => ({
+            questions: initialQuestions.map(question => ({
               ...question,
-              duration: question.duration || 0
+              duration: question.duration
             }))
           }}
           validationSchema={assessmentValidationSchema}
@@ -221,7 +218,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
                       value={formik.values.title}
                       onChange={formik.handleChange}
                       error={formik.touched.title && Boolean(formik.errors.title)}
-                      helperText={formik.touched.title ? formik.errors.title : ''}
+                      helperText={formik.touched.title && formik.errors.title ? String(formik.errors.title) : ''}
                     />
                   </Grid>
                   <Grid item xs={12} sm={12}>
@@ -236,7 +233,11 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
                         value={formik.values.description}
                         onChange={formik.handleChange}
                         error={formik.touched.description && Boolean(formik.errors.description)}
-                        helperText={formik.touched.description && formik.errors.description}
+                        helperText={
+                          formik.touched.description && formik.errors.description
+                            ? String(formik.errors.description)
+                            : ''
+                        }
                       />
                     </div>
                   </Grid>
@@ -258,7 +259,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
                           <MenuItem value='LEADERSHIP'>{Task_Types.LEADERSHIP}</MenuItem>
                         </Select>
                         <FormHelperText error={formik.touched.type && Boolean(formik.errors.type)}>
-                          {formik.touched.type && formik.errors.type }
+                          {formik.touched.type && String(formik.errors.type)}
                         </FormHelperText>
                       </FormControl>
                     </div>
@@ -270,7 +271,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
                         <>
                           <Grid justifyContent='center'>
                             {arrayHelpers.form.values.questions.length > 0 &&
-                              arrayHelpers.form.values.questions.map((question, index) => (
+                              arrayHelpers.form.values.questions.map((question: any, index: any) => (
                                 <CreateQuestion
                                   key={index}
                                   formik={arrayHelpers.form}
