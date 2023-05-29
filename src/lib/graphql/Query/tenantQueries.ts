@@ -6,6 +6,7 @@ export const LOAD_TENANTS = gql`
       _id
       createdAt
       domains
+      disabled
       name
       updatedAt
     }

@@ -9,7 +9,7 @@ import { DataGrid } from '@mui/x-data-grid'
 import Typography from '@mui/material/Typography'
 
 // ** Custom Components Imports
-import { IconButton } from '@mui/material'
+import { IconButton, Switch } from '@mui/material'
 import Icon from 'src/@core/components/icon'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { ACTIONS, SUBJECTS } from '@custom-types/enum'
@@ -17,10 +17,24 @@ import { TenantsType } from '@custom-types/tenants-type'
 import { formatDate } from 'src/@core/utils/format'
 import TableHeader from '../TableUsersList/TableHeader'
 import CustomChip from 'src/@core/components/mui/chip'
+import { ThemeColor } from 'src/@core/layouts/types'
+import { useMutation } from '@apollo/client'
+import { UPDATE_TENANT_STATUS } from 'src/lib/graphql/Mutation/tenantMutation'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from 'src/store'
+import { fetchTenants } from 'src/store/tenants/tenantsActions'
 
 interface CellType {
   row: TenantsType
 }
+interface UserStatusType {
+  [key: string]: ThemeColor
+}
+const userStatusObj: UserStatusType = {
+  active: 'success',
+  disabled: 'error'
+}
+const label = { inputProps: { 'aria-label': 'Color switch demo' } }
 
 const tableColumns = [
   {
@@ -74,6 +88,23 @@ const tableColumns = [
   {
     flex: 0.1,
     minWidth: 110,
+    field: 'disabled',
+    headerName: 'Status',
+    renderCell: ({ row }: CellType) => {
+      return (
+        <CustomChip
+          skin='light'
+          size='small'
+          label={row.disabled ? 'disabled' : 'active'}
+          color={userStatusObj[row.disabled ? 'disabled' : 'active']}
+          sx={{ textTransform: 'capitalize' }}
+        />
+      )
+    }
+  },
+  {
+    flex: 0.1,
+    minWidth: 110,
     field: 'created_at',
     headerName: 'CreatedAt',
     renderCell: ({ row }: CellType) => {
@@ -92,12 +123,31 @@ const TableTenantsList = ({ tenants }: any) => {
   const [pageSize, setPageSize] = useState<number>(10)
   const [value, setValue] = useState('')
   const [filteredData, setFilteredData] = useState<TenantsType[]>([])
+  const [UpdateTenantStatus] = useMutation(UPDATE_TENANT_STATUS)
 
+  const dispatch = useDispatch<AppDispatch>()
   const handleEditTenant = (id: string) => {
     console.log('Edit Role', id)
   }
   const escapeRegExp = (value: string) => {
     return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+  }
+  const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>, id: string) => {
+    const updatedTenant = {
+      disabled: event.target.checked
+    }
+
+    UpdateTenantStatus({
+      variables: { updateTenantStatusInput: { ...updatedTenant }, updateTenantStatusId: id }
+    })
+      .then(result => {
+        dispatch(fetchTenants())
+        console.log(result.data)
+      })
+      .catch(reason => {
+        dispatch(fetchTenants())
+        console.log(reason)
+      })
   }
 
   const handleSearch = (searchValue: string) => {
@@ -134,6 +184,17 @@ const TableTenantsList = ({ tenants }: any) => {
           </IconButton>
         </Box>
       )
+    },
+
+    {
+      flex: 0.1,
+      minWidth: 110,
+      sortable: false,
+      field: 'status_update',
+      headerName: 'Disabled',
+      renderCell: ({ row }: CellType) => {
+        return <Switch checked={row.disabled} {...label} onChange={e => handleStatusChange(e, row._id)} />
+      }
     }
   ]
 
