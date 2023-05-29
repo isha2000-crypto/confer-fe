@@ -110,7 +110,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { id, ...rest } = question
       if (question.type === '' || question.description === '' || question.duration < 1) {
-        alert('Please Make Sure Question Fields are Valid!!')
+        toast('Please Make Sure Question Fields are Valid!!')
         isFormValid = false
       }
 
@@ -259,7 +259,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
                           <MenuItem value='LEADERSHIP'>{Task_Types.LEADERSHIP}</MenuItem>
                         </Select>
                         <FormHelperText error={formik.touched.type && Boolean(formik.errors.type)}>
-                          {formik.touched.type && String(formik.errors.type)}
+                          {formik.touched.type && formik.errors.type ? String(formik.errors.type) : null}
                         </FormHelperText>
                       </FormControl>
                     </div>
