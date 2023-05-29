@@ -18,6 +18,7 @@ export const ADD_NEW_ROLE = gql`
         users
         admin_settings
         assessment_management
+        users_management
       }
     }
   }
@@ -37,6 +38,7 @@ export const UPDATE_ROLE = gql`
         roles
         admin_settings
         assessment_management
+        users_management
       }
       createdBy
       creator {

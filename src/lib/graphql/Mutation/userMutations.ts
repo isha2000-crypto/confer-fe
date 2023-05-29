@@ -31,6 +31,7 @@ export const LOGIN_USER_MUTATION = gql`
             users
             assessment_management
             admin_settings
+            users_management
           }
         }
         email_verified
@@ -62,6 +63,7 @@ export const LOGIN_GOOGLE_MUTATION = gql`
             users
             admin_settings
             assessment_management
+            users_management
           }
         }
         email_verified

@@ -17,9 +17,10 @@ export const SUBJECT_TITLES: any = {
   [SUBJECTS.ASSESSMENT_SUBMISSION]: 'Submission of Assessments',
   [SUBJECTS.ASSESSMENT_SUBMISSION_MANAGEMENT]: 'Assessment Submission Management',
   [SUBJECTS.ROLES]: 'Manage Roles',
-  [SUBJECTS.USERS]: 'Manage Users',
+  [SUBJECTS.USERS]: 'User Profile',
   [SUBJECTS.USER_INVITATION]: 'Users Invitation',
   [SUBJECTS.ADMIN_SETTINGS]: 'Admin Settings',
   [SUBJECTS.SYSTEM_ADMIN]: 'System Admin',
-  [SUBJECTS.ASSESSMENT_MANAGEMENT]: 'Assessments Management'
+  [SUBJECTS.ASSESSMENT_MANAGEMENT]: 'Assessments Management',
+  [SUBJECTS.USERS_MANAGEMENT]: 'Users Management'
 }

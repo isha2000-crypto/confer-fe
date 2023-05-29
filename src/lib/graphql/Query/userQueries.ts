@@ -38,6 +38,7 @@ export const VALIDATE_USERS = gql`
           users
           admin_settings
           assessment_management
+          users_management
         }
       }
       email_verified

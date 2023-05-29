@@ -26,6 +26,9 @@ import { IconButton } from '@mui/material'
 import { Icon } from '@iconify/react'
 
 import TableFilter from './tableFilter'
+import { useRouter } from 'next/router'
+import { SyntheticEvent } from 'react-draft-wysiwyg'
+import { URLS } from '@custom-types/constants'
 
 interface UserStatusType {
   [key: string]: ThemeColor
@@ -126,8 +129,14 @@ const TableUsersList = ({ users, anchor, header }: { users: any; anchor: boolean
   const [selectedUser, setSelectedUser] = useState<UsersType>()
   const [open, setOpen] = useState<boolean>(false)
   const [tenant, setTenant] = useState<string>('')
+  const router = useRouter()
 
-  const handleEditRole = (user: UsersType) => {
+  const handleRowClick = ({ row }: CellType) => {
+    router.push(`${URLS.ADMIN}/users/${row._id}/view`)
+  }
+
+  const handleEditRole = (event: SyntheticEvent, user: UsersType) => {
+    event.stopPropagation()
     setSelectedUser(user)
     setOpen(true)
   }
@@ -157,7 +166,7 @@ const TableUsersList = ({ users, anchor, header }: { users: any; anchor: boolean
       renderCell: ({ row }: CellType) =>
         !anchor ? (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton onClick={() => handleEditRole(row)} disabled={row.role.title === 'Super Admin'}>
+            <IconButton onClick={event => handleEditRole(event, row)} disabled={row.role.title === 'Super Admin'}>
               <Icon icon='mdi:pencil-outline' />
             </IconButton>
           </Box>
@@ -176,6 +185,7 @@ const TableUsersList = ({ users, anchor, header }: { users: any; anchor: boolean
             {header && <TableFilter tenant={tenant} handleTenantChange={handleTenantChange} />}
             <DataGrid
               autoHeight
+              onRowClick={handleRowClick}
               rows={filteredUsers}
               getRowId={row => row._id}
               columns={columns}
