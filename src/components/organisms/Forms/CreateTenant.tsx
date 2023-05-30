@@ -14,7 +14,7 @@ import { toast } from 'react-hot-toast'
 
 const CreateTenant = ({ handleCancel, title, tenant }: { handleCancel: any; title: string; tenant?: any }) => {
   const [domain, setDomain] = useState<string>('')
-  const [domains, setDomains] = useState<string[]>(tenant.domains ?? [])
+  const [domains, setDomains] = useState<string[]>(tenant?.domains ?? [])
 
   const [createTenantMutation] = useMutation(CREATE_TENANT_MUTATION)
   const [updateTenantMutation] = useMutation(UPDATE_TENANT)
@@ -80,11 +80,11 @@ const CreateTenant = ({ handleCancel, title, tenant }: { handleCancel: any; titl
   }
   const formik = useFormik({
     initialValues: {
-      name: String(tenant?.name) ?? '',
+      name: tenant?.name ? String(tenant?.name) : '',
       domains: domains,
-      assessment_duration: parseInt(tenant?.assessment_duration) ?? 0
+      assessment_duration: tenant?.assessment_duration ? parseInt(tenant?.assessment_duration) : 0
     },
-    onSubmit: values => handleFormSubmission({ ...values }),
+    onSubmit: values => (title === 'Create' ? handleFormSubmission({ ...values }) : handleTenantUpdate()),
 
     validationSchema: TenantValidationSchema
   })
@@ -144,12 +144,7 @@ const CreateTenant = ({ handleCancel, title, tenant }: { handleCancel: any; titl
           ))}
         </Grid>
       </Grid>
-      <ActionButtons
-        loading={false}
-        submitText={title === 'Create' ? 'Add' : 'Update'}
-        handleCancel={handleCancel}
-        submit={handleTenantUpdate}
-      />
+      <ActionButtons loading={false} submitText={title === 'Create' ? 'Add' : 'Update'} handleCancel={handleCancel} />
     </form>
   )
 }
