@@ -25,6 +25,7 @@ import toast from 'react-hot-toast'
 import { useRouter } from 'next/router'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { minutesToSeconds } from 'src/utils/unitConversion'
+import { CreateSchema } from 'src/lib/schema/CreateSchema'
 
 interface Question {
   id: number
@@ -44,6 +45,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
   const [initialQuestions, setInitialQuestions] = useState<Question[]>(initialAssessment?.tasks || [])
   const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
   const [updateAssessmentMutation] = useMutation(UPDATE_ASSESSMENT_MUTATION)
+  const schema = CreateSchema()
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [assessment, setAssessment] = useState({
@@ -195,7 +197,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
               duration: question.duration
             }))
           }}
-          validationSchema={assessmentValidationSchema}
+          validationSchema={schema}
           onSubmit={handleAssessmentSubmit}
           enableReinitialize
         >
