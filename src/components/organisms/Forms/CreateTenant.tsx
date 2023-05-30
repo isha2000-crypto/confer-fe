@@ -6,16 +6,19 @@ import ActionButtons from '@components/molecules/Actions/ActionButtons'
 import { TenantValidationSchema } from 'src/lib/schema/validationSchema'
 
 import { useMutation } from '@apollo/client'
-import { CREATE_TENANT_MUTATION } from 'src/lib/graphql/Mutation/tenantMutation'
+import { CREATE_TENANT_MUTATION, UPDATE_TENANT } from 'src/lib/graphql/Mutation/tenantMutation'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'src/store'
 import { fetchTenants } from 'src/store/tenants/tenantsActions'
+import { toast } from 'react-hot-toast'
 
-const CreateTenant = ({ handleCancel }: { handleCancel: any }) => {
+const CreateTenant = ({ handleCancel, title, tenant }: { handleCancel: any; title: string; tenant?: any }) => {
   const [domain, setDomain] = useState<string>('')
-  const [domains, setDomains] = useState<string[]>([])
+  const [domains, setDomains] = useState<string[]>(tenant.domains ?? [])
 
   const [createTenantMutation] = useMutation(CREATE_TENANT_MUTATION)
+  const [updateTenantMutation] = useMutation(UPDATE_TENANT)
+
   const dispatch = useDispatch<AppDispatch>()
 
   const handleDomainChange = (event: any) => {
@@ -36,6 +39,16 @@ const CreateTenant = ({ handleCancel }: { handleCancel: any }) => {
     if (event.key === 'Enter') {
       handleAddDomain(event)
     }
+  }
+  const handleTenantUpdate = () => {
+    updateTenantMutation({
+      variables: { updateTenantId: tenant?._id, UpdateTenantInput: { ...formik.values } }
+    }).then(result => {
+      if (result.data) {
+        toast('Tenant Updated successfully')
+        dispatch(fetchTenants())
+      }
+    })
   }
   const handleFormSubmission = (values: any) => {
     console.log(values)
@@ -67,9 +80,9 @@ const CreateTenant = ({ handleCancel }: { handleCancel: any }) => {
   }
   const formik = useFormik({
     initialValues: {
-      name: '',
+      name: String(tenant?.name) ?? '',
       domains: domains,
-      assessment_duration: 0
+      assessment_duration: parseInt(tenant?.assessment_duration) ?? 0
     },
     onSubmit: values => handleFormSubmission({ ...values }),
 
@@ -131,7 +144,12 @@ const CreateTenant = ({ handleCancel }: { handleCancel: any }) => {
           ))}
         </Grid>
       </Grid>
-      <ActionButtons loading={false} submitText='Add' handleCancel={handleCancel} />
+      <ActionButtons
+        loading={false}
+        submitText={title === 'Create' ? 'Add' : 'Update'}
+        handleCancel={handleCancel}
+        submit={handleTenantUpdate}
+      />
     </form>
   )
 }

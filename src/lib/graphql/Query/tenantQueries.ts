@@ -20,3 +20,15 @@ export const LOAD_CURRENT_TENANT = gql`
     }
   }
 `
+export const FETCH_TENANT_BY_ID = gql`
+  query Tenant($tenantId: ObjectId!) {
+    tenant(id: $tenantId) {
+      _id
+      assessment_duration
+      createdAt
+      disabled
+      domains
+      name
+    }
+  }
+`

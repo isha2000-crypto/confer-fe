@@ -17,12 +17,14 @@ import { TenantsType } from '@custom-types/tenants-type'
 import { formatDate } from 'src/@core/utils/format'
 import CustomChip from 'src/@core/components/mui/chip'
 import { ThemeColor } from 'src/@core/layouts/types'
-import { useMutation } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import { UPDATE_TENANT_STATUS } from 'src/lib/graphql/Mutation/tenantMutation'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'src/store'
 import { fetchTenants } from 'src/store/tenants/tenantsActions'
 import QuickSearchToolbar from '../Data-Grid/QuickSearchToolbar'
+import DialogTenantCreate from '../Dialog/DialogTenant/DialogTenantCreate'
+import { FETCH_TENANT_BY_ID } from 'src/lib/graphql/Query'
 
 interface CellType {
   row: TenantsType
@@ -121,11 +123,21 @@ const TableTenantsList = ({ tenants }: any) => {
   // ** State
   const ability = useContext(AbilityContext)
   const [pageSize, setPageSize] = useState<number>(10)
-  const [UpdateTenantStatus] = useMutation(UPDATE_TENANT_STATUS)
 
+  // const [value, setValue] = useState('')
+  const [open, setOpen] = useState(false)
+  const [selectedTenant, setSelectedTenant] = useState(null)
+  const [filteredData, setFilteredData] = useState<TenantsType[]>([])
+  const [UpdateTenantStatus] = useMutation(UPDATE_TENANT_STATUS)
+  const [getTenant, { error }] = useLazyQuery(FETCH_TENANT_BY_ID)
   const dispatch = useDispatch<AppDispatch>()
-  const handleEditTenant = (id: string) => {
-    console.log('Edit Role', id)
+  const handleEditTenant = async (id: string) => {
+    const { data } = await getTenant({ variables: { tenantId: id } })
+    setSelectedTenant(data?.tenant)
+    setOpen(true)
+  }
+  const handleClose = () => {
+    setOpen(false)
   }
   const escapeRegExp = (value: string) => {
     return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
@@ -148,7 +160,6 @@ const TableTenantsList = ({ tenants }: any) => {
       })
   }
   const [searchText, setSearchText] = useState<string>('')
-  const [filteredData, setFilteredData] = useState<any>([])
 
   const handleSearch = (searchValue: string) => {
     setSearchText(searchValue)
@@ -179,9 +190,6 @@ const TableTenantsList = ({ tenants }: any) => {
           <IconButton onClick={() => handleEditTenant(row._id)}>
             <Icon icon='mdi:pencil-outline' />
           </IconButton>
-          <IconButton onClick={() => handleEditTenant(row._id)}>
-            <Icon icon='mdi:bin-outline' color='red' />
-          </IconButton>
         </Box>
       )
     },
@@ -197,10 +205,14 @@ const TableTenantsList = ({ tenants }: any) => {
       }
     }
   ]
+  if (error) return <div>Error</div>
 
   return (
     <>
       <Grid container spacing={6}>
+        {open && (
+          <DialogTenantCreate open={open} handleClose={handleClose} dialogTitle='Edit' tenant={selectedTenant} />
+        )}
         <Grid item xs={12}>
           <Card>
             <DataGrid
