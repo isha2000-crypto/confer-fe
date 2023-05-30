@@ -1,5 +1,5 @@
 // ** React Imports
-import { useContext, useMemo, useState } from 'react'
+import { ChangeEvent, useContext, useMemo, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -26,6 +26,11 @@ import { IconButton } from '@mui/material'
 import { Icon } from '@iconify/react'
 
 import TableFilter from './tableFilter'
+import { useRouter } from 'next/router'
+import { SyntheticEvent } from 'react-draft-wysiwyg'
+import { URLS } from '@custom-types/constants'
+import QuickSearchToolbar from '../Data-Grid/QuickSearchToolbar'
+import { escapeRegExp } from 'src/utils/functions'
 
 interface UserStatusType {
   [key: string]: ThemeColor
@@ -46,7 +51,7 @@ const tableColumns = [
     flex: 0.2,
     minWidth: 230,
     field: 'name',
-    headerName: 'User',
+    headerName: 'Name',
     renderCell: ({ row }: CellType) => {
       const { name } = row
 
@@ -87,6 +92,13 @@ const tableColumns = [
   {
     flex: 0.15,
     field: 'role',
+    valueGetter: (params: any) => {
+      if (!params.value) {
+        return params.value
+      }
+
+      return params.value.title
+    },
     minWidth: 150,
     headerName: 'Role',
     renderCell: ({ row }: CellType) => {
@@ -126,8 +138,14 @@ const TableUsersList = ({ users, anchor, header }: { users: any; anchor: boolean
   const [selectedUser, setSelectedUser] = useState<UsersType>()
   const [open, setOpen] = useState<boolean>(false)
   const [tenant, setTenant] = useState<string>('')
+  const router = useRouter()
 
-  const handleEditRole = (user: UsersType) => {
+  const handleRowClick = ({ row }: CellType) => {
+    router.push(`${URLS.ADMIN}/users/${row._id}/view`)
+  }
+
+  const handleEditRole = (event: SyntheticEvent, user: UsersType) => {
+    event.stopPropagation()
     setSelectedUser(user)
     setOpen(true)
   }
@@ -157,7 +175,7 @@ const TableUsersList = ({ users, anchor, header }: { users: any; anchor: boolean
       renderCell: ({ row }: CellType) =>
         !anchor ? (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton onClick={() => handleEditRole(row)} disabled={row.role.title === 'Super Admin'}>
+            <IconButton onClick={event => handleEditRole(event, row)} disabled={row.role.title === 'Super Admin'}>
               <Icon icon='mdi:pencil-outline' />
             </IconButton>
           </Box>
@@ -166,6 +184,26 @@ const TableUsersList = ({ users, anchor, header }: { users: any; anchor: boolean
         )
     }
   ]
+
+  const [searchText, setSearchText] = useState<string>('')
+  const [filteredData, setFilteredData] = useState<any>([])
+
+  const handleSearch = (searchValue: string) => {
+    setSearchText(searchValue)
+    const searchRegex = new RegExp(escapeRegExp(searchValue), 'i')
+    const filteredRows = filteredUsers.filter((row: any) => {
+      return Object.keys(row).some(field => {
+        // @ts-ignore
+
+        return searchRegex.test(row[field]?.toString())
+      })
+    })
+    if (searchValue.length) {
+      setFilteredData(filteredRows)
+    } else {
+      setFilteredData([])
+    }
+  }
 
   return (
     <>
@@ -176,7 +214,9 @@ const TableUsersList = ({ users, anchor, header }: { users: any; anchor: boolean
             {header && <TableFilter tenant={tenant} handleTenantChange={handleTenantChange} />}
             <DataGrid
               autoHeight
-              rows={filteredUsers}
+              onRowClick={handleRowClick}
+              components={{ Toolbar: QuickSearchToolbar }}
+              rows={filteredData.length ? filteredData : filteredUsers}
               getRowId={row => row._id}
               columns={columns}
               pageSize={pageSize}
@@ -186,6 +226,16 @@ const TableUsersList = ({ users, anchor, header }: { users: any; anchor: boolean
               sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
               columnVisibilityModel={{
                 actions: ability?.can(ACTIONS.UPDATE, SUBJECTS.ROLES) && true
+              }}
+              componentsProps={{
+                baseButton: {
+                  variant: 'outlined'
+                },
+                toolbar: {
+                  value: searchText,
+                  clearSearch: () => handleSearch(''),
+                  onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
+                }
               }}
             />
           </Card>

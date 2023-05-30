@@ -88,6 +88,19 @@ const Navigation = (): VerticalNavItemsType => {
           action: ACTIONS.READ,
           title: 'Settings',
           path: `${URLS.ADMIN}/settings`
+        },
+        {
+          action: ACTIONS.READ,
+          subject: SUBJECTS.USERS_MANAGEMENT,
+          title: 'Users',
+          children: [
+            {
+              action: ACTIONS.READ,
+              subject: SUBJECTS.USERS_MANAGEMENT,
+              title: 'List',
+              path: `${URLS.ADMIN}/users/list`
+            }
+          ]
         }
       ]
     },
@@ -96,16 +109,16 @@ const Navigation = (): VerticalNavItemsType => {
       icon: 'mdi:account-circle',
       children: [
         {
-          subject: SUBJECTS.PUBLIC,
+          subject: SUBJECTS.USERS,
           action: ACTIONS.READ,
           title: 'My Profile',
           path: `${URLS.PROFILE}/view`
         },
         {
-          subject: SUBJECTS.PUBLIC,
-          action: ACTIONS.READ,
-          title: 'Edit',
-          path: `${URLS.PROFILE}/edit`
+          subject: SUBJECTS.USERS,
+          action: ACTIONS.UPDATE,
+          title: 'Security',
+          path: `${URLS.PROFILE}/security`
         }
       ]
     },

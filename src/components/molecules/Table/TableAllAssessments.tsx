@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -14,6 +14,8 @@ import { formatDate } from 'src/@core/utils/format'
 import { useRouter } from 'next/router'
 import { URLS } from '@custom-types/constants'
 import { displayTime } from 'src/utils/timeFuncs'
+import QuickSearchToolbar from '../Data-Grid/QuickSearchToolbar'
+import { escapeRegExp } from 'src/utils/functions'
 
 interface CellType {
   row: any
@@ -141,6 +143,25 @@ const TableAllAssessments = ({ data }: any) => {
     router.push(`${URLS.ASSESSMENT_URL}/${row._id}/view`)
   }
 
+  const [searchText, setSearchText] = useState<string>('')
+  const [filteredData, setFilteredData] = useState<any>([])
+
+  const handleSearch = (searchValue: string) => {
+    setSearchText(searchValue)
+    const searchRegex = new RegExp(escapeRegExp(searchValue), 'i')
+    const filteredRows = data.filter((row: any) => {
+      return Object.keys(row).some(field => {
+        // @ts-ignore
+        return searchRegex.test(row[field].toString())
+      })
+    })
+    if (searchValue.length) {
+      setFilteredData(filteredRows)
+    } else {
+      setFilteredData([])
+    }
+  }
+
   return (
     <>
       <Grid container spacing={6}>
@@ -148,15 +169,26 @@ const TableAllAssessments = ({ data }: any) => {
           <Card>
             <DataGrid
               autoHeight
-              rows={data}
+              rows={filteredData.length ? filteredData : data}
               getRowId={row => row._id}
               columns={columns}
               pageSize={pageSize}
+              components={{ Toolbar: QuickSearchToolbar }}
               disableSelectionOnClick
               rowsPerPageOptions={[10, 25, 50]}
               onPageSizeChange={newPageSize => setPageSize(newPageSize)}
               sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
               onRowClick={handleRowClick}
+              componentsProps={{
+                baseButton: {
+                  variant: 'outlined'
+                },
+                toolbar: {
+                  value: searchText,
+                  clearSearch: () => handleSearch(''),
+                  onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
+                }
+              }}
             />
           </Card>
         </Grid>

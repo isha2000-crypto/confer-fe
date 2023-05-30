@@ -8,3 +8,12 @@ export const CREATE_TENANT_MUTATION = gql`
     }
   }
 `
+export const UPDATE_TENANT_STATUS = gql`
+  mutation UpdateTenantStatus($updateTenantStatusId: ObjectId!, $updateTenantStatusInput: UpdateTenantStatusInput!) {
+    updateTenantStatus(id: $updateTenantStatusId, UpdateTenantStatusInput: $updateTenantStatusInput) {
+      _id
+      disabled
+      name
+    }
+  }
+`

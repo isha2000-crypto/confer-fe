@@ -23,6 +23,7 @@ export type Role = {
 
 export type UserDataType = {
   id: number
+  _id?: string
   role: Role
   email: string
   name: string

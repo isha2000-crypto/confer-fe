@@ -38,6 +38,7 @@ export const VALIDATE_USERS = gql`
           users
           admin_settings
           assessment_management
+          users_management
         }
       }
       email_verified
@@ -54,12 +55,12 @@ export const FETCH_USER_BY_ID = gql`
       picture
       role {
         title
-        permissions {
-          roles
-        }
       }
       assessments {
         title
+      }
+      submittedAssessments {
+        userId
       }
     }
   }
