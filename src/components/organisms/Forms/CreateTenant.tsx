@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'src/store'
 import { fetchTenants } from 'src/store/tenants/tenantsActions'
 import { toast } from 'react-hot-toast'
+import InputQuestionDuration from '@components/atoms/InputQuestionDuration'
 
 const CreateTenant = ({ handleCancel, title, tenant }: { handleCancel: any; title: string; tenant?: any }) => {
   const [domain, setDomain] = useState<string>('')
@@ -89,6 +90,10 @@ const CreateTenant = ({ handleCancel, title, tenant }: { handleCancel: any; titl
     validationSchema: TenantValidationSchema
   })
 
+  const handleDurationChange = (value: number) => {
+    formik.setFieldValue('assessment_duration', value)
+  }
+
   return (
     <form onSubmit={formik.handleSubmit}>
       <Grid container spacing={5} padding={8}>
@@ -105,18 +110,15 @@ const CreateTenant = ({ handleCancel, title, tenant }: { handleCancel: any; titl
           />
         </Grid>
         <Grid item xs={6}>
-          <TextField
-            fullWidth
-            type='number'
-            name='assessment_duration'
+          <InputQuestionDuration
             label='Max Assessment Duration'
             placeholder='Enter max duration for assessment'
             value={formik.values.assessment_duration}
-            onChange={e => {
-              formik.handleChange(e)
-            }}
-            error={formik.touched.assessment_duration && Boolean(formik.errors.assessment_duration)}
-            helperText={formik.touched.assessment_duration && formik.errors.assessment_duration}
+            onChange={handleDurationChange}
+            error={Boolean(formik.touched.assessment_duration) && Boolean(formik.errors.assessment_duration)}
+            helperText={
+              (formik.touched.assessment_duration && formik.errors.assessment_duration) || 'Max Duration is 15 minutes'
+            } 
           />
         </Grid>
         <Grid item xs={12}>

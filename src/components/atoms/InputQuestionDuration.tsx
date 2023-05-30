@@ -6,11 +6,12 @@ import { FormControl } from '@mui/material'
 
 interface InputQuestionDurationProps {
   value: number
+  label?: string
+  placeholder?: string
   onChange: (value: number) => void
-  disabled: any
-  admin_duration: number
-  isReadOnly: any
-  error?: string | null
+  disabled?: boolean
+  isReadOnly?: boolean
+  error?: boolean | null
   helperText: string
 }
 
@@ -25,10 +26,10 @@ const InputQuestionDuration = (props: InputQuestionDurationProps) => {
   return (
     <FormControl>
       <TextField
-        label='Duration'
-        placeholder='Time to complete (in seconds)'
+        label={props.label || 'Duration'}
+        placeholder={props.placeholder || 'Time to complete (in seconds)'}
         value={secondsToMinutes(value)}
-        disabled={props.isReadOnly}
+        disabled={props.isReadOnly || false}
         onChange={handleInputChange}
         inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
         InputProps={{
@@ -38,8 +39,8 @@ const InputQuestionDuration = (props: InputQuestionDurationProps) => {
             </Typography>
           )
         }}
-        error={!!error}
-        helperText={error ?? helperText}
+        error={error || false}
+        helperText={helperText}
       />
     </FormControl>
   )

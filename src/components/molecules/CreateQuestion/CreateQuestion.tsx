@@ -107,10 +107,9 @@ const CreateQuestion = (props: QuestionProps) => {
                 disabled={props.isReadOnly}
                 value={field.value}
                 onChange={value => field.onChange({ target: { name: field.name, value } })}
-                admin_duration={admin_duration}
                 isReadOnly={props.isReadOnly}
                 error={meta.touched && meta.error}
-                helperText={`Duration value should be less then ${admin_duration}`}
+                helperText={(meta.touched && meta.error) || `Duration value should be less then ${admin_duration}`}
               />
             )}
           </Field>
