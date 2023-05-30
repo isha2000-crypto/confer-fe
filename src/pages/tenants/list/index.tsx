@@ -39,7 +39,7 @@ const TenantsList = () => {
 
   return (
     <Grid container spacing={6}>
-      {open && <DialogTenantCreate open={open} handleClose={handleClose} dialogTitle='Create Tenant' />}
+      {open && <DialogTenantCreate open={open} handleClose={handleClose} dialogTitle='Create' />}
       <PageHeader
         title={<Typography variant='h5'>Tenants List</Typography>}
         subtitle={<Typography variant='body2'>You can view all the available Tenants here</Typography>}

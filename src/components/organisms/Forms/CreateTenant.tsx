@@ -6,16 +6,20 @@ import ActionButtons from '@components/molecules/Actions/ActionButtons'
 import { TenantValidationSchema } from 'src/lib/schema/validationSchema'
 
 import { useMutation } from '@apollo/client'
-import { CREATE_TENANT_MUTATION } from 'src/lib/graphql/Mutation/tenantMutation'
+import { CREATE_TENANT_MUTATION, UPDATE_TENANT } from 'src/lib/graphql/Mutation/tenantMutation'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'src/store'
 import { fetchTenants } from 'src/store/tenants/tenantsActions'
+import { toast } from 'react-hot-toast'
+import InputQuestionDuration from '@components/atoms/InputQuestionDuration'
 
-const CreateTenant = ({ handleCancel }: { handleCancel: any }) => {
+const CreateTenant = ({ handleCancel, title, tenant }: { handleCancel: any; title: string; tenant?: any }) => {
   const [domain, setDomain] = useState<string>('')
-  const [domains, setDomains] = useState<string[]>([])
+  const [domains, setDomains] = useState<string[]>(tenant?.domains ?? [])
 
   const [createTenantMutation] = useMutation(CREATE_TENANT_MUTATION)
+  const [updateTenantMutation] = useMutation(UPDATE_TENANT)
+
   const dispatch = useDispatch<AppDispatch>()
 
   const handleDomainChange = (event: any) => {
@@ -36,6 +40,16 @@ const CreateTenant = ({ handleCancel }: { handleCancel: any }) => {
     if (event.key === 'Enter') {
       handleAddDomain(event)
     }
+  }
+  const handleTenantUpdate = () => {
+    updateTenantMutation({
+      variables: { updateTenantId: tenant?._id, UpdateTenantInput: { ...formik.values } }
+    }).then(result => {
+      if (result.data) {
+        toast('Tenant Updated successfully')
+        dispatch(fetchTenants())
+      }
+    })
   }
   const handleFormSubmission = (values: any) => {
     console.log(values)
@@ -67,14 +81,18 @@ const CreateTenant = ({ handleCancel }: { handleCancel: any }) => {
   }
   const formik = useFormik({
     initialValues: {
-      name: '',
+      name: tenant?.name ? String(tenant?.name) : '',
       domains: domains,
-      assessment_duration: 0
+      assessment_duration: tenant?.assessment_duration ? parseInt(tenant?.assessment_duration) : 0
     },
-    onSubmit: values => handleFormSubmission({ ...values }),
+    onSubmit: values => (title === 'Create' ? handleFormSubmission({ ...values }) : handleTenantUpdate()),
 
     validationSchema: TenantValidationSchema
   })
+
+  const handleDurationChange = (value: number) => {
+    formik.setFieldValue('assessment_duration', value)
+  }
 
   return (
     <form onSubmit={formik.handleSubmit}>
@@ -92,18 +110,15 @@ const CreateTenant = ({ handleCancel }: { handleCancel: any }) => {
           />
         </Grid>
         <Grid item xs={6}>
-          <TextField
-            fullWidth
-            type='number'
-            name='assessment_duration'
+          <InputQuestionDuration
             label='Max Assessment Duration'
             placeholder='Enter max duration for assessment'
             value={formik.values.assessment_duration}
-            onChange={e => {
-              formik.handleChange(e)
-            }}
-            error={formik.touched.assessment_duration && Boolean(formik.errors.assessment_duration)}
-            helperText={formik.touched.assessment_duration && formik.errors.assessment_duration}
+            onChange={handleDurationChange}
+            error={Boolean(formik.touched.assessment_duration) && Boolean(formik.errors.assessment_duration)}
+            helperText={
+              (formik.touched.assessment_duration && formik.errors.assessment_duration) || 'Max Duration is 15 minutes'
+            } 
           />
         </Grid>
         <Grid item xs={12}>
@@ -131,7 +146,7 @@ const CreateTenant = ({ handleCancel }: { handleCancel: any }) => {
           ))}
         </Grid>
       </Grid>
-      <ActionButtons loading={false} submitText='Add' handleCancel={handleCancel} />
+      <ActionButtons loading={false} submitText={title === 'Create' ? 'Add' : 'Update'} handleCancel={handleCancel} />
     </form>
   )
 }
