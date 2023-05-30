@@ -4,3 +4,24 @@
 .red_icon:hover {
   color: red;
 }
+.redInput {
+  input {
+    color: red;
+    border-color: red;
+  }
+
+  label {
+    color: red !important;
+  }
+
+  .MuiInputAdornment-root {
+    color: red;
+  }
+
+  .helperText {
+    color: red;
+  }
+}
+.redHelperText {
+  color: red;
+}

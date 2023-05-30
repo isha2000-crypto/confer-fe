@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext } from 'react'
-import { Formik } from 'formik'
-import { validationSchema } from '../../../lib/schema/validationSchema'
+import { Formik, FieldArray, useFormikContext } from 'formik'
 
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
@@ -9,20 +8,22 @@ import Divider from '@mui/material/Divider'
 import TextField from '@mui/material/TextField'
 import CardContent from '@mui/material/CardContent'
 import CreateQuestion from '../../molecules/CreateQuestion/CreateQuestion'
+
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
-
+import FormHelperText from '@mui/material/FormHelperText'
 import { ACTIONS, SUBJECTS, Task_Types } from '../../../custom-types/enum'
 
 import { useMutation } from '@apollo/client'
 import { CREATE_ASSESSMENT_MUTATION, UPDATE_ASSESSMENT_MUTATION } from 'src/lib/graphql/Mutation'
 import toast from 'react-hot-toast'
-import { TransitionGroup } from 'react-transition-group'
-import { Collapse } from '@mui/material'
+
 import { useRouter } from 'next/router'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
+import { minutesToSeconds } from 'src/utils/unitConversion'
+import { CreateSchema } from 'src/lib/schema/CreateSchema'
 
 interface Question {
   id: number
@@ -31,86 +32,85 @@ interface Question {
   duration: number
 }
 interface Props {
-  viewAssessment?: any
   isReadOnly?: boolean
   isEdit?: any
   assessmentId?: any
   initialAssessment?: any
 }
 
-const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, viewAssessment }: Props) => {
+const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }: Props) => {
   const ability = useContext(AbilityContext)
-  const [questions, setQuestions] = useState<Question[]>(initialAssessment?.tasks || [])
+  const [initialQuestions, setInitialQuestions] = useState<Question[]>(initialAssessment?.tasks || [])
   const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
   const [updateAssessmentMutation] = useMutation(UPDATE_ASSESSMENT_MUTATION)
-  const [assessment, setAssessment] = useState({
-    title: isEdit ? initialAssessment.title : '',
-    description: isEdit ? initialAssessment.description : '',
-    type: isEdit ? initialAssessment.type : ''
-  })
+  const schema = CreateSchema()
 
-  const containerStyle = {
-    backgroundColor: 'background.default',
-    borderRadius: '20px',
-    padding: '20px',
-    margin: '20px 0',
-    marginLeft: '20px',
-    visibility: questions?.length ? 'visible' : 'hidden'
-  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [assessment, setAssessment] = useState({
+    title: isEdit || isReadOnly ? initialAssessment.title : '',
+    description: isEdit || isReadOnly ? initialAssessment.description : '',
+    type: isEdit || isReadOnly ? initialAssessment.type : ''
+  })
+  const formikContext = useFormikContext()
+
   useEffect(() => {
     if (isReadOnly) {
-      setQuestions(viewAssessment?.tasks || [])
+      setInitialQuestions(initialAssessment?.tasks || [])
     } else if (isEdit) {
-      setQuestions(initialAssessment?.tasks || [])
+      setInitialQuestions(initialAssessment?.tasks || [])
     }
-  }, [isReadOnly, isEdit, initialAssessment, viewAssessment])
-  const addQuestion = () => {
+  }, [isReadOnly, isEdit, initialAssessment])
+
+  useEffect(() => {
+    if (!isReadOnly && !isEdit && initialQuestions.length === 0) {
+      const arrayHelpers = formikContext?.getFieldHelpers('questions')
+      addQuestion(arrayHelpers)
+    }
+  }, [isReadOnly, isEdit, initialQuestions.length])
+
+  const addQuestion = (arrayHelpers: any) => {
     const newQuestion: Question = {
-      id: questions.length + 1,
+      id: arrayHelpers?.form?.values?.questions?.length + 1,
       type: 'TEXTUAL',
       description: '',
-      duration: 1
+      duration: 0
     }
-    setQuestions([...questions, newQuestion])
+    arrayHelpers?.push(newQuestion)
   }
 
-  const removeQuestion = (index: number) => {
+  const removeQuestion = (arrayHelpers: any, index: any) => {
     if (isReadOnly) {
-      toast.error('You cannot remove the task !')
+      toast.error('You cannot remove the task!')
     } else {
-      const updatedQuestions = [...questions]
-      updatedQuestions.splice(index, 1)
-      setQuestions([...updatedQuestions])
+      arrayHelpers?.remove(index)
     }
   }
 
-  const handleQuestionUpdate = (index: number, name: string, value: string | number) => {
+  const handleQuestionUpdate = (formik: any, index: any, name: any, value: any) => {
     if (isReadOnly) {
       toast('You cannot edit')
     } else {
-      const updateQuestions: any = [...questions]
+      const { questions } = formik.values
+      const updateQuestions = [...questions]
       if (name === 'duration') {
-        value = Number(value) * 60
+        const minutes = Number(value)
+        const seconds = minutesToSeconds(minutes)
+        value = seconds
       }
+
       updateQuestions[index][name] = value
-      setQuestions([...updateQuestions])
+      formik.setFieldValue('questions', updateQuestions)
     }
   }
 
-  const handleAssessmentSubmit = (event: any) => {
-    event.preventDefault()
+  const handleAssessmentSubmit = (values: any, { resetForm }: any) => {
     let isFormValid = true
-    if (questions.length === 0 || assessment.title === '' || assessment.description === '' || assessment.type === '') {
-      toast('Minimum one question is required!')
-
-      return
-    }
-
-    const modifiedQuestions = questions.map(question => {
+    const { questions, ...rest } = values
+    const modifiedQuestions = questions.map((question: any) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { id, ...rest } = question
       if (question.type === '' || question.description === '' || question.duration < 1) {
-        alert('Please Make Sure Question Fields are Valid!!')
+        toast('Please Make Sure Question Fields are Valid!!')
         isFormValid = false
       }
 
@@ -127,11 +127,11 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, v
         variables: {
           updateAssessmentId: assessmentId,
           updateAssessmentInput: {
-            ...assessment,
-            tasks: modifiedQuestions.map(question => ({
-              type: question.type,
-              description: question.description,
-              duration: question.duration
+            ...rest,
+            tasks: modifiedQuestions.map((question: any) => ({
+              type: question?.type,
+              description: question?.description,
+              duration: question?.duration
             }))
           }
         }
@@ -147,13 +147,12 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, v
         })
     } else {
       createAssessmentMutation({
-        variables: { createAssessmentInput: { ...assessment, tasks: modifiedQuestions } }
+        variables: { createAssessmentInput: { ...rest, tasks: modifiedQuestions } }
       })
         .then(result => {
           console.log(result.data)
-          setTimeout(() => {
-            resetForm()
-          }, 2000)
+
+          resetForm()
           toast.success('Assessment Created Successfully', {
             duration: 2000
           })
@@ -163,17 +162,10 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, v
         })
     }
   }
-  const resetForm = () => {
-    setAssessment({
-      title: '',
-      description: '',
-      type: ''
-    })
-    setQuestions([])
-  }
+
   const router = useRouter()
   const EditAssessment = () => {
-    const assessmentId = viewAssessment?._id
+    const assessmentId = initialAssessment?._id
 
     router.push(`/assessments/${assessmentId}/edit`)
   }
@@ -195,16 +187,20 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, v
         )}
         <Formik
           initialValues={{
-            title: '',
-            description: '',
-            type: '',
-            questions: questions
+            title: assessment.title,
+            description: assessment.description,
+            type: assessment.type,
+            questions: initialQuestions.map(question => ({
+              ...question,
+              duration: question.duration
+            }))
           }}
-          validationSchema={validationSchema}
+          validationSchema={schema}
           onSubmit={handleAssessmentSubmit}
+          enableReinitialize
         >
           {formik => (
-            <form onSubmit={handleAssessmentSubmit}>
+            <form onSubmit={formik.handleSubmit}>
               <h3 style={{ paddingLeft: '25px', paddingTop: '10px' }}>
                 {isReadOnly ? 'Assessment Details' : isEdit ? 'Edit Assessment' : 'Create Assessment'}
               </h3>
@@ -213,32 +209,16 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, v
                 <Grid container spacing={5} columns={1}>
                   <Grid item xs={12}>
                     <TextField
-                      required
                       fullWidth
                       type='title'
                       label='Title'
                       name='title'
                       placeholder='Task'
                       disabled={isReadOnly}
-                      value={
-                        isReadOnly
-                          ? viewAssessment.title
-                          : assessment.title || isEdit
-                          ? assessment.title
-                          : formik.values.title
-                      }
-                      onChange={event => {
-                        {
-                          !isReadOnly && setAssessment({ ...assessment, title: event.target.value })
-                          formik.handleChange(event)
-                          if (!isEdit) {
-                            formik.handleChange(event)
-                          }
-                          setAssessment({ ...assessment, title: event.target.value })
-                        }
-                      }}
+                      value={formik.values.title}
+                      onChange={formik.handleChange}
                       error={formik.touched.title && Boolean(formik.errors.title)}
-                      helperText={formik.touched.title && formik.errors.title}
+                      helperText={formik.touched.title && formik.errors.title ? String(formik.errors.title) : ''}
                     />
                   </Grid>
                   <Grid item xs={12} sm={12}>
@@ -246,26 +226,18 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, v
                       <TextField
                         fullWidth
                         multiline
-                        required
                         label='Description'
                         name='description'
                         disabled={isReadOnly}
                         rows={4}
-                        value={
-                          isReadOnly
-                            ? viewAssessment.description
-                            : assessment.description || isEdit
-                            ? assessment.description
-                            : formik.values.description
-                        }
-                        onChange={event => {
-                          if (!isEdit) {
-                            formik.handleChange(event)
-                          }
-                          setAssessment({ ...assessment, description: event.target.value })
-                        }}
+                        value={formik.values.description}
+                        onChange={formik.handleChange}
                         error={formik.touched.description && Boolean(formik.errors.description)}
-                        helperText={formik.touched.description && formik.errors.description}
+                        helperText={
+                          formik.touched.description && formik.errors.description
+                            ? String(formik.errors.description)
+                            : ''
+                        }
                       />
                     </div>
                   </Grid>
@@ -279,67 +251,64 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly, v
                           label='assessment Type'
                           name='type'
                           disabled={isReadOnly}
-                          value={
-                            isReadOnly
-                              ? viewAssessment.type
-                              : formik.values.type || isEdit
-                              ? assessment.type
-                              : formik.values.type
-                          }
-                          onChange={event => {
-                            if (!isEdit) {
-                              formik.handleChange(event)
-                            }
-                            setAssessment({ ...assessment, type: event.target.value })
-                          }}
+                          value={formik.values.type}
+                          onChange={formik.handleChange}
                           error={formik.touched.type && Boolean(formik.errors.type)}
-                          required
                         >
                           <MenuItem value='CODING'>{Task_Types.CODING}</MenuItem>
                           <MenuItem value='LEADERSHIP'>{Task_Types.LEADERSHIP}</MenuItem>
                         </Select>
+                        <FormHelperText error={formik.touched.type && Boolean(formik.errors.type)}>
+                          {formik.touched.type && formik.errors.type ? String(formik.errors.type) : null}
+                        </FormHelperText>
                       </FormControl>
                     </div>
                   </Grid>
-
-                  <Grid container sx={containerStyle} spacing={5} justifyContent={'center'}>
-                    <TransitionGroup>
-                      {questions?.map((q, index) => (
-                        <Collapse key={index}>
-                          <CreateQuestion
-                            count={index}
-                            {...q}
-                            removeQuestion={removeQuestion}
-                            handleQuestionUpdate={handleQuestionUpdate}
-                            isReadOnly={isReadOnly}
-                          />
-                        </Collapse>
-                      ))}
-                    </TransitionGroup>
-                  </Grid>
-
                   <Divider sx={{ mb: '0 !important' }} />
+                  <Grid item container justifyContent='center'>
+                    <FieldArray name='questions'>
+                      {arrayHelpers => (
+                        <>
+                          <Grid justifyContent='center'>
+                            {arrayHelpers.form.values.questions.length > 0 &&
+                              arrayHelpers.form.values.questions.map((question: any, index: any) => (
+                                <CreateQuestion
+                                  key={index}
+                                  formik={arrayHelpers.form}
+                                  count={index}
+                                  index={index}
+                                  {...question}
+                                  removeQuestion={() => removeQuestion(arrayHelpers, index)}
+                                  handleQuestionUpdate={(name, value) =>
+                                    handleQuestionUpdate(arrayHelpers.form, index, name, value)
+                                  }
+                                  isReadOnly={isReadOnly}
+                                />
+                              ))}
+                          </Grid>
 
-                  {!isReadOnly && (
-                    <Grid item container justifyContent='center'>
-                      <Button
-                        onClick={addQuestion}
-                        className='add-question-button'
-                        sx={{
-                          width: '100%',
-                          fontSize: '1.5rem',
-                          padding: '1rem',
-                          borderRadius: '0.5rem',
-                          transition: 'all 0.3s ease',
-                          border: '2px dashed',
-                          borderColor: 'text.primary',
-                          color: 'text.primary'
-                        }}
-                      >
-                        Add Question
-                      </Button>
-                    </Grid>
-                  )}
+                          {!isReadOnly && (
+                            <Button
+                              onClick={() => addQuestion(arrayHelpers)}
+                              className='add-question-button'
+                              sx={{
+                                width: '100%',
+                                fontSize: '1.5rem',
+                                padding: '1rem',
+                                borderRadius: '0.5rem',
+                                transition: 'all 0.3s ease',
+                                border: '2px dashed',
+                                borderColor: 'text.primary',
+                                color: 'text.primary'
+                              }}
+                            >
+                              Add Question
+                            </Button>
+                          )}
+                        </>
+                      )}
+                    </FieldArray>
+                  </Grid>
                 </Grid>
               </CardContent>
               <Divider sx={{ m: '0 !important' }} />
