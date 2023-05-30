@@ -101,7 +101,6 @@ function TableRoleEdit({ role, loading, handleSubmit, handleCancel, buttonTitle 
       title: title,
       permissions: getPermissionsObject(selectedCheckbox)
     }
-    console.log(newRole)
 
     handleSubmit(newRole)
     setTitle('')

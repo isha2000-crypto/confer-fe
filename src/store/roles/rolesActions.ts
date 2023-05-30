@@ -20,7 +20,6 @@ export const fetchRoles = () => async (dispatch: (arg0: { payload: any; type: st
     const { data } = await client.query({
       query: LOAD_ROLES
     })
-    console.log(data)
     dispatch(setRolesSuccess(data.roles))
   } catch (error: any) {
     dispatch(setRolesFailure(error.message))

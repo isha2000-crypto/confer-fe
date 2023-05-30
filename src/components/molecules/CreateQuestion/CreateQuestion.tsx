@@ -46,7 +46,6 @@ const CreateQuestion = (props: QuestionProps) => {
   }
 
   const admin_duration = data?.currentTenant?.assessment_duration / 60
-  console.log('count here ', props.count)
 
   return (
     <>

@@ -9,8 +9,6 @@ import Icon from 'src/@core/components/icon'
 import VideoPlayer from '../VideoPlayer'
 
 const AccordionTasks = ({ tasks, responses }: any) => {
-  console.log('Tasks', tasks)
-
   return (
     <>
       {tasks.map((task: any, index: number) => {

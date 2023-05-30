@@ -34,7 +34,6 @@ const defineRulesFor = (role: Role, subject: string) => {
   }
 
   if (role && role.tenantId === null) {
-    console.log('Role', role)
     can(Object.values(ACTIONS), SUBJECTS.SYSTEM_ADMIN)
   }
 

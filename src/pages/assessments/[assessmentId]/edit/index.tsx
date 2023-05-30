@@ -39,7 +39,6 @@ const EditAssessmentCreation = () => {
   if (loading) return <Spinner />
 
   if (error) return <div>Error</div>
-  console.log('ass to', initialAssessment)
 
   return (
     <>

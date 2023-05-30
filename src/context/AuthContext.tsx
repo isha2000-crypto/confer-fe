@@ -101,7 +101,6 @@ const AuthProvider = ({ children }: Props) => {
         router.replace(redirectURL as string)
       })
       .catch(err => {
-        console.log('Error', err)
         if (errorCallback) errorCallback(err)
       })
   }
@@ -143,7 +142,6 @@ const AuthProvider = ({ children }: Props) => {
         router.replace(redirectURL as string)
       })
       .catch(err => {
-        console.log('Error in LoginGoogle', err)
         if (errorCallback) errorCallback(err)
       })
   }

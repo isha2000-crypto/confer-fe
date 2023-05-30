@@ -48,11 +48,6 @@ const InviteForm = () => {
   if (rolesStore.loading) return <FallbackSpinner />
   if (rolesStore.error) router.push('/404')
 
-  console.log(
-    'roles here',
-    rolesStore.roles.map(title => title.title)
-  )
-
   const handleEmailsChange = (event: any) => {
     setInputValue(event.target.value)
   }
