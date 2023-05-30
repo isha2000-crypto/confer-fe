@@ -32,6 +32,7 @@ const RolesComponent = () => {
   const router = useRouter()
   if (rolesStore.loading) return <FallbackSpinner />
   if (rolesStore.error) router.push('/404')
+  console.log('user roles', rolesStore.roles)
 
   return (
     <Grid container spacing={6}>
