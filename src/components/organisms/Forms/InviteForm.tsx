@@ -13,6 +13,14 @@ import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import InputLabel from '@mui/material/InputLabel'
 import { Alert, FormControl } from '@mui/material'
+import { useEffect } from 'react'
+
+// ** Redux Imports
+import { useSelector, useDispatch } from 'react-redux'
+import { AppDispatch, RootState } from 'src/store'
+import { fetchRoles } from 'src/store/roles/rolesActions'
+import { useRouter } from 'next/router'
+import FallbackSpinner from 'src/@core/components/spinner'
 
 const Form = styled('form')(({ theme }) => ({
   maxWidth: 400,
@@ -28,8 +36,22 @@ const InviteForm = () => {
   const [failedInvite, setFailedInvite] = useState([])
   const [loading, setLoading] = useState(false)
   const [inviteUserMutation] = useMutation(INVITE_USER_MUTATION)
-
+  const dispatch = useDispatch<AppDispatch>()
+  const rolesStore = useSelector((store: RootState) => store.roles)
   const [userRole, setUserRole] = useState('user')
+
+  useEffect(() => {
+    dispatch(fetchRoles())
+  }, [dispatch])
+
+  const router = useRouter()
+  if (rolesStore.loading) return <FallbackSpinner />
+  if (rolesStore.error) router.push('/404')
+
+  console.log(
+    'roles here',
+    rolesStore.roles.map(title => title.title)
+  )
 
   const handleEmailsChange = (event: any) => {
     setInputValue(event.target.value)
@@ -111,16 +133,20 @@ const InviteForm = () => {
       <Grid item xs={12} md={4}>
         <FormControl fullWidth sx={{ alignSelf: 'center' }}>
           <InputLabel id='role-select-label'>Role</InputLabel>
+
           <Select
             labelId='role-select-label'
             id='role-select'
             value={userRole}
             onChange={handleRoleChange}
             label='Role'
+            placeholder='Role'
           >
-            <MenuItem value='admin'>Admin</MenuItem>
-            <MenuItem value='user'>User</MenuItem>
-            <MenuItem value='superadmin'>Superadmin</MenuItem>
+            {rolesStore.roles.map(role => (
+              <MenuItem key={role.title} value='user'>
+                {role.title}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
       </Grid>
