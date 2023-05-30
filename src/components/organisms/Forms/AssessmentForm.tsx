@@ -1,8 +1,6 @@
 import { useState, useEffect, useContext } from 'react'
 import { Formik, FieldArray, useFormikContext } from 'formik'
 
-import { assessmentValidationSchema } from '../../../lib/schema/validationSchema'
-
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
