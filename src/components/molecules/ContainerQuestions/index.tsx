@@ -16,7 +16,7 @@ function ContainerQuestion({ assessment, currentTask }: Props) {
           }`}
         </Typography>
       </Card>
-      <CardContent>
+      <div className={styles.questionCardWrapper}>
         <Card className={styles.questionCard}>
           <CardContent>
             <Typography className={styles.questionCard_paragraph} paragraph={true}>
@@ -24,7 +24,7 @@ function ContainerQuestion({ assessment, currentTask }: Props) {
             </Typography>
           </CardContent>
         </Card>
-      </CardContent>
+      </div>
     </Card>
   )
 }

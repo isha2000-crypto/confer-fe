@@ -6,7 +6,7 @@ import ViewSubmittedAssessment from '@components/organisms/SubmittedAssessments/
 import { useLazyQuery } from '@apollo/client'
 import { SUBMITTED_ASSESSMENT_BY_ID } from 'src/lib/graphql/Query'
 import Spinner from 'src/@core/components/spinner'
-import { Card } from '@mui/material'
+import { Card, Theme, useMediaQuery } from '@mui/material'
 import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 
 const SubmittedAssessmentDetail = () => {
@@ -14,7 +14,7 @@ const SubmittedAssessmentDetail = () => {
   const { submittedAssessmentId } = router.query
   const [submittedAssessment, setSubmittedAssessment] = React.useState<any>(null)
   const [getAssessment, { loading, error }] = useLazyQuery(SUBMITTED_ASSESSMENT_BY_ID)
-
+  const largeScreen = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'))
   React.useEffect(() => {
     const fetchData = async () => {
       const result = await getAssessment({ variables: { submittedAssessmentId: submittedAssessmentId } })
@@ -29,7 +29,7 @@ const SubmittedAssessmentDetail = () => {
   if (error) return <div>Error</div>
 
   return (
-    <Card sx={{ padding: '2rem' }}>
+    <Card sx={{ padding: largeScreen ? '2rem' : '1rem' }}>
       {submittedAssessment && <ViewSubmittedAssessment data={submittedAssessment} />}
     </Card>
   )

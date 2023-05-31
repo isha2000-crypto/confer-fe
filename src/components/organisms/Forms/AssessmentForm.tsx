@@ -66,6 +66,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
       const arrayHelpers = formikContext?.getFieldHelpers('questions')
       addQuestion(arrayHelpers)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isReadOnly, isEdit, initialQuestions.length])
 
   const addQuestion = (arrayHelpers: any) => {
