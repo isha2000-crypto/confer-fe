@@ -3,7 +3,7 @@ import { useFormik } from 'formik'
 import React, { useState } from 'react'
 import CancelIcon from '@mui/icons-material/Cancel'
 import ActionButtons from '@components/molecules/Actions/ActionButtons'
-import { TenantValidationSchema } from 'src/lib/schema/validationSchema'
+import { TenantValidationSchema } from 'src/lib/yup-schema'
 
 import { useMutation } from '@apollo/client'
 import { CREATE_TENANT_MUTATION, UPDATE_TENANT } from 'src/lib/graphql/Mutation/tenantMutation'
@@ -118,7 +118,7 @@ const CreateTenant = ({ handleCancel, title, tenant }: { handleCancel: any; titl
             error={Boolean(formik.touched.assessment_duration) && Boolean(formik.errors.assessment_duration)}
             helperText={
               (formik.touched.assessment_duration && formik.errors.assessment_duration) || 'Max Duration is 15 minutes'
-            } 
+            }
           />
         </Grid>
         <Grid item xs={12}>

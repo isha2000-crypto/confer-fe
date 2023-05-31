@@ -16,7 +16,9 @@ interface InputQuestionDurationProps {
 }
 
 const InputQuestionDuration = (props: InputQuestionDurationProps) => {
-  const { value, onChange, error = null, helperText } = props
+  const { value, onChange, error, helperText } = props
+  console.log('Error', error)
+  console.log('Helper Text', helperText)
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = parseInt(event.target.value)
