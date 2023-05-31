@@ -1,5 +1,5 @@
 // ** React Imports
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useContext, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -11,10 +11,22 @@ import Typography from '@mui/material/Typography'
 // ** Custom Components Imports
 import RenderCustomAvatar from './RenderCustomAvatar'
 import { formatDate } from 'src/@core/utils/format'
+import CustomChip from 'src/@core/components/mui/chip'
+
 import { useRouter } from 'next/router'
-import { URLS } from '@custom-types/constants'
 import QuickSearchToolbar from '../Data-Grid/QuickSearchToolbar'
 import { escapeRegExp } from 'src/utils/functions'
+import { Button, Dialog, DialogTitle, IconButton } from '@mui/material'
+import Icon from 'src/@core/components/icon'
+import { URLS } from '@custom-types/constants'
+import { useMutation } from '@apollo/client'
+import { DELETE_SUBMITTED_ASSESSMENT } from 'src/lib/graphql/Mutation'
+import { toast } from 'react-hot-toast'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from 'src/store'
+import { fetchAssessments } from 'src/store/assessments/assessmentsSlice'
+import { AbilityContext } from 'src/layouts/components/acl/Can'
+import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 
 interface CellType {
   row: any
@@ -96,18 +108,74 @@ const tableColumns = [
         </Typography>
       )
     }
+  },
+  {
+    flex: 0.1,
+    minWidth: 110,
+    field: 'status',
+    headerName: 'Status',
+    renderCell: ({ row }: CellType) => {
+      return (
+        <CustomChip skin='light' size='small' label={row.status} color={'info'} sx={{ textTransform: 'capitalize' }} />
+      )
+    }
   }
 ]
 
 const TableSubmittedAssessments = ({ data }: any) => {
   const router = useRouter()
+  const dispatch = useDispatch<AppDispatch>()
+  const [removeSubmittedAssessment] = useMutation(DELETE_SUBMITTED_ASSESSMENT)
+  const ability = useContext(AbilityContext)
 
   // ** State
   const [pageSize, setPageSize] = useState<number>(10)
-  const columns = [...tableColumns]
+  const [open, setOpen] = useState(false)
+  const [selectedAssessmentId, setSelectedAssessmentId] = useState('')
+  const columns = [
+    ...tableColumns,
+    ability?.can(ACTIONS.DELETE, SUBJECTS.ASSESSMENT_SUBMISSION_MANAGEMENT) && {
+      flex: 0.1,
+      minWidth: 80,
+      field: 'actions',
+      headerName: 'Actions',
+      renderCell: ({}: CellType) => (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton>
+            <Icon icon='mdi:bin-outline' />
+          </IconButton>
+        </Box>
+      )
+    }
+  ]
+  const handleClose = () => {
+    setOpen(false)
+  }
+  const handleDeleteAssessment = () => {
+    console.log(selectedAssessmentId)
+    removeSubmittedAssessment({
+      variables: { removeSubmittedAssessmentId: selectedAssessmentId }
+    })
+      .then(result => {
+        if (result.data) {
+          toast('Assessment Deleted Successfully')
+          dispatch(fetchAssessments())
+        }
+      })
+      .catch(reason => {
+        console.log(reason)
+      })
+  }
+  const handleRowClick = (params: any) => {
+    if (params.field === 'actions') {
+      console.log(params)
+      setSelectedAssessmentId(params.row._id)
+      setOpen(true)
 
-  const handleRowClick = ({ row }: CellType) => {
-    router.push(`${URLS.ASSESSMENT_URL}/submitted/${row.userId}/${row._id}/view`)
+      return
+    }
+
+    router.push(`${URLS.ASSESSMENT_URL}/submitted/${params.row.userId}/${params.row._id}/view`)
   }
 
   const [searchText, setSearchText] = useState<string>('')
@@ -132,20 +200,41 @@ const TableSubmittedAssessments = ({ data }: any) => {
   return (
     <>
       <Grid container spacing={6}>
+        <Dialog maxWidth='sm' onClose={handleClose} open={open}>
+          <DialogTitle sx={{ textAlign: 'center' }}>
+            <Typography variant='h5' component='span'>
+              {` Are you sure you want to delete?`}
+            </Typography>
+          </DialogTitle>
+          <Box
+            className='demo-space-x'
+            sx={{ display: 'flex', justifyContent: 'end', alignItems: 'flex-end', p: { xs: 6, sm: 6 } }}
+          >
+            <Button size='large' type='submit' variant='contained' onClick={handleDeleteAssessment}>
+              {'Delete'}
+            </Button>
+            <Button size='large' color='secondary' variant='outlined' onClick={handleClose}>
+              Cancel
+            </Button>
+          </Box>
+        </Dialog>
         <Grid item xs={12}>
           <Card>
             <DataGrid
               autoHeight
               rows={filteredData.length ? filteredData : data}
               getRowId={row => row._id}
-              columns={columns}
+              columns={columns.map((column: any) => ({
+                ...column,
+                disableClickEventBubbling: true
+              }))}
               pageSize={pageSize}
               disableSelectionOnClick
               components={{ Toolbar: QuickSearchToolbar }}
               rowsPerPageOptions={[10, 25, 50]}
               onPageSizeChange={newPageSize => setPageSize(newPageSize)}
               sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
-              onRowClick={handleRowClick}
+              onCellClick={handleRowClick}
               componentsProps={{
                 baseButton: {
                   variant: 'outlined'

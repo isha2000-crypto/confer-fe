@@ -44,12 +44,16 @@ const CreateTenant = ({ handleCancel, title, tenant }: { handleCancel: any; titl
   const handleTenantUpdate = () => {
     updateTenantMutation({
       variables: { updateTenantId: tenant?._id, UpdateTenantInput: { ...formik.values } }
-    }).then(result => {
-      if (result.data) {
-        toast('Tenant Updated successfully')
-        dispatch(fetchTenants())
-      }
     })
+      .then(result => {
+        if (result.data) {
+          toast('Tenant Updated successfully')
+          dispatch(fetchTenants())
+        }
+      })
+      .catch(reason => {
+        if (reason) console.log(reason)
+      })
   }
   const handleFormSubmission = (values: any) => {
     console.log(values)
@@ -118,7 +122,7 @@ const CreateTenant = ({ handleCancel, title, tenant }: { handleCancel: any; titl
             error={Boolean(formik.touched.assessment_duration) && Boolean(formik.errors.assessment_duration)}
             helperText={
               (formik.touched.assessment_duration && formik.errors.assessment_duration) || 'Max Duration is 15 minutes'
-            } 
+            }
           />
         </Grid>
         <Grid item xs={12}>

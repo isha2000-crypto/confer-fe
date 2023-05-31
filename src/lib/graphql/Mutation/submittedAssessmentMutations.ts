@@ -75,3 +75,11 @@ export const UPDATE_ASSESSMENT_SUBMISSION = gql`
     }
   }
 `
+export const DELETE_SUBMITTED_ASSESSMENT = gql`
+  mutation RemoveSubmittedAssessment($removeSubmittedAssessmentId: ObjectId!) {
+    removeSubmittedAssessment(id: $removeSubmittedAssessmentId) {
+      _id
+      updatedAt
+    }
+  }
+`
