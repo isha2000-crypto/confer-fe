@@ -118,7 +118,7 @@ const CreateTenant = ({ handleCancel, title, tenant }: { handleCancel: any; titl
             error={Boolean(formik.touched.assessment_duration) && Boolean(formik.errors.assessment_duration)}
             helperText={
               (formik.touched.assessment_duration && formik.errors.assessment_duration) || 'Max Duration is 15 minutes'
-            } 
+            }
           />
         </Grid>
         <Grid item xs={12}>

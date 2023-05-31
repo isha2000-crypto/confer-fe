@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Task } from '@custom-types/assessmentsType'
-import { Grid } from '@mui/material'
+import { Grid, Theme, useMediaQuery } from '@mui/material'
 import React from 'react'
 import { useState } from 'react'
 
@@ -44,6 +44,7 @@ function ContainerVideoRecorder({ initiatedSubmission }: props) {
   const [submitted, setSubmitted] = useState<boolean>(false)
   const router = useRouter()
   const auth = useAuth()
+  const largeScreen = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'))
 
   const handleRecording = (_id: string, status: string, videoUrl: string | null) => {
     setRecordings((prev: any) => ({
@@ -185,8 +186,26 @@ function ContainerVideoRecorder({ initiatedSubmission }: props) {
 
   return (
     <>
-      <Grid container sx={{ height: '94vh', flexWrap: 'nowrap' }} padding={3} className={classnames.animater_wrapper}>
-        <Grid item padding={'0 2rem'} xs={fullScreen ? 12 : 9} style={GridTransition}>
+      <Grid
+        container
+        sx={{
+          minHeight: theme => `calc(100vh - ${theme.spacing((theme.mixins.toolbar.minHeight as number) / 4)})`,
+          height: theme => `calc(100vh - ${theme.spacing((theme.mixins.toolbar.minHeight as number) / 4)})`,
+          flexWrap: largeScreen ? 'wrap' : 'wrap-reverse',
+          flexDirection: largeScreen ? 'row' : 'row-reverse'
+        }}
+        padding={largeScreen ? 2 : 1}
+        className={classnames.animater_wrapper}
+      >
+        <Grid
+          item
+          paddingX={largeScreen ? 2 : 0}
+          sx={{ height: largeScreen ? '100%' : fullScreen ? '100%' : '77%' }}
+          xs={12}
+          md={fullScreen ? 12 : 8}
+          lg={fullScreen ? 12 : 9}
+          style={GridTransition}
+        >
           <ContainerVideo
             currentTask={currentTask}
             handleUserMediaError={handleUserMediaError}
@@ -197,7 +216,7 @@ function ContainerVideoRecorder({ initiatedSubmission }: props) {
         </Grid>
 
         {!loading && !fullScreen && (
-          <Grid item xs={3} style={GridTransition}>
+          <Grid item xs={12} md={4} lg={3} style={GridTransition}>
             <ContainerQuestion assessment={initiatedSubmission?.assessment} currentTask={currentTask} />
           </Grid>
         )}

@@ -21,7 +21,7 @@ const AccordionTasks = ({ tasks, responses }: any) => {
             >
               <Typography variant='body1' sx={{ fontWeight: 'bold' }}>{`${index + 1}. ${task.description}`}</Typography>
             </AccordionSummary>
-            <AccordionDetails sx={{ textAlign: 'center' }}>
+            <AccordionDetails sx={{ textAlign: 'center', padding: '1rem 0 ' }}>
               <VideoPlayer source={responses[index].videoUrl} id={task._id} />
             </AccordionDetails>
           </Accordion>

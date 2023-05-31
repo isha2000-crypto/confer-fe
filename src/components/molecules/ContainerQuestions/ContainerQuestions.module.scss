@@ -1,34 +1,59 @@
 .questionContainer {
-  display: grid;
-  align-self: end;
+  display: flex;
+  flex-direction: column;
   height: 100%;
   width: 100%;
   background: white !important;
   box-shadow: none !important;
   border: 1px solid #00aca1;
   border-radius: 45px !important;
+
+  @media (max-width: 991px) {
+    border-radius: 15px !important;
+  }
 }
 
-.questionCard {
-  display: grid;
-  height: 15vh;
-  border: 1px solid #00aca1;
+.questionCardWrapper {
+  display: flex;
   justify-content: center;
   align-items: center;
-  justify-self: center;
+  flex: 1;
+  padding: 2%;
 
-  .questionCard_paragraph {
-    font-size: 24px;
+  .questionCard {
+    display: grid;
+    border: 1px solid #00aca1;
+    justify-content: center;
+    align-items: center;
+    justify-self: center;
+
+    .questionCard_paragraph {
+      font-size: 18px;
+      word-break: break-all;
+
+      @media (max-width: 991px) {
+        font-size: 12px;
+      }
+    }
   }
 }
 
 .questionNumberCard {
   background: #00aca1 !important;
   height: 3rem;
+  border-radius: 0 !important;
+  @media (max-width: 991px) {
+    height: 2rem;
+  }
 
   .questionNumberCard_paragraph {
     font-size: 24px;
     color: white;
     text-align: center;
+
+    @media (max-width: 991px) {
+      font-size: 14px;
+      line-height: 2;
+    }
   }
 }
