@@ -31,7 +31,7 @@ function UsersList() {
           </Typography>
         }
       />
-      <TableUsersList users={usersStore.users} anchor={false} header={false} />
+      <TableUsersList users={usersStore.users} />
     </>
   )
 }
