@@ -31,7 +31,7 @@ const Users = () => {
         subtitle={<Typography variant='body2'>You can view all the available Users here</Typography>}
       />
       <Grid item xs={12} sx={{ mb: 5 }}>
-        <TableUsersList users={usersStore.users} anchor />
+        <TableUsersList users={usersStore.users} />
       </Grid>
     </Grid>
   )

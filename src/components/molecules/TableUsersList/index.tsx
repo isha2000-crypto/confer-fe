@@ -16,7 +16,6 @@ import { ThemeColor } from 'src/@core/layouts/types'
 import { UsersType } from '@custom-types/user-type'
 
 import DialogUserEdit from '../Dialog/DialogUserEdit/DialogUserEdit'
-import RowOptions from './rowOptions'
 import { IconButton } from '@mui/material'
 import { Icon } from '@iconify/react'
 
@@ -43,7 +42,7 @@ const userStatusObj: UserStatusType = {
   inactive: 'secondary'
 }
 
-const TableUsersList = ({ users, anchor }: { users: any; anchor: boolean }) => {
+const TableUsersList = ({ users }: { users: any }) => {
   // ** State
   const ability = useContext(AbilityContext)
 
@@ -134,21 +133,18 @@ const TableUsersList = ({ users, anchor }: { users: any; anchor: boolean }) => {
         }
       },
       {
-        accessorKey: '_id',
+        accessorKey: 'actions',
         header: 'Actions',
-        Cell: ({ row }: CellType) =>
-          !anchor ? (
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton
-                onClick={event => handleEditRole(event, row.original)}
-                disabled={row.original.role.title === 'Super Admin'}
-              >
-                <Icon icon='mdi:pencil-outline' />
-              </IconButton>
-            </Box>
-          ) : (
-            <RowOptions />
-          )
+        Cell: ({ row }: CellType) => (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton
+              onClick={event => handleEditRole(event, row.original)}
+              disabled={row.original.role.title === 'Super Admin'}
+            >
+              <Icon icon='mdi:pencil-outline' />
+            </IconButton>
+          </Box>
+        )
       }
     ],
     []

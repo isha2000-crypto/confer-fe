@@ -1,6 +1,7 @@
 import { Icon } from '@iconify/react'
 import { IconButton, Menu, MenuItem } from '@mui/material'
 import { useState } from 'react'
+import { SyntheticEvent } from 'react-draft-wysiwyg'
 
 const RowOptions = () => {
   // ** Hooks
@@ -13,12 +14,13 @@ const RowOptions = () => {
   const handleRowOptionsClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
   }
-  const handleRowOptionsClose = () => {
+  const handleRowOptionsClose = (event: SyntheticEvent) => {
+    event.stopPropagation()
     setAnchorEl(null)
   }
 
-  const handleDelete = () => {
-    handleRowOptionsClose()
+  const handleDelete = (event: any) => {
+    handleRowOptionsClose(event)
   }
 
   return (
