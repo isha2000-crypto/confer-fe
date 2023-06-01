@@ -127,17 +127,6 @@ const TableSubmittedAssessments = ({ data }: any) => {
             />
           )
         }
-      },
-      {
-        accessorKey: 'actions',
-        header: 'Actions',
-        Cell: ({ row }: CellType) => (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton onClick={e => handleDelete(e, row.original._id)}>
-              <Icon icon='mdi:bin-outline' />
-            </IconButton>
-          </Box>
-        )
       }
     ],
     []
@@ -161,6 +150,19 @@ const TableSubmittedAssessments = ({ data }: any) => {
       .catch(reason => {
         console.error(reason.message)
       })
+  }
+  if (ability?.can(ACTIONS.UPDATE, SUBJECTS.ASSESSMENT_SUBMISSION_MANAGEMENT)) {
+    columns.push({
+      accessorKey: 'actions',
+      header: 'Actions',
+      Cell: ({ row }: CellType) => (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton onClick={e => handleDelete(e, row.original._id)}>
+            <Icon icon='mdi:bin-outline' />
+          </IconButton>
+        </Box>
+      )
+    })
   }
 
   return (
