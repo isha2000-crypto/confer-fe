@@ -63,6 +63,7 @@ const TableUsersList = ({ users }: { users: any }) => {
   const columns = useMemo<MRT_ColumnDef<any>[]>(
     () => [
       {
+        accessorKey: 'name',
         header: 'Author',
         Cell: ({ row }: CellType) => {
           const { name } = row.original
@@ -103,6 +104,9 @@ const TableUsersList = ({ users }: { users: any }) => {
         )
       },
       {
+        accessorFn: (row: { role: { title: string } }) => {
+          return row.role.title
+        },
         accessorKey: 'role',
         header: 'Role',
         Cell: ({ row }: CellType) => {
@@ -116,6 +120,9 @@ const TableUsersList = ({ users }: { users: any }) => {
         }
       },
       {
+        accessorFn: (row: { email_verified: boolean }) => {
+          return row.email_verified ? 'active' : 'pending'
+        },
         accessorKey: 'email_verified',
         header: 'Status',
         Cell: ({ row }: CellType) => {
@@ -131,24 +138,26 @@ const TableUsersList = ({ users }: { users: any }) => {
             />
           )
         }
-      },
-      {
-        accessorKey: 'actions',
-        header: 'Actions',
-        Cell: ({ row }: CellType) => (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton
-              onClick={event => handleEditRole(event, row.original)}
-              disabled={row.original.role.title === 'Super Admin'}
-            >
-              <Icon icon='mdi:pencil-outline' />
-            </IconButton>
-          </Box>
-        )
       }
     ],
     []
   )
+  if (ability?.can(ACTIONS.UPDATE, SUBJECTS.ROLES)) {
+    columns.push({
+      accessorKey: 'actions',
+      header: 'Actions',
+      Cell: ({ row }: CellType) => (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton
+            onClick={event => handleEditRole(event, row.original)}
+            disabled={row.original.role.title === 'Super Admin'}
+          >
+            <Icon icon='mdi:pencil-outline' />
+          </IconButton>
+        </Box>
+      )
+    })
+  }
 
   return (
     <>

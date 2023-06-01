@@ -78,6 +78,9 @@ const TableTenantsList = ({ tenants }: any) => {
           })
       },
       {
+        accessorFn: (row: { disabled: boolean }) => {
+          return row.disabled ? 'disabled' : 'active'
+        },
         accessorKey: 'disabled',
         header: 'Status',
         Cell: ({ row }: CellType) => {
@@ -130,7 +133,7 @@ const TableTenantsList = ({ tenants }: any) => {
   const [UpdateTenantStatus] = useMutation(UPDATE_TENANT_STATUS)
   const [getTenant, { error }] = useLazyQuery(FETCH_TENANT_BY_ID)
   const dispatch = useDispatch<AppDispatch>()
-  
+
   const handleEditTenant = async (id: string) => {
     const { data } = await getTenant({ variables: { tenantId: id } })
     setSelectedTenant(data?.tenant)

@@ -43,7 +43,10 @@ const TableSubmittedAssessments = ({ data }: any) => {
   const columns = useMemo<MRT_ColumnDef<any>[]>(
     () => [
       {
-        accessorKey: 'title',
+        accessorFn: (row: { assessment: { title: string } }) => {
+          return row.assessment.title
+        },
+        accessorKey: 'assessment',
         header: 'Title',
         Cell: ({ row }: CellType) => {
           return (
@@ -60,6 +63,9 @@ const TableSubmittedAssessments = ({ data }: any) => {
         header: 'Created At'
       },
       {
+        accessorFn: (row: { user: { name: string; email: string } }) => {
+          return row.user.name + ' ' + row.user.email
+        },
         accessorKey: 'name',
         header: 'Submitted By',
         Cell: ({ row }: CellType) => {
@@ -91,7 +97,10 @@ const TableSubmittedAssessments = ({ data }: any) => {
         }
       },
       {
-        accessorKey: 'tenantName',
+        accessorFn: (row: { tenant: { name: string } }) => {
+          return row.tenant.name
+        },
+        accessorKey: 'tenant',
         header: 'Organization',
         Cell: ({ row }: CellType) => {
           return (
@@ -102,6 +111,9 @@ const TableSubmittedAssessments = ({ data }: any) => {
         }
       },
       {
+        accessorFn: (row: { status: string }) => {
+          return row.status
+        },
         accessorKey: 'status',
         header: 'Status',
         Cell: ({ row }: CellType) => {
@@ -184,6 +196,7 @@ const TableSubmittedAssessments = ({ data }: any) => {
             cursor: 'pointer'
           }
         })}
+        enableHiding
         initialState={{
           columnVisibility: { actions: ability?.can(ACTIONS.DELETE, SUBJECTS.ASSESSMENT_SUBMISSION_MANAGEMENT) }
         }}
