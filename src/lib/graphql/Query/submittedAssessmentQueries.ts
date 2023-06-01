@@ -5,6 +5,7 @@ export const SUBMITTED_ASSESSMENT_BY_ID = gql`
     submittedAssessment(id: $submittedAssessmentId) {
       _id
       userId
+      status
       user {
         name
       }
@@ -92,6 +93,7 @@ export const FETCH_SUBMITTED_ASSESSMENTS = gql`
       }
       createdAt
       updatedAt
+      status
       taskResponses {
         _id
         taskId
@@ -105,6 +107,7 @@ export const LIST_SUBMITTED_ASSESSMENTS = gql`
     submittedAssessments {
       _id
       tenantId
+      status
       tenant {
         name
       }

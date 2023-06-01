@@ -4,12 +4,14 @@ import Cookies from 'js-cookie'
 import { toast } from 'react-hot-toast'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const errorLink = onError(({ graphQLErrors, networkError }) => {
+const errorLink = onError(({ graphQLErrors, networkError, response }) => {
   if (graphQLErrors) {
     graphQLErrors.map(({ message }) => {
       toast.error(message)
-
-      //alert(`Graphql error ${message}`)
+    })
+  } else if (response?.errors) {
+    response.errors.map(({ message }) => {
+      toast.error(message)
     })
   }
   if (networkError) {
