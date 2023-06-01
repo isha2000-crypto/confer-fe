@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { SUBJECTS, ACTIONS } from '@custom-types/enum'
-import { Card, CardContent, CardHeader, Button } from '@mui/material'
+import { Card, CardContent, CardHeader, Button, Grid } from '@mui/material'
 import { useMutation, useQuery } from '@apollo/client'
 import { UPDATE_ASSESSMENT_DURATION } from 'src/lib/graphql/Mutation'
 import { useAuth } from 'src/hooks/useAuth'
@@ -26,7 +26,6 @@ function AdminSettings() {
   }, [data])
 
   const handleSubmit = (values: any) => {
-    console.log('hello three')
     updateAssessmentDuration({
       variables: {
         updateOrganizationId: auth.user?.tenantId,
@@ -49,31 +48,37 @@ function AdminSettings() {
     organizationSettings && (
       <Card>
         <CardHeader title='Setting' />
-        <CardContent sx={{ display: 'flex', width: '100%' }}>
+        <CardContent>
           <Formik
             initialValues={{ maxDuration: organizationSettings?.assessment_duration || 0 }}
             onSubmit={handleSubmit}
             validationSchema={AdminSettingsSchema}
           >
             <Form>
-              <Field name='maxDuration' type='number'>
-                {({ field, meta, form }: any) => (
-                  <div>
-                    <InputQuestionDuration
-                      label='Max Duration'
-                      placeholder='Max Duration'
-                      onChange={(value: number) => form.setFieldValue('maxDuration', value)}
-                      value={field.value}
-                      error={meta.touched && meta.error}
-                      helperText={(meta.touched && meta.error) || 'Max Duration is 15 minutes'}
-                    />
-                    <ErrorMessage name='maxDuration' component='div' />
-                  </div>
-                )}
-              </Field>
-              <Button variant='contained' type='submit' sx={{ float: 'right', marginLeft: '1000px' }}>
-                Add
-              </Button>
+              <Grid container spacing={2} alignItems='center'>
+                <Grid item xs={12} md={6}>
+                  <Field name='maxDuration' type='number'>
+                    {({ field, meta, form }: any) => (
+                      <div>
+                        <InputQuestionDuration
+                          label='Max Duration'
+                          placeholder='Max Duration'
+                          onChange={(value: number) => form.setFieldValue('maxDuration', value)}
+                          value={field.value}
+                          error={meta.touched && meta.error}
+                          helperText={(meta.touched && meta.error) || 'Max Duration is 15 minutes'}
+                        />
+                        <ErrorMessage name='maxDuration' component='div' />
+                      </div>
+                    )}
+                  </Field>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Button variant='contained' type='submit' sx={{ float: 'right' }}>
+                    Add
+                  </Button>
+                </Grid>
+              </Grid>
             </Form>
           </Formik>
         </CardContent>
