@@ -53,12 +53,10 @@ const CreateTenant = ({ handleCancel, title, tenant }: { handleCancel: any; titl
         }
       })
       .catch(reason => {
-        if (reason) toast.error(reason.message)
+        if (reason) console.error(reason.message)
       })
   }
   const handleFormSubmission = (values: any) => {
-    console.log(values)
-
     createTenantMutation({
       variables: {
         createTenantInput: values
@@ -73,7 +71,7 @@ const CreateTenant = ({ handleCancel, title, tenant }: { handleCancel: any; titl
         }, 2000)
       })
       .catch(error => {
-        toast.error(error.message)
+        console.error(error.message)
       })
   }
 

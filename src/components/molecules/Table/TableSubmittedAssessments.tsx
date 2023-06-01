@@ -166,9 +166,8 @@ const TableSubmittedAssessments = ({ data }: any) => {
           dispatch(fetchAssessments())
         }
       })
-
       .catch(reason => {
-        toast.error(reason.message)
+        console.error(reason.message)
       })
   }
   const handleRowClick = (params: any) => {
