@@ -1,5 +1,4 @@
 // ** MUI Imports
-import Grid from '@mui/material/Grid'
 
 //import { RootState } from 'src/store'
 import React, { useEffect, useState } from 'react'
@@ -59,11 +58,7 @@ function ListSubmittedAssessments() {
     )
   }
 
-  return (
-    <Grid container spacing={6}>
-      <TableSubmittedAssessments data={submittedAssessments} />
-    </Grid>
-  )
+  return <TableSubmittedAssessments data={submittedAssessments} />
 }
 
 export default ListSubmittedAssessments
