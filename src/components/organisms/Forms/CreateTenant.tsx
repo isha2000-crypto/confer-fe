@@ -42,17 +42,18 @@ const CreateTenant = ({ handleCancel, title, tenant }: { handleCancel: any; titl
     }
   }
   const handleTenantUpdate = () => {
+    console.log(formik.values)
     updateTenantMutation({
       variables: { updateTenantId: tenant?._id, UpdateTenantInput: { ...formik.values } }
     })
       .then(result => {
         if (result.data) {
-          toast('Tenant Updated successfully')
+          toast.success('Tenant Updated successfully')
           dispatch(fetchTenants())
         }
       })
       .catch(reason => {
-        if (reason) console.log(reason)
+        if (reason) toast.error(reason.message)
       })
   }
   const handleFormSubmission = (values: any) => {
@@ -72,7 +73,7 @@ const CreateTenant = ({ handleCancel, title, tenant }: { handleCancel: any; titl
         }, 2000)
       })
       .catch(error => {
-        console.error(error)
+        toast.error(error.message)
       })
   }
 

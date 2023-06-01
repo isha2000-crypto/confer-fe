@@ -1,5 +1,5 @@
 // ** React Imports
-import { ChangeEvent, useContext, useState } from 'react'
+import React, { ChangeEvent, useContext, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -139,9 +139,9 @@ const TableSubmittedAssessments = ({ data }: any) => {
       minWidth: 80,
       field: 'actions',
       headerName: 'Actions',
-      renderCell: ({}: CellType) => (
+      renderCell: ({ row }: CellType) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton>
+          <IconButton onClick={e => handleDelete(e, row._id)}>
             <Icon icon='mdi:bin-outline' />
           </IconButton>
         </Box>
@@ -151,31 +151,29 @@ const TableSubmittedAssessments = ({ data }: any) => {
   const handleClose = () => {
     setOpen(false)
   }
+  const handleDelete = (event: any, id: string) => {
+    event.stopPropagation()
+    setOpen(true)
+    setSelectedAssessmentId(id)
+  }
   const handleDeleteAssessment = () => {
-    console.log(selectedAssessmentId)
     removeSubmittedAssessment({
       variables: { removeSubmittedAssessmentId: selectedAssessmentId }
     })
       .then(result => {
         if (result.data) {
-          toast('Assessment Deleted Successfully')
+          toast.success('Assessment Deleted Successfully')
           dispatch(fetchAssessments())
         }
       })
+
       .catch(reason => {
-        console.log(reason)
+        toast.error(reason.message)
       })
   }
   const handleRowClick = (params: any) => {
-    if (params.field === 'actions') {
-      console.log(params)
-      setSelectedAssessmentId(params.row._id)
-      setOpen(true)
-
-      return
-    }
-
-    router.push(`${URLS.ASSESSMENT_URL}/submitted/${params.row.userId}/${params.row._id}/view`)
+    const { row } = params
+    router.push(`${URLS.ASSESSMENT_URL}/submitted/${row.userId}/${row._id}/view`)
   }
 
   const [searchText, setSearchText] = useState<string>('')
@@ -234,7 +232,7 @@ const TableSubmittedAssessments = ({ data }: any) => {
               rowsPerPageOptions={[10, 25, 50]}
               onPageSizeChange={newPageSize => setPageSize(newPageSize)}
               sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
-              onCellClick={handleRowClick}
+              onRowClick={handleRowClick}
               componentsProps={{
                 baseButton: {
                   variant: 'outlined'
