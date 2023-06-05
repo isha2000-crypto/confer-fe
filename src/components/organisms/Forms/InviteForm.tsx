@@ -204,11 +204,6 @@ const InviteForm = () => {
           <Button size='large' type='submit' variant='contained' sx={{ width: '100%' }}>
             {loading ? <CircularProgress size={24} /> : 'Send Invite'}
           </Button>
-          {!userRole && (
-            <Typography color='error' variant='caption'>
-              Please select a role before adding emails.
-            </Typography>
-          )}
           {inviteSuccessCount > 0 && (
             <Alert severity='success' sx={{ marginTop: '10px' }}>
               {inviteSuccessCount} invite{inviteSuccessCount > 1 ? 's' : ''} sent successfully
