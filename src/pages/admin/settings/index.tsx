@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { SUBJECTS, ACTIONS } from '@custom-types/enum'
-import { TextField, Typography, Card, CardContent, CardHeader, Button } from '@mui/material'
+import { Card, CardContent, CardHeader, Button, Grid } from '@mui/material'
 import { useMutation, useQuery } from '@apollo/client'
 import { UPDATE_ASSESSMENT_DURATION } from 'src/lib/graphql/Mutation'
 import { useAuth } from 'src/hooks/useAuth'
@@ -8,31 +8,28 @@ import { LOAD_CURRENT_TENANT } from 'src/lib/graphql/Query'
 import FallbackSpinner from 'src/@core/components/spinner'
 import { useRouter } from 'next/router'
 import toast from 'react-hot-toast'
+import InputQuestionDuration from '@components/atoms/InputQuestionDuration'
+import { Field, Formik, Form, ErrorMessage } from 'formik'
+import { AdminSettingsSchema } from 'src/lib/yup-schema'
 
 function AdminSettings() {
   const [updateAssessmentDuration] = useMutation(UPDATE_ASSESSMENT_DURATION)
   const auth = useAuth()
   const router = useRouter()
   const { error, loading, data } = useQuery(LOAD_CURRENT_TENANT)
-  const [maxDuration, setMaxDuration] = useState('')
-
-  const handleMaxDurationChange = (event: any) => {
-    setMaxDuration(event.target.value)
-  }
+  const [organizationSettings, setOrganizationSettings] = useState(data?.currentTenant)
 
   useEffect(() => {
     if (data) {
-      setMaxDuration(data?.currentTenant?.assessment_duration)
+      setOrganizationSettings(data?.currentTenant)
     }
   }, [data])
 
-  const handleSubmit = (event: any) => {
-    event.preventDefault()
-
+  const handleSubmit = (values: any) => {
     updateAssessmentDuration({
       variables: {
         updateOrganizationId: auth.user?.tenantId,
-        updateOrganizationInput: { assessment_duration: parseInt(maxDuration) }
+        updateOrganizationInput: { assessment_duration: values.maxDuration }
       }
     }).then(() => {
       toast.success('Duration added successfully!')
@@ -48,35 +45,48 @@ function AdminSettings() {
   }
 
   return (
-    <Card>
-      <CardHeader title='Setting' />
-      <CardContent sx={{ display: 'flex', width: '100%' }}>
-        <form onSubmit={handleSubmit}>
-          <TextField
-            fullWidth
-            label='Max Duration'
-            type='number'
-            placeholder='Max Duration'
-            onWheel={(event: any) => event.target.blur()}
-            InputProps={{
-              endAdornment: (
-                <Typography variant='body2' sx={{ fontWeight: 600 }}>
-                  minutes
-                </Typography>
-              )
-            }}
-            name='max duration'
-            onChange={handleMaxDurationChange}
-            value={maxDuration}
-          />
-        </form>
-        <Button variant='contained' type='submit' sx={{ float: 'right', marginLeft: '1000px' }} onClick={handleSubmit}>
-          Add{' '}
-        </Button>
-      </CardContent>
-    </Card>
+    organizationSettings && (
+      <Card>
+        <CardHeader title='Setting' />
+        <CardContent>
+          <Formik
+            initialValues={{ maxDuration: organizationSettings?.assessment_duration || 0 }}
+            onSubmit={handleSubmit}
+            validationSchema={AdminSettingsSchema}
+          >
+            <Form>
+              <Grid container spacing={2} alignItems='center'>
+                <Grid item xs={12} md={6}>
+                  <Field name='maxDuration' type='number'>
+                    {({ field, meta, form }: any) => (
+                      <div>
+                        <InputQuestionDuration
+                          label='Max Duration'
+                          placeholder='Max Duration'
+                          onChange={(value: number) => form.setFieldValue('maxDuration', value)}
+                          value={field.value}
+                          error={meta.touched && meta.error}
+                          helperText={(meta.touched && meta.error) || 'Max Duration is 15 minutes'}
+                        />
+                        <ErrorMessage name='maxDuration' component='div' />
+                      </div>
+                    )}
+                  </Field>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Button variant='contained' type='submit' sx={{ float: 'right' }}>
+                    Add
+                  </Button>
+                </Grid>
+              </Grid>
+            </Form>
+          </Formik>
+        </CardContent>
+      </Card>
+    )
   )
 }
+
 AdminSettings.acl = {
   action: ACTIONS.READ,
   subject: SUBJECTS.ADMIN_SETTINGS

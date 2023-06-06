@@ -3,7 +3,7 @@ import { useFormik } from 'formik'
 import React, { useState } from 'react'
 import CancelIcon from '@mui/icons-material/Cancel'
 import ActionButtons from '@components/molecules/Actions/ActionButtons'
-import { TenantValidationSchema } from 'src/lib/schema/validationSchema'
+import { TenantValidationSchema } from 'src/lib/yup-schema'
 
 import { useMutation } from '@apollo/client'
 import { CREATE_TENANT_MUTATION, UPDATE_TENANT } from 'src/lib/graphql/Mutation/tenantMutation'

@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useFormik } from 'formik'
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
 import { styled } from '@mui/material/styles'
@@ -12,45 +13,84 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import InputLabel from '@mui/material/InputLabel'
-import { Alert, FormControl } from '@mui/material'
+import { Alert, Card, FormControl } from '@mui/material'
 import { useEffect } from 'react'
-
-// ** Redux Imports
 import { useSelector, useDispatch } from 'react-redux'
 import { AppDispatch, RootState } from 'src/store'
 import { fetchRoles } from 'src/store/roles/rolesActions'
 import { useRouter } from 'next/router'
 import FallbackSpinner from 'src/@core/components/spinner'
+import { InviteFormSchema } from 'src/lib/yup-schema/InviteFormSchema'
+import { EmailWithRole } from '@custom-types/invite-form-types'
 
-const Form = styled('form')(({ theme }) => ({
+const CustomForm = styled(Card)(({ theme }) => ({
   maxWidth: 400,
   padding: theme.spacing(12),
   borderRadius: theme.shape.borderRadius,
-  border: `1px solid ${theme.palette.divider}`
+  border: `1px solid ${theme.palette.divider}`,
+  '& .MuiFormControl-root': {
+    '& .MuiFormHelperText-root': {
+      color: theme.palette.error.main
+    }
+  }
 }))
 
 const InviteForm = () => {
-  const [emails, setEmails] = useState<string[]>([])
-  const [inputValue, setInputValue] = useState('')
-  const [inviteSuccessCount, setInviteSuccessCount] = useState(0) // new state variable
+  const [inviteSuccessCount, setInviteSuccessCount] = useState(0)
   const [failedInvite, setFailedInvite] = useState([])
-  const [loading, setLoading] = useState(false)
   const [inviteUserMutation] = useMutation(INVITE_USER_MUTATION)
   const dispatch = useDispatch<AppDispatch>()
   const rolesStore = useSelector((store: RootState) => store.roles)
-  const [userRole, setUserRole] = useState('user')
+  const [formSubmitting, setFormSubmitting] = useState(false)
+
+  const handleInvite = (values: any) => {
+    setFormSubmitting(true)
+
+    // TODO: Add support form both emails and role IDs in mutation
+    inviteUserMutation({
+      variables: { usersInvitationInput: { emails: [...values.emails.map((item: EmailWithRole) => item.email)] } }
+    })
+      .then(result => {
+        setInviteSuccessCount(result.data.inviteUsers.sent.length)
+        setFailedInvite(result.data.inviteUsers.failed)
+      })
+      .catch(error => {
+        console.error(error)
+      })
+      .finally(() => {
+        setFormSubmitting(false)
+      })
+  }
 
   useEffect(() => {
     dispatch(fetchRoles())
   }, [dispatch])
+
+  const formik = useFormik({
+    initialValues: {
+      emailInput: '',
+      emails: [],
+      userRole: rolesStore.roles.length > 0 ? rolesStore.roles[0]._id : ''
+    },
+    validationSchema: InviteFormSchema,
+    onSubmit: handleInvite
+  })
+
+  useEffect(() => {
+    if (rolesStore.roles.length > 0) {
+      formik.setFieldValue('userRole', rolesStore.roles[0]._id)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rolesStore.roles])
 
   const router = useRouter()
   if (rolesStore.loading) return <FallbackSpinner />
   if (rolesStore.error) router.push('/404')
 
   const handleEmailsChange = (event: any) => {
-    setInputValue(event.target.value)
+    formik.setFieldValue('emailInput', event.target.value)
   }
+
   const handleKeyPress = (event: any) => {
     if (event.key === 'Enter') {
       handleAddEmail(event)
@@ -59,146 +99,142 @@ const InviteForm = () => {
 
   const handleAddEmail = (event: any) => {
     event.preventDefault()
-    const newEmails = inputValue.split(' ').filter(email => email !== '')
 
-    // Email regex pattern
+    const newEmails = formik.values?.emailInput?.split(' ').filter(email => email !== '')
+
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-    const validEmails = newEmails.filter(email => emailPattern.test(email))
-
-    setEmails([...emails, ...validEmails])
-    setInputValue('')
+    const validEmails = newEmails?.filter(email => emailPattern.test(email))
+    const emailsWithRoles = validEmails.map(email => ({
+      email: email,
+      role: formik.values.userRole
+    }))
+    const uniqueEmails = [
+      ...new Map([...formik.values?.emails, ...emailsWithRoles].map(item => [item['email'], item])).values()
+    ]
+    formik.setFieldValue('emails', [...uniqueEmails])
+    formik.setFieldValue('emailInput', '')
   }
 
-  const handleSubmit = (event: any) => {
-    event.preventDefault()
-  }
-  const handleRemoveEmail = (email: any) => {
-    setEmails(emails.filter(e => e !== email))
-  }
-  const handleInvite = () => {
-    setLoading(true)
-    inviteUserMutation({
-      variables: { usersInvitationInput: { emails } }
-    })
-      .then(result => {
-        console.log(result.data)
-
-        setInviteSuccessCount(result.data.inviteUsers.sent.length)
-        setFailedInvite(result.data.inviteUsers.failed)
-      })
-      .catch(error => {
-        console.error(error)
-      })
-      .finally(() => {
-        setLoading(false)
-      })
-    if (userRole == null) {
-      console.log('Enter role')
-    }
-  }
   const handleClear = () => {
-    setEmails([])
+    formik.setFieldValue('emails', [])
   }
 
-  const handleRoleChange = (event: any) => {
-    setUserRole(event.target.value)
+  const handleRemoveEmail = (email: string) => {
+    formik.setFieldValue(
+      'emails',
+      formik.values?.emails.filter((item: EmailWithRole) => item.email !== email)
+    )
+  }
+
+  const getRoleLabel = (roleId: string) => {
+    const roleItemIndex = rolesStore.roles.findIndex(item => item._id === roleId)
+
+    return rolesStore.roles[roleItemIndex].title
   }
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Grid container spacing={5}>
-        <Grid item xs={12}>
-          <Typography variant='h5'>Invitation</Typography>
+    <CustomForm>
+      <form onSubmit={formik.handleSubmit}>
+        <Grid container spacing={5}>
+          <Grid item xs={12}>
+            <Typography variant='h5'>Invitation</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label='Emails'
+              multiline
+              disabled={formSubmitting}
+              rows={4}
+              placeholder='Enter emails separated by a single space'
+              name='emailInput'
+              value={formik.values?.emailInput}
+              onChange={event => handleEmailsChange(event)}
+              onKeyPress={event => handleKeyPress(event)}
+              error={
+                (formik.touched.emailInput && Boolean(formik.errors.emailInput)) ||
+                (formik.touched.emails && Boolean(formik.errors.emails))
+              }
+              helperText={
+                (formik.touched.emailInput && formik.errors.emailInput) ||
+                (formik.touched.emails && formik.errors.emails)
+              }
+            />
+          </Grid>
         </Grid>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label='Emails'
-            multiline
-            rows={4}
-            placeholder='Enter emails separated by a single space'
-            value={inputValue}
-            onChange={handleEmailsChange}
-            onKeyPress={handleKeyPress}
-          />
+        <br />
+        <Grid item xs={12} md={4}>
+          <FormControl fullWidth sx={{ alignSelf: 'center' }}>
+            <InputLabel id='role-select-label'>Role</InputLabel>
+            {rolesStore.roles.length > 0 && (
+              <Select
+                labelId='role-select-label'
+                id='role-select'
+                name='userRole'
+                disabled={formSubmitting || !formik.values?.emailInput?.trim()}
+                value={formik.values.userRole}
+                onChange={formik.handleChange}
+                label='Role'
+                placeholder='Role'
+              >
+                {rolesStore.roles.map(role => (
+                  <MenuItem key={role._id} value={role._id}>
+                    {role.title}
+                  </MenuItem>
+                ))}
+              </Select>
+            )}
+          </FormControl>
         </Grid>
-      </Grid>
-      <br />
-      <Grid item xs={12} md={4}>
-        <FormControl fullWidth sx={{ alignSelf: 'center' }}>
-          <InputLabel id='role-select-label'>Role</InputLabel>
-
-          <Select
-            labelId='role-select-label'
-            id='role-select'
-            value={userRole}
-            onChange={handleRoleChange}
-            label='Role'
-            placeholder='Role'
+        <br />
+        <Grid item xs={12}>
+          <Button
+            size='large'
+            type='button'
+            variant='contained'
+            sx={{ width: '100%' }}
+            onClick={event => handleAddEmail(event)}
+            disabled={!formik.values?.emailInput?.trim()}
           >
-            {rolesStore.roles.map(role => (
-              <MenuItem key={role.title} value='user'>
-                {role.title}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Grid>
-      <br />
-      <Grid item xs={12}>
-        <Button size='large' type='button' variant='contained' sx={{ width: '100%' }} onClick={handleAddEmail}>
-          Add
-        </Button>
-      </Grid>
-      <br />
-      <Grid item xs={12}>
-        {emails.map(email => (
-          <Chip
-            key={email}
-            label={`(${userRole}) ${email}`}
-            onDelete={() => handleRemoveEmail(email)}
-            deleteIcon={<CancelIcon />}
-            sx={{ mr: 1, mb: 1 }}
-          />
-        ))}
-      </Grid>
-      <br />
-      <Grid item xs={12}>
-        <Button
-          size='large'
-          type='submit'
-          variant='contained'
-          sx={{ width: '100%' }}
-          onClick={handleInvite}
-          disabled={!userRole}
-        >
-          {loading ? <CircularProgress size={24} /> : 'Send Invite'}
-        </Button>
-        {!userRole && (
-          <Typography color='error' variant='caption'>
-            Please select a role before adding emails.
-          </Typography>
-        )}
-        {inviteSuccessCount > 0 && (
-          <Alert severity='success'>
-            {inviteSuccessCount} invite{inviteSuccessCount > 1 && 's'} sent successfully
-          </Alert>
-        )}
-        {inviteSuccessCount < 0 && (
-          <div>
-            <Alert severity='error'>{failedInvite} to these emails invite not sent</Alert>
-            <Button size='large' type='submit' variant='contained' sx={{ width: '100%' }} onClick={handleInvite}>
-              {' '}
-              Retry
-            </Button>{' '}
-            <Button size='large' type='submit' variant='contained' sx={{ width: '100%' }} onClick={handleClear}>
-              Clear
-            </Button>
-          </div>
-        )}
-      </Grid>
-    </Form>
+            Add
+          </Button>
+        </Grid>
+        <br />
+        <Grid item xs={12}>
+          {formik.values.emails.map((item: EmailWithRole) => (
+            <Chip
+              key={item.email}
+              label={`(${getRoleLabel(item.role)}) ${item.email}`}
+              onDelete={() => handleRemoveEmail(item.email)}
+              deleteIcon={<CancelIcon />}
+              sx={{ mr: 1, mb: 1 }}
+            />
+          ))}
+        </Grid>
+        <br />
+        <Grid item xs={12}>
+          <Button size='large' type='submit' disabled={formSubmitting} variant='contained' sx={{ width: '100%' }}>
+            {formSubmitting ? <CircularProgress size={24} /> : 'Send Invite'}
+          </Button>
+          {inviteSuccessCount > 0 && (
+            <Alert severity='success' sx={{ marginTop: '10px' }}>
+              {inviteSuccessCount} invite{inviteSuccessCount > 1 ? 's' : ''} sent successfully
+            </Alert>
+          )}
+          {inviteSuccessCount < 0 && (
+            <div>
+              <Alert severity='error'>{failedInvite.length} to these emails invite not sent</Alert>
+              <Button size='large' type='submit' variant='contained' sx={{ width: '100%' }}>
+                Retry
+              </Button>
+              <Button size='large' variant='contained' sx={{ width: '100%' }} onClick={handleClear}>
+                Clear
+              </Button>
+            </div>
+          )}
+        </Grid>
+      </form>
+    </CustomForm>
   )
 }
 

@@ -23,7 +23,8 @@ import toast from 'react-hot-toast'
 import { useRouter } from 'next/router'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { minutesToSeconds } from 'src/utils/unitConversion'
-import { CreateSchema } from 'src/lib/schema/CreateSchema'
+import { CreateAssessmentSchema } from 'src/lib/yup-schema'
+import { Alert } from '@mui/material'
 
 interface Question {
   id: number
@@ -43,7 +44,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
   const [initialQuestions, setInitialQuestions] = useState<Question[]>(initialAssessment?.tasks || [])
   const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
   const [updateAssessmentMutation] = useMutation(UPDATE_ASSESSMENT_MUTATION)
-  const schema = CreateSchema()
+  const assessmentValidationSchema = CreateAssessmentSchema()
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [assessment, setAssessment] = useState({
@@ -196,7 +197,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
               duration: question.duration
             }))
           }}
-          validationSchema={schema}
+          validationSchema={assessmentValidationSchema}
           onSubmit={handleAssessmentSubmit}
           enableReinitialize
         >
@@ -207,6 +208,9 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
               </h3>
 
               <CardContent>
+                {formik.touched.questions && formik.errors.questions && formik.values.questions.length === 0 ? (
+                  <Alert severity='error' sx={{ marginBottom: '2rem' }}>{`${formik.errors.questions}`}</Alert>
+                ) : null}
                 <Grid container spacing={5} columns={1}>
                   <Grid item xs={12}>
                     <TextField
