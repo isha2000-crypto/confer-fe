@@ -16,10 +16,9 @@ export const InviteFormSchema = Yup.object().shape({
       message: 'Invalid email format',
       test: function (value: any) {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        const invalidEmails = value.some((item: any) => emailPattern.test(item.email))
 
-        return emailPattern.test(value || '')
+        return invalidEmails
       }
     })
-
-  // userRole: Yup.string().required('Role is required')
 })

@@ -21,6 +21,7 @@ import { fetchRoles } from 'src/store/roles/rolesActions'
 import { useRouter } from 'next/router'
 import FallbackSpinner from 'src/@core/components/spinner'
 import { InviteFormSchema } from 'src/lib/yup-schema/InviteFormSchema'
+import { EmailWithRole } from '@custom-types/invite-form-types'
 
 const CustomForm = styled(Card)(({ theme }) => ({
   maxWidth: 400,
@@ -37,21 +38,19 @@ const CustomForm = styled(Card)(({ theme }) => ({
 const InviteForm = () => {
   const [inviteSuccessCount, setInviteSuccessCount] = useState(0)
   const [failedInvite, setFailedInvite] = useState([])
-  const [loading, setLoading] = useState(false)
   const [inviteUserMutation] = useMutation(INVITE_USER_MUTATION)
   const dispatch = useDispatch<AppDispatch>()
   const rolesStore = useSelector((store: RootState) => store.roles)
-  const [roles, setRoles] = useState(rolesStore.roles.length > 0 ? rolesStore.roles : [])
-  const [formDisabled, setFormDisabled] = useState(false)
+  const [formSubmitting, setFormSubmitting] = useState(false)
 
-  const handleInvite = (values: any, { setSubmitting }: { setSubmitting: any }) => {
-    setLoading(true)
-    setFormDisabled(true)
+  const handleInvite = (values: any) => {
+    setFormSubmitting(true)
+
+    // TODO: Add support form both emails and role IDs in mutation
     inviteUserMutation({
-      variables: { usersInvitationInput: { emails: values.emails } }
+      variables: { usersInvitationInput: { emails: [...values.emails.map((item: EmailWithRole) => item.email)] } }
     })
       .then(result => {
-        console.log(result.data)
         setInviteSuccessCount(result.data.inviteUsers.sent.length)
         setFailedInvite(result.data.inviteUsers.failed)
       })
@@ -59,10 +58,7 @@ const InviteForm = () => {
         console.error(error)
       })
       .finally(() => {
-        console.log('Finally block running')
-        setLoading(false)
-        setFormDisabled(false)
-        setSubmitting(false)
+        setFormSubmitting(false)
       })
   }
 
@@ -108,7 +104,14 @@ const InviteForm = () => {
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     const validEmails = newEmails?.filter(email => emailPattern.test(email))
-    formik.setFieldValue('emails', [...formik.values?.emails, ...validEmails])
+    const emailsWithRoles = validEmails.map(email => ({
+      email: email,
+      role: formik.values.userRole
+    }))
+    const uniqueEmails = [
+      ...new Map([...formik.values?.emails, ...emailsWithRoles].map(item => [item['email'], item])).values()
+    ]
+    formik.setFieldValue('emails', [...uniqueEmails])
     formik.setFieldValue('emailInput', '')
   }
 
@@ -116,19 +119,18 @@ const InviteForm = () => {
     formik.setFieldValue('emails', [])
   }
 
-  const handleRoleChange = (event: any) => {
-    const selectedRole = event.target.value
-    setRoles(selectedRole)
-    formik.setFieldValue('userRole', selectedRole)
-  }
-
   const handleRemoveEmail = (email: string) => {
     formik.setFieldValue(
       'emails',
-      formik.values?.emails.filter((e: string) => e !== email)
+      formik.values?.emails.filter((item: EmailWithRole) => item.email !== email)
     )
   }
-  console.log('Formik values', formik.values)
+
+  const getRoleLabel = (roleId: string) => {
+    const roleItemIndex = rolesStore.roles.findIndex(item => item._id === roleId)
+
+    return rolesStore.roles[roleItemIndex].title
+  }
 
   return (
     <CustomForm>
@@ -142,7 +144,7 @@ const InviteForm = () => {
               fullWidth
               label='Emails'
               multiline
-              disabled={formDisabled}
+              disabled={formSubmitting}
               rows={4}
               placeholder='Enter emails separated by a single space'
               name='emailInput'
@@ -169,7 +171,7 @@ const InviteForm = () => {
                 labelId='role-select-label'
                 id='role-select'
                 name='userRole'
-                disabled={formDisabled || !formik.values?.emailInput?.trim()}
+                disabled={formSubmitting || !formik.values?.emailInput?.trim()}
                 value={formik.values.userRole}
                 onChange={formik.handleChange}
                 label='Role'
@@ -199,11 +201,11 @@ const InviteForm = () => {
         </Grid>
         <br />
         <Grid item xs={12}>
-          {formik.values.emails.map(email => (
+          {formik.values.emails.map((item: EmailWithRole) => (
             <Chip
-              key={email}
-              label={`(${formik.values.userRole}) ${email}`}
-              onDelete={() => handleRemoveEmail(email)}
+              key={item.email}
+              label={`(${getRoleLabel(item.role)}) ${item.email}`}
+              onDelete={() => handleRemoveEmail(item.email)}
               deleteIcon={<CancelIcon />}
               sx={{ mr: 1, mb: 1 }}
             />
@@ -211,8 +213,8 @@ const InviteForm = () => {
         </Grid>
         <br />
         <Grid item xs={12}>
-          <Button size='large' type='submit' variant='contained' sx={{ width: '100%' }}>
-            {loading ? <CircularProgress size={24} /> : 'Send Invite'}
+          <Button size='large' type='submit' disabled={formSubmitting} variant='contained' sx={{ width: '100%' }}>
+            {formSubmitting ? <CircularProgress size={24} /> : 'Send Invite'}
           </Button>
           {inviteSuccessCount > 0 && (
             <Alert severity='success' sx={{ marginTop: '10px' }}>
