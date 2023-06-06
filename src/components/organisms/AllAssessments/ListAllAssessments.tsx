@@ -1,10 +1,6 @@
 // ** MUI Imports
-import Grid from '@mui/material/Grid'
-
-//import { RootState } from 'src/store'
 import React, { useEffect, useState } from 'react'
 
-//import ApiService from '../../lib/api/ApiService'
 import { useLazyQuery } from '@apollo/client'
 import { FETCH_ALL_ASSESSMENTS } from 'src/lib/graphql/Query'
 import { useAuth } from 'src/hooks/useAuth'
@@ -59,11 +55,7 @@ function ListAllAssessments() {
     )
   }
 
-  return (
-    <Grid container spacing={6}>
-      <TableAllAssessments data={allAssessments} />
-    </Grid>
-  )
+  return <TableAllAssessments data={allAssessments} />
 }
 
 export default ListAllAssessments

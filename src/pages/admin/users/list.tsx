@@ -28,7 +28,7 @@ function UsersList() {
         title={<Typography variant='h5'>List of All Users</Typography>}
         subtitle={<Typography variant='body2'>Find all of your company’s users.</Typography>}
       />
-      <TableUsersList users={usersStore.users} anchor={false} header={false} />
+      <TableUsersList users={usersStore.users} />
     </>
   )
 }

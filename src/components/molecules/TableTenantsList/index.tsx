@@ -1,19 +1,15 @@
 // ** React Imports
-import { ChangeEvent, useContext, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
-import Card from '@mui/material/Card'
-import Grid from '@mui/material/Grid'
-import { DataGrid } from '@mui/x-data-grid'
+
 import Typography from '@mui/material/Typography'
 
 // ** Custom Components Imports
 import { IconButton, Switch } from '@mui/material'
 import Icon from 'src/@core/components/icon'
-import { AbilityContext } from 'src/layouts/components/acl/Can'
-import { ACTIONS, SUBJECTS } from '@custom-types/enum'
-import { TenantsType } from '@custom-types/tenants-type'
+
 import { formatDate } from 'src/@core/utils/format'
 import CustomChip from 'src/@core/components/mui/chip'
 import { ThemeColor } from 'src/@core/layouts/types'
@@ -22,12 +18,13 @@ import { UPDATE_TENANT_STATUS } from 'src/lib/graphql/Mutation/tenantMutation'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'src/store'
 import { fetchTenants } from 'src/store/tenants/tenantsActions'
-import QuickSearchToolbar from '../Data-Grid/QuickSearchToolbar'
+
 import DialogTenantCreate from '../Dialog/DialogTenant/DialogTenantCreate'
 import { FETCH_TENANT_BY_ID } from 'src/lib/graphql/Query'
+import { MRT_ColumnDef, MaterialReactTable } from 'material-react-table'
 
 interface CellType {
-  row: TenantsType
+  row: any
 }
 interface UserStatusType {
   [key: string]: ThemeColor
@@ -38,99 +35,105 @@ const userStatusObj: UserStatusType = {
 }
 const label = { inputProps: { 'aria-label': 'Color switch demo' } }
 
-const tableColumns = [
-  {
-    flex: 0.2,
-    minWidth: 230,
-    field: 'name',
-    headerName: 'Name',
-    renderCell: ({ row }: CellType) => {
-      const { name } = row
-
-      return (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-            <Typography
-              noWrap
-              variant='subtitle2'
-              sx={{
-                fontWeight: 600,
-                color: 'text.primary',
-                textDecoration: 'none',
-                '&:hover': { color: 'primary.main' }
-              }}
-            >
-              {name}
-            </Typography>
-          </Box>
-        </Box>
-      )
-    }
-  },
-  {
-    flex: 0.2,
-    minWidth: 250,
-    field: 'domain',
-    headerName: 'Domain',
-    renderCell: ({ row }: CellType) => {
-      return row.domains.map((domain, index) => {
-        return (
-          <CustomChip
-            skin='light'
-            size='small'
-            label={domain}
-            color='primary'
-            sx={{ textTransform: 'capitalize' }}
-            key={index}
-          />
-        )
-      })
-    }
-  },
-  {
-    flex: 0.1,
-    minWidth: 110,
-    field: 'disabled',
-    headerName: 'Status',
-    renderCell: ({ row }: CellType) => {
-      return (
-        <CustomChip
-          skin='light'
-          size='small'
-          label={row.disabled ? 'disabled' : 'active'}
-          color={userStatusObj[row.disabled ? 'disabled' : 'active']}
-          sx={{ textTransform: 'capitalize' }}
-        />
-      )
-    }
-  },
-  {
-    flex: 0.1,
-    minWidth: 110,
-    field: 'created_at',
-    headerName: 'CreatedAt',
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Typography variant='body2' noWrap>
-          {formatDate(row.createdAt)}
-        </Typography>
-      )
-    }
-  }
-]
-
 const TableTenantsList = ({ tenants }: any) => {
-  // ** State
-  const ability = useContext(AbilityContext)
-  const [pageSize, setPageSize] = useState<number>(10)
+  const columns = useMemo<MRT_ColumnDef<any>[]>(
+    () => [
+      {
+        accessorKey: 'name',
+        header: 'Name',
+        Cell: ({ renderedCellValue }: any) => (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+              <Typography
+                noWrap
+                variant='subtitle2'
+                sx={{
+                  fontWeight: 600,
+                  color: 'text.primary',
+                  textDecoration: 'none',
+                  '&:hover': { color: 'primary.main' }
+                }}
+              >
+                {renderedCellValue}
+              </Typography>
+            </Box>
+          </Box>
+        )
+      },
+      {
+        accessorKey: 'domains',
+        header: 'Domain',
+        Cell: ({ renderedCellValue }: any) =>
+          renderedCellValue.map((domain: string[], index: number) => {
+            return (
+              <CustomChip
+                skin='light'
+                size='small'
+                label={domain}
+                color='primary'
+                sx={{ textTransform: 'capitalize' }}
+                key={index}
+              />
+            )
+          })
+      },
+      {
+        accessorFn: (row: { disabled: boolean }) => {
+          return row.disabled ? 'disabled' : 'active'
+        },
+        accessorKey: 'disabled',
+        header: 'Status',
+        Cell: ({ row }: CellType) => {
+          const { disabled } = row.original
 
-  // const [value, setValue] = useState('')
+          return (
+            <CustomChip
+              skin='light'
+              size='small'
+              label={disabled ? 'disabled' : 'active'}
+              color={userStatusObj[disabled ? 'disabled' : 'active']}
+              sx={{ textTransform: 'capitalize' }}
+            />
+          )
+        }
+      },
+      {
+        accessorFn: (row: { createdAt: string | Date }) => {
+          return formatDate(row.createdAt)
+        },
+        header: 'Created At'
+      },
+      {
+        accessorKey: '_id',
+        header: 'Actions',
+        Cell: ({ row }: CellType) => (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton onClick={() => handleEditTenant(row.original._id)}>
+              <Icon icon='mdi:pencil-outline' />
+            </IconButton>
+          </Box>
+        )
+      },
+      {
+        accessorKey: '_id',
+        header: 'Disabled',
+        Cell: ({ row }: CellType) => {
+          const { disabled, _id } = row.original
+
+          return <Switch checked={disabled} {...label} onChange={e => handleStatusChange(e, _id)} />
+        }
+      }
+    ],
+    []
+  )
+
   const [open, setOpen] = useState(false)
   const [selectedTenant, setSelectedTenant] = useState(null)
-  const [filteredData, setFilteredData] = useState<TenantsType[]>([])
+
   const [UpdateTenantStatus] = useMutation(UPDATE_TENANT_STATUS)
   const [getTenant, { error }] = useLazyQuery(FETCH_TENANT_BY_ID)
   const dispatch = useDispatch<AppDispatch>()
+
   const handleEditTenant = async (id: string) => {
     const { data } = await getTenant({ variables: { tenantId: id } })
     setSelectedTenant(data?.tenant)
@@ -139,9 +142,7 @@ const TableTenantsList = ({ tenants }: any) => {
   const handleClose = () => {
     setOpen(false)
   }
-  const escapeRegExp = (value: string) => {
-    return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
-  }
+
   const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>, id: string) => {
     const updatedTenant = {
       disabled: event.target.checked
@@ -159,90 +160,13 @@ const TableTenantsList = ({ tenants }: any) => {
         console.log(reason)
       })
   }
-  const [searchText, setSearchText] = useState<string>('')
 
-  const handleSearch = (searchValue: string) => {
-    setSearchText(searchValue)
-    const searchRegex = new RegExp(escapeRegExp(searchValue), 'i')
-    const filteredRows = tenants.filter((row: any) => {
-      return Object.keys(row).some(field => {
-        // @ts-ignore
-        return searchRegex.test(row[field].toString())
-      })
-    })
-    if (searchValue.length) {
-      setFilteredData(filteredRows)
-    } else {
-      setFilteredData([])
-    }
-  }
-  const columns = [
-    ...tableColumns,
-
-    {
-      flex: 0.15,
-      minWidth: 115,
-      sortable: false,
-      field: 'actions',
-      headerName: 'Actions',
-      renderCell: ({ row }: CellType) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton onClick={() => handleEditTenant(row._id)}>
-            <Icon icon='mdi:pencil-outline' />
-          </IconButton>
-        </Box>
-      )
-    },
-
-    {
-      flex: 0.1,
-      minWidth: 110,
-      sortable: false,
-      field: 'status_update',
-      headerName: 'Disabled',
-      renderCell: ({ row }: CellType) => {
-        return <Switch checked={row.disabled} {...label} onChange={e => handleStatusChange(e, row._id)} />
-      }
-    }
-  ]
   if (error) return <div>Error</div>
 
   return (
     <>
-      <Grid container spacing={6}>
-        {open && (
-          <DialogTenantCreate open={open} handleClose={handleClose} dialogTitle='Edit' tenant={selectedTenant} />
-        )}
-        <Grid item xs={12}>
-          <Card>
-            <DataGrid
-              autoHeight
-              rows={filteredData.length ? filteredData : tenants}
-              getRowId={row => row._id}
-              columns={columns}
-              pageSize={pageSize}
-              components={{ Toolbar: QuickSearchToolbar }}
-              disableSelectionOnClick
-              rowsPerPageOptions={[10, 25, 50]}
-              onPageSizeChange={newPageSize => setPageSize(newPageSize)}
-              sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
-              columnVisibilityModel={{
-                actions: ability?.can(ACTIONS.UPDATE, SUBJECTS.USER_INVITATION) && true
-              }}
-              componentsProps={{
-                baseButton: {
-                  variant: 'outlined'
-                },
-                toolbar: {
-                  value: searchText,
-                  clearSearch: () => handleSearch(''),
-                  onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
-                }
-              }}
-            />
-          </Card>
-        </Grid>
-      </Grid>
+      {open && <DialogTenantCreate open={open} handleClose={handleClose} dialogTitle='Edit' tenant={selectedTenant} />}
+      <MaterialReactTable columns={columns} data={tenants} />
     </>
   )
 }
