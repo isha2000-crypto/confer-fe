@@ -1,5 +1,5 @@
 import ComponentSpinner from '@components/atoms/ComponentSpinner'
-import TableUsersList from '@components/molecules/TableUsersList'
+import TableUsersList from '@components/molecules/Table/TableUsersList'
 import { Typography } from '@mui/material'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'

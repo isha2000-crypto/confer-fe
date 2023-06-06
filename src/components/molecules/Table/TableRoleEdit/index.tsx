@@ -17,7 +17,7 @@ import {
 import React, { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import { getPermissionsObject, getSubjectTitles } from 'src/utils/functions'
-import ActionButtons from '../Actions/ActionButtons'
+import ActionButtons from '../../Actions/ActionButtons'
 
 interface Props {
   role: any

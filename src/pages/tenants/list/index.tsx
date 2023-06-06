@@ -12,7 +12,7 @@ import { ACTIONS, SUBJECTS } from '@custom-types/enum'
 // ** Redux Imports
 import { useSelector } from 'react-redux'
 import { AppDispatch, RootState } from 'src/store'
-import TableTenantsList from '@components/molecules/TableTenantsList'
+import TableTenantsList from '@components/molecules/Table/TableTenantsList'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { fetchTenants } from 'src/store/tenants/tenantsActions'

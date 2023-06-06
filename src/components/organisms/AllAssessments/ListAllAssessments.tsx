@@ -8,7 +8,7 @@ import Spinner from 'src/@core/components/spinner'
 import { useRouter } from 'next/router'
 import { Box, Typography, Button } from '@mui/material'
 import Icon from 'src/@core/components/icon'
-import TableAllAssessments from '@components/molecules/Table/TableAllAssessments'
+import TableAllAssessments from '@components/molecules/Table/TableAllAssessment'
 
 function ListAllAssessments() {
   const router = useRouter()

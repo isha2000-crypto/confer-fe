@@ -1,19 +1,14 @@
 // ** React Imports
-import { useContext, useMemo, useState } from 'react'
+import { useContext, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
 
 import Typography from '@mui/material/Typography'
 
-// ** Custom Components Imports
-import RenderCustomAvatar from './RenderCustomAvatar'
-import { formatDate } from 'src/@core/utils/format'
-import CustomChip from 'src/@core/components/mui/chip'
-
 import { useRouter } from 'next/router'
 
-import { MRT_ColumnDef, MaterialReactTable } from 'material-react-table'
+import { MaterialReactTable } from 'material-react-table'
 import { URLS } from '@custom-types/constants'
 import { Dialog, DialogTitle, Button, IconButton } from '@mui/material'
 import toast from 'react-hot-toast'
@@ -25,12 +20,13 @@ import { useMutation } from '@apollo/client'
 import { DELETE_SUBMITTED_ASSESSMENT } from 'src/lib/graphql/Mutation'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { ACTIONS, SUBJECTS } from '@custom-types/enum'
+import TableSubmittedAssessmentColumns from './columns'
 
 interface CellType {
   row: any
 }
-
 const TableSubmittedAssessments = ({ data }: any) => {
+  const tableColumns = TableSubmittedAssessmentColumns()
   const router = useRouter()
   const ability = useContext(AbilityContext)
   const [open, setOpen] = useState(false)
@@ -40,97 +36,6 @@ const TableSubmittedAssessments = ({ data }: any) => {
   const handleClose = () => {
     setOpen(false)
   }
-  const columns = useMemo<MRT_ColumnDef<any>[]>(
-    () => [
-      {
-        accessorFn: (row: { assessment: { title: string } }) => {
-          return row.assessment.title
-        },
-        accessorKey: 'assessment',
-        header: 'Title',
-        Cell: ({ row }: CellType) => {
-          return (
-            <Typography noWrap sx={{ color: 'text.secondary' }}>
-              {row.original.assessment.title}
-            </Typography>
-          )
-        }
-      },
-      {
-        accessorFn: (row: { createdAt: string | Date }) => {
-          return formatDate(row.createdAt)
-        },
-        header: 'Created At'
-      },
-      {
-        accessorFn: (row: { user: { name: string; email: string } }) => {
-          return row.user.name + ' ' + row.user.email
-        },
-        accessorKey: 'name',
-        header: 'Submitted By',
-        Cell: ({ row }: CellType) => {
-          const { name } = row.original.user
-
-          return (
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <RenderCustomAvatar row={row.original.user} showEmail />
-              <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-                <Typography
-                  noWrap
-                  variant='subtitle2'
-                  sx={{
-                    fontWeight: 600,
-                    color: 'text.primary',
-                    textDecoration: 'none',
-                    '&:hover': { color: 'primary.main' }
-                  }}
-                >
-                  {name}
-                </Typography>
-
-                <Typography noWrap variant='caption'>
-                  {row.original.user.email}
-                </Typography>
-              </Box>
-            </Box>
-          )
-        }
-      },
-      {
-        accessorFn: (row: { tenant: { name: string } }) => {
-          return row.tenant.name
-        },
-        accessorKey: 'tenant',
-        header: 'Organization',
-        Cell: ({ row }: CellType) => {
-          return (
-            <Typography noWrap sx={{ color: 'text.secondary' }}>
-              {row.original.tenant.name}
-            </Typography>
-          )
-        }
-      },
-      {
-        accessorFn: (row: { status: string }) => {
-          return row.status
-        },
-        accessorKey: 'status',
-        header: 'Status',
-        Cell: ({ row }: CellType) => {
-          return (
-            <CustomChip
-              skin='light'
-              size='small'
-              label={row.original.status}
-              color={'info'}
-              sx={{ textTransform: 'capitalize' }}
-            />
-          )
-        }
-      }
-    ],
-    []
-  )
 
   const handleDelete = (event: any, id: string) => {
     event.stopPropagation()
@@ -152,7 +57,7 @@ const TableSubmittedAssessments = ({ data }: any) => {
       })
   }
   if (ability?.can(ACTIONS.UPDATE, SUBJECTS.ASSESSMENT_SUBMISSION_MANAGEMENT)) {
-    columns.push({
+    tableColumns.push({
       accessorKey: 'actions',
       header: 'Actions',
       Cell: ({ row }: CellType) => (
@@ -188,7 +93,7 @@ const TableSubmittedAssessments = ({ data }: any) => {
         </Dialog>
       }
       <MaterialReactTable
-        columns={columns}
+        columns={tableColumns}
         data={data}
         muiTableBodyRowProps={({ row }) => ({
           onClick: () => {

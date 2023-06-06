@@ -1,28 +1,15 @@
-// ** React Imports
-import { useMemo } from 'react'
-
-// ** MUI Imports
-import Box from '@mui/material/Box'
-
-import Typography from '@mui/material/Typography'
-
-// ** Custom Components Imports
-import RenderCustomAvatar from './RenderCustomAvatar'
-import { formatDate } from 'src/@core/utils/format'
-
-import { useRouter } from 'next/router'
-import { URLS } from '@custom-types/constants'
-
-import { displayTime } from 'src/utils/timeFuncs'
-
 import { Assessment } from '@custom-types/assessmentsType'
-import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table'
+import { Box, Typography } from '@mui/material'
+import { MRT_ColumnDef } from 'material-react-table'
+import { formatDate } from 'src/@core/utils/format'
+import { displayTime } from 'src/utils/timeFuncs'
+import RenderCustomAvatar from '../RenderCustomAvatar'
+import { useMemo } from 'react'
 
 interface CellType {
   row: any
 }
-
-const TableAllAssessments = ({ data }: any) => {
+const AllAssessmentTableColumns = () => {
   const columns = useMemo<MRT_ColumnDef<any>[]>(
     () => [
       {
@@ -113,23 +100,6 @@ const TableAllAssessments = ({ data }: any) => {
     []
   )
 
-  const router = useRouter()
-
-  return (
-    <MaterialReactTable
-      columns={columns}
-      data={data}
-      getRowId={row => row._id}
-      muiTableBodyRowProps={({ row }) => ({
-        onClick: () => {
-          router.push(`${URLS.ASSESSMENT_URL}/${row.original._id}/view`)
-        },
-        sx: {
-          cursor: 'pointer'
-        }
-      })}
-    />
-  )
+  return columns
 }
-
-export default TableAllAssessments
+export default AllAssessmentTableColumns
