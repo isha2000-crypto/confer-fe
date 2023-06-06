@@ -41,7 +41,7 @@ const InviteForm = () => {
   const [inviteUserMutation] = useMutation(INVITE_USER_MUTATION)
   const dispatch = useDispatch<AppDispatch>()
   const rolesStore = useSelector((store: RootState) => store.roles)
-  const [userRole, setUserRole] = useState(rolesStore.roles.length > 0 ? rolesStore.roles[0].title : '')
+  const [roles, setRoles] = useState(rolesStore.roles.length > 0 ? rolesStore.roles : [])
   const [formDisabled, setFormDisabled] = useState(false)
 
   const handleInvite = (values: any, { setSubmitting }: { setSubmitting: any }) => {
@@ -59,7 +59,9 @@ const InviteForm = () => {
         console.error(error)
       })
       .finally(() => {
+        console.log('Finally block running')
         setLoading(false)
+        setFormDisabled(false)
         setSubmitting(false)
       })
   }
@@ -72,11 +74,18 @@ const InviteForm = () => {
     initialValues: {
       emailInput: '',
       emails: [],
-      userRole: rolesStore.roles.length > 0 ? rolesStore.roles[0].title : ''
+      userRole: rolesStore.roles.length > 0 ? rolesStore.roles[0]._id : ''
     },
     validationSchema: InviteFormSchema,
     onSubmit: handleInvite
   })
+
+  useEffect(() => {
+    if (rolesStore.roles.length > 0) {
+      formik.setFieldValue('userRole', rolesStore.roles[0]._id)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rolesStore.roles])
 
   const router = useRouter()
   if (rolesStore.loading) return <FallbackSpinner />
@@ -109,7 +118,7 @@ const InviteForm = () => {
 
   const handleRoleChange = (event: any) => {
     const selectedRole = event.target.value
-    setUserRole(selectedRole)
+    setRoles(selectedRole)
     formik.setFieldValue('userRole', selectedRole)
   }
 
@@ -119,6 +128,7 @@ const InviteForm = () => {
       formik.values?.emails.filter((e: string) => e !== email)
     )
   }
+  console.log('Formik values', formik.values)
 
   return (
     <CustomForm>
@@ -159,14 +169,14 @@ const InviteForm = () => {
                 labelId='role-select-label'
                 id='role-select'
                 name='userRole'
-                disabled={formDisabled}
-                value={userRole}
-                onChange={handleRoleChange}
+                disabled={formDisabled || !formik.values?.emailInput?.trim()}
+                value={formik.values.userRole}
+                onChange={formik.handleChange}
                 label='Role'
                 placeholder='Role'
               >
                 {rolesStore.roles.map(role => (
-                  <MenuItem key={role.title} value={role.title}>
+                  <MenuItem key={role._id} value={role._id}>
                     {role.title}
                   </MenuItem>
                 ))}
@@ -182,7 +192,7 @@ const InviteForm = () => {
             variant='contained'
             sx={{ width: '100%' }}
             onClick={event => handleAddEmail(event)}
-            disabled={!formik.values?.emailInput}
+            disabled={!formik.values?.emailInput?.trim()}
           >
             Add
           </Button>
@@ -192,7 +202,7 @@ const InviteForm = () => {
           {formik.values.emails.map(email => (
             <Chip
               key={email}
-              label={`(${userRole}) ${email}`}
+              label={`(${formik.values.userRole}) ${email}`}
               onDelete={() => handleRemoveEmail(email)}
               deleteIcon={<CancelIcon />}
               sx={{ mr: 1, mb: 1 }}
