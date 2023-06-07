@@ -4,9 +4,7 @@ import { useMemo } from 'react'
 import { formatDate } from 'src/@core/utils/format'
 import CustomChip from 'src/@core/components/mui/chip'
 import { ThemeColor } from 'src/@core/layouts/types'
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import DateProvider from '@components/atoms/DateProvider'
 
 interface CellType {
   row: any
@@ -82,26 +80,13 @@ const TableTenantsColumns = () => {
       },
       {
         accessorFn: (row: { createdAt: string | Date }) => {
-          return formatDate(row.createdAt)
+          return new Date(row.createdAt)
         },
         header: 'Created At',
-        Filter: ({ column }) => (
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              onChange={newValue => {
-                column.setFilterValue(newValue)
-              }}
-              slotProps={{
-                textField: {
-                  helperText: 'Filter Mode: Less Than',
-                  sx: { minWidth: '120px' },
-                  variant: 'standard'
-                }
-              }}
-              value={column.getFilterValue()}
-            />
-          </LocalizationProvider>
-        )
+        filterFn: 'lessThanOrEqualTo',
+        sortingFn: 'datetime',
+        Cell: ({ cell }) => formatDate(cell.getValue<Date>()),
+        Filter: DateProvider
       }
     ],
     []

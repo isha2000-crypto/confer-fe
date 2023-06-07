@@ -1,13 +1,11 @@
 import { Assessment } from '@custom-types/assessmentsType'
 import { Box, Typography } from '@mui/material'
 import { MRT_ColumnDef } from 'material-react-table'
-import { formatDate } from 'src/@core/utils/format'
 import { displayTime } from 'src/utils/timeFuncs'
 import RenderCustomAvatar from '../RenderCustomAvatar'
 import { useMemo } from 'react'
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { formatDate } from 'src/@core/utils/format'
+import DateProvider from '@components/atoms/DateProvider'
 
 interface CellType {
   row: any
@@ -95,26 +93,13 @@ const AllAssessmentTableColumns = () => {
       },
       {
         accessorFn: (row: { createdAt: string | Date }) => {
-          return formatDate(row.createdAt)
+          return new Date(row.createdAt)
         },
         header: 'Created At',
-        Filter: ({ column }) => (
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              onChange={newValue => {
-                column.setFilterValue(newValue)
-              }}
-              slotProps={{
-                textField: {
-                  helperText: 'Filter Mode: Less Than',
-                  sx: { minWidth: '120px' },
-                  variant: 'standard'
-                }
-              }}
-              value={column.getFilterValue()}
-            />
-          </LocalizationProvider>
-        )
+        filterFn: 'lessThanOrEqualTo',
+        sortingFn: 'datetime',
+        Cell: ({ cell }) => formatDate(cell.getValue<Date>()),
+        Filter: DateProvider
       }
     ],
     []
