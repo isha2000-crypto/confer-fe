@@ -10,8 +10,7 @@ import Icon from 'src/@core/components/icon'
 import { Question_Types } from '../../../custom-types/enum'
 import { memo } from 'react'
 import styles from './CreateQuestions.module.scss'
-import { useQuery } from '@apollo/client'
-import { LOAD_CURRENT_TENANT } from 'src/lib/graphql/Query'
+
 import { AnyARecord } from 'dns'
 import InputQuestionDuration from '@components/atoms/InputQuestionDuration'
 import { Field } from 'formik'
@@ -27,11 +26,11 @@ interface QuestionProps {
   isReadOnly?: boolean
   handleQuestionUpdate: (index: number, name: string, value: string | number) => void
   removeQuestion: (id: number) => void
+  assessmentDuration: number
 }
 
 const CreateQuestion = (props: QuestionProps) => {
-  const { index } = props
-  const { data } = useQuery(LOAD_CURRENT_TENANT)
+  const { index, assessmentDuration } = props
 
   const handleQuestionDataChange = (event: any) => {
     const { name, value } = event.target
@@ -44,8 +43,6 @@ const CreateQuestion = (props: QuestionProps) => {
   const handleRemove = () => {
     props.removeQuestion(props.count)
   }
-
-  const admin_duration = data?.currentTenant?.assessment_duration / 60
 
   return (
     <>
@@ -108,7 +105,11 @@ const CreateQuestion = (props: QuestionProps) => {
                 onChange={value => field.onChange({ target: { name: field.name, value } })}
                 isReadOnly={props.isReadOnly}
                 error={meta.touched && meta.error}
-                helperText={(meta.touched && meta.error) || `Duration value should be less then ${admin_duration}`}
+                helperText={
+                  props.isReadOnly
+                    ? ''
+                    : (meta.touched && meta.error) || `Duration value should be less then ${assessmentDuration}`
+                }
               />
             )}
           </Field>

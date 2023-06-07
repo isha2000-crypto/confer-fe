@@ -1,17 +1,32 @@
 import * as Yup from 'yup'
-import { useQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import { LOAD_CURRENT_TENANT } from 'src/lib/graphql/Query'
 import { useRouter } from 'next/router'
+import { ACTIONS, SUBJECTS } from '@custom-types/enum'
+import { useContext, useEffect, useState } from 'react'
+import { AbilityContext } from 'src/layouts/components/acl/Can'
 
 export const CreateAssessmentSchema = () => {
   const router = useRouter()
-  const { data, error } = useQuery(LOAD_CURRENT_TENANT)
-  if (error) {
-    router.push('/505')
+  const ability = useContext(AbilityContext)
+  const [adminDuration, setAdminDuration] = useState<number>(0)
+  const [loadCurrentTenant, { error: FetchError }] = useLazyQuery(LOAD_CURRENT_TENANT) // Use useLazyQuery
 
+  useEffect(() => {
+    // Execute the query when the component mounts or when ability changes
+    if (ability.can(ACTIONS.CREATE, SUBJECTS.ASSESSMENT) || ability.can(ACTIONS.UPDATE, SUBJECTS.ASSESSMENT)) {
+      loadCurrentTenant().then(data => {
+        setAdminDuration(data.data.currentTenant.assessment_duration)
+      })
+    }
+  }, [ability, loadCurrentTenant])
+
+  if (!adminDuration) {
     return null
   }
-  const admin_duration = data?.currentTenant?.assessment_duration ?? 0
+  if (FetchError) {
+    router.push('/505')
+  }
 
   return Yup.object().shape({
     title: Yup.string().required('Title is required'),
@@ -27,9 +42,9 @@ export const CreateAssessmentSchema = () => {
             .test({
               name: 'max',
               exclusive: false,
-              message: ` duration value should be less than or equal to ${admin_duration / 60}`,
+              message: ` duration value should be less than or equal to ${adminDuration / 60}`,
               test: function (value: any) {
-                return value <= admin_duration
+                return value <= adminDuration
               }
             })
         })

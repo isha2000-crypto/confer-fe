@@ -16,15 +16,17 @@ import MenuItem from '@mui/material/MenuItem'
 import FormHelperText from '@mui/material/FormHelperText'
 import { ACTIONS, SUBJECTS, Task_Types } from '../../../custom-types/enum'
 
-import { useMutation } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import { CREATE_ASSESSMENT_MUTATION, UPDATE_ASSESSMENT_MUTATION } from 'src/lib/graphql/Mutation'
 import toast from 'react-hot-toast'
 
 import { useRouter } from 'next/router'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
-import { minutesToSeconds } from 'src/utils/unitConversion'
+import { minutesToSeconds, secondsToMinutes } from 'src/utils/unitConversion'
 import { CreateAssessmentSchema } from 'src/lib/yup-schema'
 import { Alert } from '@mui/material'
+import FallbackSpinner from 'src/@core/components/spinner'
+import { LOAD_CURRENT_TENANT } from 'src/lib/graphql/Query'
 
 interface Question {
   id: number
@@ -45,6 +47,8 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
   const [createAssessmentMutation] = useMutation(CREATE_ASSESSMENT_MUTATION)
   const [updateAssessmentMutation] = useMutation(UPDATE_ASSESSMENT_MUTATION)
   const assessmentValidationSchema = CreateAssessmentSchema()
+  const [assessmentDuration, setAssessmentDuration] = useState<number>(0)
+  const [loadCurrentTenant, { loading: currentTenantLoading }] = useLazyQuery(LOAD_CURRENT_TENANT)
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [assessment, setAssessment] = useState({
@@ -172,6 +176,21 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
     router.push(`/assessments/${assessmentId}/edit`)
   }
 
+  useEffect(() => {
+    console.log('Ability', ability.can(ACTIONS.CREATE, SUBJECTS.ASSESSMENT))
+
+    // Execute the query when the component mounts or when ability changes
+    if (ability.can(ACTIONS.CREATE, SUBJECTS.ASSESSMENT) || ability.can(ACTIONS.UPDATE, SUBJECTS.ASSESSMENT)) {
+      loadCurrentTenant().then(data => {
+        setAssessmentDuration(secondsToMinutes(data.data.currentTenant.assessment_duration))
+      })
+    }
+  }, [ability, loadCurrentTenant])
+
+  if (currentTenantLoading) {
+    return <FallbackSpinner />
+  }
+
   return (
     <>
       <Card>
@@ -288,6 +307,7 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
                                     handleQuestionUpdate(arrayHelpers.form, index, name, value)
                                   }
                                   isReadOnly={isReadOnly}
+                                  assessmentDuration={assessmentDuration}
                                 />
                               ))}
                           </Grid>
