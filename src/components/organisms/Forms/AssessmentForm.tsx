@@ -74,6 +74,16 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isReadOnly, isEdit, initialQuestions.length])
 
+  const containerStyle = {
+    backgroundColor: 'background.default',
+    borderRadius: '20px',
+    padding: '20px',
+    margin: '20px 0',
+    marginLeft: '20px'
+
+    // visibility: initialQuestions.length ? 'visible' : 'hidden'
+  }
+
   const addQuestion = (arrayHelpers: any) => {
     const newQuestion: Question = {
       id: arrayHelpers?.form?.values?.questions?.length + 1,
@@ -289,7 +299,8 @@ const AssessmentForm = ({ isEdit, assessmentId, initialAssessment, isReadOnly }:
                     </div>
                   </Grid>
                   <Divider sx={{ mb: '0 !important' }} />
-                  <Grid item container justifyContent='center'>
+
+                  <Grid className='ggggggg' item container sx={containerStyle} justifyContent='center'>
                     <FieldArray name='questions'>
                       {arrayHelpers => (
                         <>
