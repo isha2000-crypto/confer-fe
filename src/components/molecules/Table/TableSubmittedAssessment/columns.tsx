@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { formatDate } from 'src/@core/utils/format'
 import RenderCustomAvatar from '../RenderCustomAvatar'
 import CustomChip from 'src/@core/components/mui/chip'
+import DateProvider from '@components/atoms/DateProvider'
 
 interface CellType {
   row: any
@@ -27,9 +28,13 @@ const TableSubmittedAssessmentColumns = () => {
       },
       {
         accessorFn: (row: { createdAt: string | Date }) => {
-          return formatDate(row.createdAt)
+          return new Date(row.createdAt)
         },
-        header: 'Created At'
+        header: 'Created At',
+        filterFn: 'lessThanOrEqualTo',
+        sortingFn: 'datetime',
+        Cell: ({ cell }) => formatDate(cell.getValue<Date>()),
+        Filter: DateProvider
       },
       {
         accessorFn: (row: { user: { name: string; email: string } }) => {
