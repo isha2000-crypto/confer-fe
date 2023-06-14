@@ -11,7 +11,7 @@ import Spinner from 'src/@core/components/spinner'
 import { useRouter } from 'next/router'
 import { Box, Typography, Button } from '@mui/material'
 import Icon from 'src/@core/components/icon'
-import TableSubmittedAssessments from '@components/molecules/Table/TableSubmittedAssessments'
+import TableSubmittedAssessments from '@components/molecules/Table/TableSubmittedAssessment'
 
 function ListSubmittedAssessments() {
   const router = useRouter()
