@@ -74,7 +74,7 @@ const ListAssessments = () => {
               type={assessment.type}
               title={assessment.title}
               time={displayTime(assessment)}
-              responses={'1'}
+              responses={assessment.num_responses}
               tasks={assessment.tasks.length}
               handlePopup={handleOpenPopup}
               author={assessment.author.name}
