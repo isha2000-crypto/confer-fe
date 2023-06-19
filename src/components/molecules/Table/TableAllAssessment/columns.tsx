@@ -53,6 +53,19 @@ const AllAssessmentTableColumns = () => {
         }
       },
       {
+        accessorKey: 'num_responses',
+        header: ' responses',
+        Cell: ({ renderedCellValue }: any) => {
+          return (
+            <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 3 } }}>
+              <Typography noWrap sx={{ color: 'text.secondary' }}>
+                {renderedCellValue}
+              </Typography>
+            </Box>
+          )
+        }
+      },
+      {
         accessorFn: (row: Assessment) => {
           return displayTime(row)
         },
