@@ -15,6 +15,7 @@ export const FETCH_ALL_ASSESSMENTS = gql`
       title
       description
       type
+      num_responses
       createdAt
       author {
         name
@@ -36,6 +37,7 @@ export const FETCH_ASSESSMENT_BY_ID = gql`
     assessment(id: $assessmentId) {
       _id
       title
+      num_responses
       description
       type
       authorId
@@ -64,6 +66,7 @@ export const LOAD_AVAILABLE_ASSESSMENTS = gql`
       description
       type
       authorId
+      num_responses
       author {
         name
       }
@@ -105,6 +108,7 @@ export const FETCH_CREATED = gql`
       _id
       title
       description
+      num_responses
       type
       author {
         name
