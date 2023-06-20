@@ -23,7 +23,7 @@ function ListAllAssessments() {
   useEffect(() => {
     const fetchData = async () => {
       const result = await getData()
-      setAllAssessments(result.data.assessments)
+      setAllAssessments(result.data?.assessments)
     }
     if (!auth.loading && auth.user) {
       fetchData()

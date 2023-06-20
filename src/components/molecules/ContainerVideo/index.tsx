@@ -51,6 +51,20 @@ function ContainerVideo({
   const [imageUrl, setImageUrl] = React.useState<string | null>(null)
   const [counter, setCounter] = React.useState<number>(3)
   const [recordeBlob, setRecordedBlob] = React.useState<Blob | null>(null)
+  const [isOnline, setIsOnline] = React.useState(window.navigator.onLine)
+
+  React.useEffect(() => {
+    const handleOnline = () => setIsOnline(true)
+    const handleOffline = () => setIsOnline(false)
+
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [])
 
   //Handler Functions
   const handleMenuOpenClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -77,24 +91,27 @@ function ContainerVideo({
   }
 
   const handleStartCaptureClick = React.useCallback(() => {
-    setCounter(3)
-    setStartedCapture(true)
-    startCountdown()
-    setTimeout(() => {
-      setStartedCapture(false)
-      setCapturing(true)
-      clearInterval(countDownRef.current)
-      const audioTrack = webcamRef.current.stream.getAudioTracks()[0]
-      const canvasStream = canvasRef.current.captureStream(60)
-      canvasStream.addTrack(audioTrack)
-      mediaRecorderRef.current = new RecordRTC(canvasStream, {
-        mimeType: 'video/webm'
-      })
+    if (!navigator.onLine) {
+    } else {
+      setCounter(3)
+      setStartedCapture(true)
+      startCountdown()
+      setTimeout(() => {
+        setStartedCapture(false)
+        setCapturing(true)
+        clearInterval(countDownRef.current)
+        const audioTrack = webcamRef.current.stream.getAudioTracks()[0]
+        const canvasStream = canvasRef.current.captureStream(60)
+        canvasStream.addTrack(audioTrack)
+        mediaRecorderRef.current = new RecordRTC(canvasStream, {
+          mimeType: 'video/webm'
+        })
 
-      // mediaRecorderRef.current.addEventListener('dataavailable', handleDataAvailable)
-      mediaRecorderRef.current.startRecording()
-      startTimer()
-    }, 3000)
+        // mediaRecorderRef.current.addEventListener('dataavailable', handleDataAvailable)
+        mediaRecorderRef.current.startRecording()
+        startTimer()
+      }, 3000)
+    }
   }, [])
 
   const handleStopCaptureClick = React.useCallback(async () => {
@@ -146,6 +163,23 @@ function ContainerVideo({
 
   return (
     <>
+      {!isOnline && (
+        <div
+          style={{
+            width: '100%',
+            background: 'red',
+            color: 'white',
+            padding: '10px',
+            textAlign: 'center',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            zIndex: 9999
+          }}
+        >
+          No internet connection!
+        </div>
+      )}
       <Grid
         container
         gap={20}
