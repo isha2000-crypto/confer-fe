@@ -307,6 +307,14 @@ const LoginPage = () => {
                 )}
               </FormControl>
 
+              <Box>
+                <Typography variant='body2' sx={{ color: 'primary.main' }}>
+                  <a href='/forgot-password' style={{ textDecoration: 'none', color: '#00aca1', float: 'right' }}>
+                    Forgot Password?
+                  </a>
+                </Typography>
+              </Box>
+
               <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 7, mt: 2 }}>
                 Login
               </Button>

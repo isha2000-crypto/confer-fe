@@ -97,3 +97,8 @@ export const UPDATE_ASSESSMENT_DURATION = gql`
     }
   }
 `
+export const FORGET_PASSWORD = gql`
+  mutation ForgetPassword($email: String!) {
+    forgetPassword(email: $email)
+  }
+`

@@ -11,6 +11,10 @@ import Box, { BoxProps } from '@mui/material/Box'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { styled, useTheme } from '@mui/material/styles'
 import Typography, { TypographyProps } from '@mui/material/Typography'
+import { FORGET_PASSWORD } from 'src/lib/graphql/Mutation'
+import { useMutation } from '@apollo/client'
+import { useState } from 'react'
+import { toast } from 'react-hot-toast'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -26,6 +30,7 @@ import { useSettings } from 'src/@core/hooks/useSettings'
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
+import { CircularProgress } from '@mui/material'
 
 // Styled Components
 const ForgotPasswordIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -81,6 +86,9 @@ const LinkStyled = styled(Link)(({ theme }) => ({
 
 const ForgotPassword = () => {
   // ** Hooks
+  const [email, setEmail] = useState('')
+  const [reset, setReset] = useState(false)
+  const [forgetPasswordMutation] = useMutation(FORGET_PASSWORD)
   const theme = useTheme()
   const { settings } = useSettings()
 
@@ -89,6 +97,17 @@ const ForgotPassword = () => {
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
 
   const handleSubmit = (e: SyntheticEvent) => {
+    setReset(true)
+    forgetPasswordMutation({
+      variables: { email: email }
+    })
+      .catch(error => {
+        toast.error(error)
+      })
+      .finally(() => {
+        setReset(false)
+      })
+
     e.preventDefault()
   }
 
@@ -211,9 +230,17 @@ const ForgotPassword = () => {
               </Typography>
             </Box>
             <form noValidate autoComplete='off' onSubmit={handleSubmit}>
-              <TextField type='email' label='Email' sx={{ display: 'flex', mb: 4 }} />
-              <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 5.25 }}>
-                Send reset link
+              <TextField
+                type='email'
+                label='Email'
+                disabled={reset}
+                sx={{ display: 'flex', mb: 4 }}
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+              />
+
+              <Button size='large' type='submit' disabled={reset} variant='contained' sx={{ width: '100%' }}>
+                {reset ? <CircularProgress size={24} /> : 'Send Reset Link'}
               </Button>
               <Typography sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <LinkStyled href='/login'>
