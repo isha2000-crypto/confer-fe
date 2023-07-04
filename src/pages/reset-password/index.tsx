@@ -46,8 +46,7 @@ const ResetPassword = () => {
   const [resetPasswordMutation] = useMutation(RESET_PASSWORD)
   const router = useRouter()
   const { token } = router.query
-  console.log('Token for test', token)
-  const [resetToken, { loading, error }] = useMutation(VERIFY_TOKEN)
+  const [resetToken] = useMutation(VERIFY_TOKEN)
 
   useEffect(() => {
     if (token) {
@@ -98,7 +97,7 @@ const ResetPassword = () => {
     formik.setFieldValue('confirmPassword', !formik.values.password)
   }
 
-  const handleMouseDownPassword = event => {
+  const handleMouseDownPassword = (event: any) => {
     event.preventDefault()
   }
 
@@ -109,7 +108,7 @@ const ResetPassword = () => {
         <form onSubmit={formik.handleSubmit}>
           <Grid container spacing={5}>
             <Grid item xs={12}>
-              <FormControl fullWidth error={formik.touched.password && formik.errors.password}>
+              <FormControl fullWidth error={Boolean(formik.touched.password && formik.errors.password)}>
                 <InputLabel htmlFor='form-layouts-basic-password'>Password</InputLabel>
                 <OutlinedInput
                   disabled={reset}
@@ -126,7 +125,9 @@ const ResetPassword = () => {
                         onMouseDown={handleMouseDownPassword}
                         aria-label='toggle password visibility'
                       >
-                        <Icon icon={formik.values.password ? 'mdi:eye-outline' : 'mdi:eye-off-outline'} />
+                        <Icon component='span'>
+                          {formik.values.password ? 'mdi:eye-outline' : 'mdi:eye-off-outline'}
+                        </Icon>
                       </IconButton>
                     </InputAdornment>
                   }
@@ -139,8 +140,9 @@ const ResetPassword = () => {
               </FormControl>
             </Grid>
             <Grid item xs={12}>
-              <FormControl fullWidth error={formik.touched.confirmPassword && formik.errors.confirmPassword}>
+              <FormControl fullWidth error={Boolean(formik.touched.confirmPassword && formik.errors.confirmPassword)}>
                 <InputLabel htmlFor='form-layouts-confirm-password'>Confirm Password</InputLabel>
+
                 <OutlinedInput
                   disabled={reset}
                   label='Confirm Password'
@@ -155,7 +157,9 @@ const ResetPassword = () => {
                         onMouseDown={handleMouseDownPassword}
                         aria-label='toggle password visibility'
                       >
-                        <Icon icon={formik.values.password ? 'mdi:eye-outline' : 'mdi:eye-off-outline'} />
+                        <Icon component={formik.values.password ? 'span' : 'span'}>
+                          {formik.values.password ? 'mdi:eye-outline' : 'mdi:eye-off-outline'}
+                        </Icon>
                       </IconButton>
                     </InputAdornment>
                   }

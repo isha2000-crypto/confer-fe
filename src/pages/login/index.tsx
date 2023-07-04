@@ -42,6 +42,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 import ButtonGoogle from '@components/molecules/ButtonGoogle'
+import Link from 'next/link'
 
 // ** Styled Components
 const LoginIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -309,9 +310,9 @@ const LoginPage = () => {
 
               <Box>
                 <Typography variant='body2' sx={{ color: 'primary.main' }}>
-                  <a href='/forgot-password' style={{ textDecoration: 'none', color: '#00aca1', float: 'right' }}>
-                    Forgot Password?
-                  </a>
+                  <Link href='/forgot-password/' style={{ color: '#00aca1', float: 'right' }}>
+                    Forgot Password
+                  </Link>
                 </Typography>
               </Box>
 
