@@ -102,3 +102,13 @@ export const FORGET_PASSWORD = gql`
     forgetPassword(email: $email)
   }
 `
+export const VERIFY_TOKEN = gql`
+  mutation VerifyToken($token: String!) {
+    verifyToken(token: $token)
+  }
+`
+export const RESET_PASSWORD = gql`
+  mutation ResetPassword($newPassword: String!, $token: String!) {
+    resetPassword(newPassword: $newPassword, token: $token)
+  }
+`
