@@ -48,7 +48,14 @@ const InviteForm = () => {
 
     // TODO: Add support form both emails and role IDs in mutation
     inviteUserMutation({
-      variables: { usersInvitationInput: { emails: [...values.emails.map((item: EmailWithRole) => item.email)] } }
+      variables: {
+        usersInvitationInput: {
+          emailWithRoles: formik.values.emailWithRoles.map((item: EmailWithRole) => ({
+            email: item.email,
+            role: item.role
+          }))
+        }
+      }
     })
       .then(result => {
         setInviteSuccessCount(result.data.inviteUsers.sent.length)
